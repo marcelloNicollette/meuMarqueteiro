@@ -185,7 +185,7 @@
             gap: .35rem;
             padding: .45rem .9rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .78rem;
             font-weight: 500;
             cursor: pointer;

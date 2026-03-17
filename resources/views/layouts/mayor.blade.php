@@ -41,7 +41,7 @@
         html,
         body {
             height: 100%;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             background: var(--surface);
             color: var(--ink);
         }
@@ -240,7 +240,7 @@
             gap: .45rem;
             padding: .55rem 1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             cursor: pointer;

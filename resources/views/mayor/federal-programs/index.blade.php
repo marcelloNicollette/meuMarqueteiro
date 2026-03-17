@@ -89,7 +89,7 @@
             border-radius: 8px;
             background: var(--gold);
             color: var(--ink);
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             border: none;
@@ -116,7 +116,7 @@
             border: 1.5px solid var(--border);
             background: none;
             cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .8rem;
             font-weight: 500;
             color: var(--ink-muted);
@@ -327,7 +327,7 @@
             gap: .4rem;
             padding: .4rem .8rem;
             border-radius: 7px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .78rem;
             font-weight: 500;
             background: var(--ink);

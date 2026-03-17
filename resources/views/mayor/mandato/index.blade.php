@@ -77,7 +77,7 @@
         .mh-headline .risk-flag {
             font-size: .82rem;
             color: #f59e0b;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-weight: 500;
             margin-left: .5rem;
         }
@@ -246,7 +246,7 @@
             border-radius: 8px;
             border: 1.5px solid var(--border);
             background: var(--white);
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .78rem;
             color: var(--ink);
             cursor: pointer;
@@ -269,7 +269,7 @@
             border: 1.5px solid var(--border);
             background: none;
             cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .77rem;
             font-weight: 500;
             color: var(--ink-muted);
@@ -636,7 +636,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             cursor: pointer;
@@ -724,7 +724,8 @@
                     <div class="mh-counter">Em andamento: <strong>{{ $running }}</strong></div>
                     <div class="mh-counter">Em risco: <strong>{{ $atRisk }}</strong></div>
                     <div class="mh-counter">Prometidos:
-                        <strong>{{ $commitments->where('status', 'prometido')->count() }}</strong></div>
+                        <strong>{{ $commitments->where('status', 'prometido')->count() }}</strong>
+                    </div>
                 </div>
             </div>
             <div>
@@ -945,7 +946,7 @@
             function askAbout(title) {
                 sessionStorage.setItem('chatPrefill',
                     `Qual é a situação atual do compromisso: "${title}"? Quais são os riscos e o que pode ser feito para acelerar a entrega?`
-                    );
+                );
                 window.location.href = '{{ route('mayor.chat.index') }}';
             }
         </script>

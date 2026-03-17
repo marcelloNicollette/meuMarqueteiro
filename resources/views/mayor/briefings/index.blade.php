@@ -109,7 +109,7 @@
             border-radius: 10px;
             background: var(--ink);
             color: white;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .88rem;
             font-weight: 500;
             border: none;
@@ -138,7 +138,7 @@
             gap: .35rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .82rem;
             font-weight: 500;
             border: 1.5px solid var(--border);

@@ -69,7 +69,7 @@ return new class extends Migration
         // Dimensões: 1536 (OpenAI text-embedding-3-small / text-embedding-ada-002)
         //            768  (Google text-embedding-004)
         // Ajuste VECTOR_DIMENSIONS no .env conforme o provider escolhido.
-        $dimensions = (int) config('ai.rag.dimensions', 1536);
+        $dimensions = (int) config('ai.rag.dimensions', 1024);
 
         DB::statement("ALTER TABLE document_embeddings ADD COLUMN embedding vector({$dimensions})");
 

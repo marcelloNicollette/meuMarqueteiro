@@ -192,7 +192,7 @@
             border-radius: 9px;
             border: 1.5px solid var(--border);
             background: var(--white);
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .84rem;
             color: var(--ink);
             outline: none;
@@ -371,7 +371,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 9px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             cursor: pointer;
@@ -671,7 +671,7 @@
             const text = document.getElementById('transcriptText').textContent;
             sessionStorage.setItem('chatPrefill',
                 `Registre esta demanda que recebi em campo: "${text}". Organize por tema, localidade e secretaria responsável, e sugira as próximas ações.`
-                );
+            );
             window.location.href = '{{ route('mayor.chat.index') }}';
         }
 
@@ -707,7 +707,7 @@
                 Boolean).join('. ');
             sessionStorage.setItem('chatPrefill',
                 `Registre e organize esta demanda: "${ctx}". Identifique o tema, localidade, secretaria responsável e sugira próximas ações.`
-                );
+            );
             window.location.href = '{{ route('mayor.chat.index') }}';
         }
 

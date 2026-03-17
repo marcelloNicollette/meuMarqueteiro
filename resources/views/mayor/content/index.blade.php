@@ -62,7 +62,7 @@
             border: none;
             background: none;
             cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .72rem;
             font-weight: 500;
             color: var(--ink-muted);
@@ -114,7 +114,7 @@
             background: var(--surface);
             border: 1.5px solid var(--border);
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .87rem;
             color: var(--ink);
             outline: none;
@@ -146,7 +146,7 @@
             border: 1.5px solid var(--border);
             background: none;
             cursor: pointer;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .76rem;
             color: var(--ink-soft);
             transition: all .15s;
@@ -176,7 +176,7 @@
             color: var(--white);
             border: none;
             border-radius: 9px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .9rem;
             font-weight: 500;
             cursor: pointer;
@@ -354,7 +354,7 @@
             cursor: pointer;
             border: none;
             background: none;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             border-bottom: 2px solid transparent;
             transition: all .15s;
         }
@@ -391,7 +391,7 @@
             gap: .4rem;
             padding: .45rem .85rem;
             border-radius: 7px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .78rem;
             font-weight: 500;
             cursor: pointer;
@@ -470,8 +470,8 @@
         }
 
         /* ═══════════════════════════════════════
-           IMAGEM IA — estilos específicos
-        ═══════════════════════════════════════ */
+               IMAGEM IA — estilos específicos
+            ═══════════════════════════════════════ */
         .image-info-box {
             background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
             border: 1.5px solid #ede9fe;
@@ -543,7 +543,7 @@
             gap: .35rem;
             padding: .38rem .8rem;
             border-radius: 7px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .76rem;
             font-weight: 600;
             cursor: pointer;
@@ -817,7 +817,7 @@
             gap: .4rem;
             padding: .5rem 1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .78rem;
             font-weight: 600;
             cursor: pointer;
@@ -1245,7 +1245,7 @@
             const channels = [...document.querySelectorAll('#tab-post .chip[data-channel].selected')].map(c => c.dataset
                 .channel);
             const tones = [...document.querySelectorAll('#tab-post .chip[data-tone].selected')].map(c => c.dataset
-            .tone);
+                .tone);
             if (!channels.length) {
                 alert('Selecione ao menos um canal.');
                 return;
@@ -1357,7 +1357,7 @@
             const hdr = document.createElement('div');
             hdr.className = 'img-results-header';
             hdr.innerHTML = '<h3>Prompts de imagem gerados</h3><span>' + prompts.length +
-            ' op\u00e7\u00f5es criadas</span>';
+                ' op\u00e7\u00f5es criadas</span>';
             panel.appendChild(hdr);
 
             // Banner CTAs

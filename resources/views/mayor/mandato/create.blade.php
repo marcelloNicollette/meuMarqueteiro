@@ -95,7 +95,7 @@
             border-radius: 9px;
             border: 1.5px solid var(--border);
             background: var(--white);
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .85rem;
             color: var(--ink);
             outline: none;
@@ -194,7 +194,7 @@
             gap: .4rem;
             padding: .6rem 1.2rem;
             border-radius: 9px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .85rem;
             font-weight: 500;
             cursor: pointer;
@@ -279,15 +279,19 @@
                             <select class="form-select" name="area" required>
                                 <option value="">Selecione a área</option>
                                 <option value="saude" {{ old('area') == 'saude' ? 'selected' : '' }}>🏥 Saúde</option>
-                                <option value="educacao" {{ old('area') == 'educacao' ? 'selected' : '' }}>📚 Educação</option>
+                                <option value="educacao" {{ old('area') == 'educacao' ? 'selected' : '' }}>📚 Educação
+                                </option>
                                 <option value="infraestrutura"{{ old('area') == 'infraestrutura' ? 'selected' : '' }}>🏗
                                     Infraestrutura</option>
                                 <option value="social" {{ old('area') == 'social' ? 'selected' : '' }}>🤝 Social</option>
-                                <option value="seguranca" {{ old('area') == 'seguranca' ? 'selected' : '' }}>🛡 Segurança</option>
+                                <option value="seguranca" {{ old('area') == 'seguranca' ? 'selected' : '' }}>🛡 Segurança
+                                </option>
                                 <option value="meio_ambiente" {{ old('area') == 'meio_ambiente' ? 'selected' : '' }}>🌿 Meio
                                     Ambiente</option>
-                                <option value="economia" {{ old('area') == 'economia' ? 'selected' : '' }}>💼 Economia</option>
-                                <option value="cultura" {{ old('area') == 'cultura' ? 'selected' : '' }}>🎭 Cultura</option>
+                                <option value="economia" {{ old('area') == 'economia' ? 'selected' : '' }}>💼 Economia
+                                </option>
+                                <option value="cultura" {{ old('area') == 'cultura' ? 'selected' : '' }}>🎭 Cultura
+                                </option>
                                 <option value="outros" {{ old('area') == 'outros' ? 'selected' : '' }}>📋 Outros</option>
                             </select>
                         </div>
@@ -336,11 +340,14 @@
                                     <option value="">Selecione</option>
                                     <option value="municipal" {{ old('budget_source') == 'municipal' ? 'selected' : '' }}>
                                         Municipal</option>
-                                    <option value="federal" {{ old('budget_source') == 'federal' ? 'selected' : '' }}>Federal
+                                    <option value="federal" {{ old('budget_source') == 'federal' ? 'selected' : '' }}>
+                                        Federal
                                     </option>
-                                    <option value="estadual" {{ old('budget_source') == 'estadual' ? 'selected' : '' }}>Estadual
+                                    <option value="estadual" {{ old('budget_source') == 'estadual' ? 'selected' : '' }}>
+                                        Estadual
                                     </option>
-                                    <option value="convenio" {{ old('budget_source') == 'convenio' ? 'selected' : '' }}>Convênio
+                                    <option value="convenio" {{ old('budget_source') == 'convenio' ? 'selected' : '' }}>
+                                        Convênio
                                     </option>
                                     <option value="misto" {{ old('budget_source') == 'misto' ? 'selected' : '' }}>Misto
                                     </option>

@@ -44,7 +44,7 @@
         html,
         body {
             height: 100%;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             background: var(--cream);
             color: var(--ink);
         }
@@ -89,7 +89,7 @@
         }
 
         .sidebar-logo-text {
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: 1rem;
             color: #fff;
         }
@@ -184,7 +184,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .85rem;
             color: var(--ink);
             font-weight: 600;
@@ -286,7 +286,7 @@
             background: none;
             border: none;
             outline: none;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .83rem;
             color: var(--ink);
             width: 180px;
@@ -307,7 +307,7 @@
         }
 
         .page-header h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: 1.6rem;
             font-weight: 600;
             color: var(--ink);
@@ -350,7 +350,7 @@
             gap: .5rem;
             padding: .55rem 1rem;
             border-radius: 7px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             text-decoration: none;

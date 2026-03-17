@@ -6,8 +6,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Acesso — Meu Marqueteiro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
+        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
         rel="stylesheet">
     <style>
         *,
@@ -33,7 +36,7 @@
         html,
         body {
             height: 100%;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             background: var(--cream);
             color: var(--ink);
         }
@@ -103,7 +106,7 @@
         }
 
         .brand-logo-name {
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: 1.15rem;
             color: var(--white);
             letter-spacing: .01em;
@@ -124,7 +127,7 @@
         }
 
         .brand-hero-title {
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: 2.6rem;
             line-height: 1.2;
             color: var(--white);
@@ -154,7 +157,7 @@
         }
 
         .brand-stat-value {
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: 1.8rem;
             color: var(--white);
         }
@@ -185,7 +188,7 @@
         }
 
         .form-heading h1 {
-            font-family: 'Playfair Display', serif;
+            font-family: "Open Sans", sans-serif;
             font-size: 2rem;
             font-weight: 600;
             color: var(--ink);
@@ -245,7 +248,7 @@
             background: var(--white);
             border: 1.5px solid var(--border);
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .93rem;
             color: var(--ink);
             outline: none;
@@ -299,7 +302,7 @@
             color: var(--white);
             border: none;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Open Sans", sans-serif;
             font-size: .93rem;
             font-weight: 500;
             letter-spacing: .04em;
@@ -380,6 +383,11 @@
             height: 100%;
             position: absolute;
         }
+
+        .logo {
+            width: 10rem;
+            margin: 0 auto;
+        }
     </style>
 </head>
 
@@ -431,7 +439,9 @@
         {{-- ── Painel direito — formulário ──────────────────────────── --}}
         <div class="form-panel">
             <div class="form-box">
-
+                <div class="logo">
+                    <img src="/images/logo-borda-black.png" width="100%" alt="">
+                </div>
                 <div class="form-heading">
                     <h1>Bem-vindo</h1>
                     <p>Acesse com seu e-mail e senha cadastrados pelo consultor.</p>
