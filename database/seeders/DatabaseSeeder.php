@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
         $admin->assignRole($adminRole);
 
         // ── Município de exemplo ──────────────────────────────────────────
-        $municipality = Municipality::create([
+        /*$municipality = Municipality::create([
             'ibge_code'           => '3550308',
             'name'                => 'Exemplo do Sul',
             'state'               => 'São Paulo',
@@ -43,10 +43,10 @@ class DatabaseSeeder extends Seeder
                 'style'      => 'informal mas respeitoso',
                 'vocabulary' => 'simples, sem tecnicismos',
             ],
-        ]);
+        ]);*/
 
         // ── Prefeito de exemplo ───────────────────────────────────────────
-        $mayor = User::create([
+        /*$mayor = User::create([
             'name'            => 'João da Silva',
             'email'           => 'prefeito@exemplodosul.sp.gov.br',
             'password'        => Hash::make('Prefeito@2024!'),
@@ -54,10 +54,10 @@ class DatabaseSeeder extends Seeder
             'municipality_id' => $municipality->id,
             'is_active'       => true,
         ]);
-        $mayor->assignRole($mayorRole);
+        $mayor->assignRole($mayorRole);*/
 
         // ── Compromissos de exemplo ───────────────────────────────────────
-        $municipality->governmentCommitments()->createMany([
+        /*$municipality->governmentCommitments()->createMany([
             [
                 'title'                 => 'Pavimentação do bairro Santa Cruz',
                 'area'                  => 'infraestrutura',
@@ -89,13 +89,14 @@ class DatabaseSeeder extends Seeder
                 'budget_spent'          => 108000.00,
             ],
         ]);
+        */
 
         $this->command->info('✅ Seed concluído!');
         $this->command->table(
             ['Tipo', 'E-mail', 'Senha'],
             [
                 ['Admin', 'admin@meumarqueteiro.com.br', 'Admin@2024!'],
-                ['Prefeito', 'prefeito@exemplodosul.sp.gov.br', 'Prefeito@2024!'],
+                //['Prefeito', 'prefeito@exemplodosul.sp.gov.br', 'Prefeito@2024!'],
             ]
         );
     }
