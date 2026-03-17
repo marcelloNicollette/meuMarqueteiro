@@ -1,0 +1,84 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    container_name: marqueteiro_app
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      - APP_ENV=local
+      - DB_HOST=postgres
+      - DB_DATABASE=meu_marqueteiro
+      - DB_USERNAME=postgres
+      - DB_PASSWORD=secret
+      - REDIS_HOST=redis
+      - ANTHROPIC_API_KEY=sua-chave-aqui
+      - OPENAI_API_KEY=sua-chave-aqui
+    depends_on:
+      - postgres
+      - redis
+    networks:
+      - marqueteiro
+
+  postgres:
+    image: pgvector/pgvector:pg16
+    container_name: marqueteiro_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: meu_marqueteiro
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - marqueteiro
+
+  redis:
+    image: redis:7-alpine
+    container_name: marqueteiro_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - marqueteiro
+
+  minio:
+    image: minio/minio
+    container_name: marqueteiro_minio
+    restart: unless-stopped
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: meumarqueteiro
+      MINIO_ROOT_PASSWORD: secret1234
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    volumes:
+      - minio_data:/data
+    networks:
+      - marqueteiro
+
+  mailpit:
+    image: axllent/mailpit
+    container_name: marqueteiro_mailpit
+    restart: unless-stopped
+    ports:
+      - "1025:1025"
+      - "8025:8025"
+    networks:
+      - marqueteiro
+
+volumes:
+  postgres_data:
+  redis_data:
+  minio_data:
+
+networks:
+  marqueteiro:
+    driver: bridge

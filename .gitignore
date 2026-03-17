@@ -1,0 +1,40 @@
+# ── Chaves e segredos — NUNCA no GitHub ──────────────────────
+.env
+.env.docker
+.env.local
+.env.*.local
+*.key
+*.pem
+
+# ── Laravel ───────────────────────────────────────────────────
+/vendor/
+/node_modules/
+/public/hot
+/public/storage
+/storage/*.key
+/bootstrap/cache/*.php
+Homestead.json
+Homestead.yaml
+npm-debug.log
+yarn-error.log
+
+# ── Docker volumes locais ─────────────────────────────────────
+docker/data/
+
+# ── IDE ───────────────────────────────────────────────────────
+.idea/
+.vscode/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+# ── Logs ─────────────────────────────────────────────────────
+*.log
+/storage/logs/
+
+# ── Testes ───────────────────────────────────────────────────
+/coverage/
+.phpunit.result.cache
+
+sudo docker-compose down.txt

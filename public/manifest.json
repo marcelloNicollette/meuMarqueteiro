@@ -1,0 +1,26 @@
+{
+    "name": "Meu Marqueteiro",
+    "short_name": "Marqueteiro",
+    "description": "Assessor Digital do Prefeito",
+    "start_url": "/mayor/chat",
+    "display": "standalone",
+    "background_color": "#111318",
+    "theme_color": "#111318",
+    "orientation": "portrait-primary",
+    "icons": [
+        {
+            "src": "/images/mascote-robo.jpg",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any maskable"
+        },
+        {
+            "src": "/images/mascote-robo.jpg",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any maskable"
+        }
+    ],
+    "categories": ["productivity", "government"],
+    "lang": "pt-BR"
+}

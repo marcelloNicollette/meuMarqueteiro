@@ -1,0 +1,36 @@
+FROM php:8.3-fpm
+
+# ── Dependências do sistema ───────────────────────────────────
+RUN apt-get update && apt-get install -y \
+    git curl zip unzip nginx supervisor \
+    libpng-dev libonig-dev libxml2-dev libpq-dev libzip-dev \
+    && docker-php-ext-install pdo pdo_pgsql pgsql mbstring exif pcntl bcmath gd zip opcache \
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# ── Extensão Redis ────────────────────────────────────────────
+RUN pecl install redis && docker-php-ext-enable redis
+
+# ── OPcache para performance ──────────────────────────────────
+RUN echo "opcache.enable=1" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.memory_consumption=256" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.max_accelerated_files=20000" >> /usr/local/etc/php/conf.d/opcache.ini \
+    && echo "opcache.validate_timestamps=0" >> /usr/local/etc/php/conf.d/opcache.ini
+
+# ── Composer ──────────────────────────────────────────────────
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# ── Configs de produção ───────────────────────────────────────
+COPY docker/nginx.conf        /etc/nginx/sites-available/default
+COPY docker/supervisord.conf  /etc/supervisor/conf.d/supervisord.conf
+COPY docker/php-fpm.conf      /usr/local/etc/php-fpm.d/www.conf
+
+# ── Arquivos do projeto ───────────────────────────────────────
+COPY . /meu-marqueteiro-src/
+
+# ── Entrypoint de produção ────────────────────────────────────
+COPY docker/entrypoint.prod.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+EXPOSE 80
+
+ENTRYPOINT ["/entrypoint.sh"]
