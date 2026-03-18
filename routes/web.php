@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Route;
 // AUTENTICAÇÃO
 // ─────────────────────────────────────────────────────────────────────────────
 
+Route::get('/', fn() => redirect()->route('login'));
+
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLogin'])->name('login');
     Route::post('/login', [LoginController::class, 'login'])->name('login.post');
