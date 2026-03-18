@@ -396,6 +396,7 @@
                     Sair
                 </button>
             </form>
+
             <a href="{{ route('mayor.mandato.briefings') }}" class="topbar-briefing">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
