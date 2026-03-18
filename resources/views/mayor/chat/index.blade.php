@@ -570,7 +570,7 @@
                     {{-- Estado vazio --}}
                     <div class="chat-empty" id="chatEmpty">
                         <div class="chat-empty-icon">
-                            <img width="100%" src="/images/mascote-robo.jpg" alt="">
+                            <img width="100%" src="/images/icone-robo-redondo.png" alt="">
                         </div>
                         <h2>Olá, {{ explode(' ', auth()->user()->name)[0] }}.</h2>
                         <p>
@@ -809,10 +809,10 @@
             const sourcesHtml = (sources && sources.length > 0) ?
                 `<div class="rag-sources">
                  ${sources.slice(0,4).map(s => `
-                                       <span class="rag-source-tag">
-                                         <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                                         ${s.source || 'Fonte'}
-                                       </span>`).join('')}
+                                               <span class="rag-source-tag">
+                                                 <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                                 ${s.source || 'Fonte'}
+                                               </span>`).join('')}
                </div>` :
                 '';
 
@@ -893,7 +893,7 @@
             document.getElementById('messagesArea').innerHTML = `
             <div class="chat-empty" id="chatEmpty">
                 <div class="chat-empty-icon">
-                    <img width="100%" src="/images/mascote-robo.jpg" alt="">
+                    <img width="100%" src="/images/icone-robo-redondo.png" alt="">
                 </div>
                 <h2>Nova conversa</h2>
                 <p>Como posso ajudar você hoje?</p>
