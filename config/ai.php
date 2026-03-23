@@ -43,7 +43,8 @@ return [
     */
     'rag' => [
         'dimensions'           => (int) (env('VECTOR_DIMENSIONS') ?: 1536),
-        'similarity_threshold' => (float) env('VECTOR_SIMILARITY_THRESHOLD', 0.75),
+        'similarity_threshold' => (float) env('VECTOR_SIMILARITY_THRESHOLD', 0.45),
+        'fallback_similarity_threshold' => (float) env('VECTOR_FALLBACK_SIMILARITY_THRESHOLD', 0.35),
         'max_results'          => (int) env('VECTOR_MAX_RESULTS', 10),
         'chunk_size'           => 800,    // palavras por chunk
         'chunk_overlap'        => 100,    // palavras de sobreposição

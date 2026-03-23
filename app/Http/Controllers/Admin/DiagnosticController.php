@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\DocumentEmbedding;
 use App\Models\Municipality;
 use App\Models\SystemSetting;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DiagnosticController extends Controller
@@ -134,26 +135,43 @@ class DiagnosticController extends Controller
         }
     }
 
-    public function testRAG()
+    public function testRAG(Request $request)
     {
         try {
-            $municipality = Municipality::where('subscription_active', true)->firstOrFail();
+            $municipality = $request->filled('municipality_id')
+                ? Municipality::where('subscription_active', true)->where('id', $request->integer('municipality_id'))->firstOrFail()
+                : Municipality::where('subscription_active', true)->firstOrFail();
+
             $rag   = app(\App\Services\RAG\RAGService::class);
             $start = microtime(true);
-            $chunks = $rag->retrieve('orçamento municipal saúde educação', $municipality);
+            $query = $request->input('query') ?: 'orçamento municipal saúde educação';
+            $limit = $request->integer('limit') ?: 10;
+            $chunks = $rag->retrieve($query, $municipality, $limit);
             $ms    = round((microtime(true) - $start) * 1000);
+
+            $byGeneral = $chunks->filter(fn($c) => empty($c->municipality_id))->count();
+            $byMunicipality = $chunks->filter(fn($c) => !empty($c->municipality_id))->count();
 
             return response()->json([
                 'ok'         => true,
                 'municipio'  => $municipality->name,
+                'query'      => $query,
                 'chunks'     => $chunks->count(),
                 'tempo_ms'   => $ms,
-                'preview'    => $chunks->take(2)->map(fn($c) => [
-                    'source'     => $c->source,
-                    'category'   => $c->category,
-                    'similarity' => round($c->similarity ?? 0, 3),
-                    'preview'    => substr($c->content, 0, 120).'...',
-                ]),
+                'breakdown'  => [
+                    'knowledge_base_general' => $byGeneral,
+                    'municipality_specific'  => $byMunicipality,
+                ],
+                'items'      => $chunks->map(fn($c) => [
+                    'municipality_id' => $c->municipality_id,
+                    'is_general'      => empty($c->municipality_id),
+                    'layer'           => $c->layer ?? null,
+                    'category'        => $c->category ?? null,
+                    'source'          => $c->source ?? null,
+                    'similarity'      => round($c->similarity ?? 0, 6),
+                    'preview'         => mb_substr(trim(preg_replace('/\s+/', ' ', $c->content ?? '')), 0, 220),
+                    'metadata'        => is_array($c->metadata) ? $c->metadata : json_decode($c->metadata ?? '{}', true),
+                ])->values(),
             ]);
         } catch (\Exception $e) {
             return response()->json(['ok' => false, 'erro' => $e->getMessage()], 500);

@@ -62,6 +62,30 @@
         @endif
     </form>
 
+    <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1.25rem;overflow:hidden">
+        <div style="padding:1rem 1.5rem;background:#f9fafb;border-bottom:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">
+            <div>
+                <div style="font-size:.95rem;font-weight:600">Testar se o chat está buscando a Base de Conhecimento</div>
+                <div style="font-size:.82rem;color:#6b7280;margin-top:.2rem">Executa a mesma busca RAG usada pelo chat e mostra as fontes retornadas</div>
+            </div>
+            <div style="display:flex;gap:.6rem;align-items:center;flex-wrap:wrap">
+                <select id="ragMun" style="padding:.55rem .9rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;min-width:220px">
+                    @foreach($municipalities as $m)
+                        <option value="{{ $m->id }}">{{ $m->name }}</option>
+                    @endforeach
+                </select>
+                <input id="ragQuery" type="text" placeholder="Digite uma pergunta..."
+                    style="min-width:280px;padding:.55rem .9rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
+                <button type="button" onclick="runRagTest()"
+                    style="padding:.55rem 1.1rem;background:#0f1117;color:#fff;border:none;border-radius:8px;font-size:.88rem;cursor:pointer">Testar</button>
+            </div>
+        </div>
+        <div style="padding:1rem 1.5rem">
+            <div id="ragTestStatus" style="font-size:.82rem;color:#6b7280"></div>
+            <div id="ragTestResults" style="margin-top:.75rem;display:grid;gap:.5rem"></div>
+        </div>
+    </div>
+
     {{-- LISTA --}}
     <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden">
         @if($documents->isEmpty())
@@ -137,6 +161,9 @@
                     </td>
                     <td style="padding:.9rem 1rem;text-align:center">
                         <div style="display:flex;gap:.4rem;justify-content:center">
+                            <button type="button" title="Ver chunks indexados"
+                                onclick="openChunks('{{ route('admin.knowledge-base.chunks', $doc) }}')"
+                                style="padding:.3rem .6rem;border:1px solid #d1d5db;border-radius:6px;font-size:.75rem;background:#fff;cursor:pointer">Ver</button>
                             {{-- Reindexar --}}
                             <form method="POST" action="{{ route('admin.knowledge-base.reindex', $doc) }}">
                                 @csrf @method('PATCH')
@@ -173,6 +200,23 @@
         </div>
         @endif
         @endif
+    </div>
+</div>
+
+<div id="modal-chunks" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:1001;align-items:center;justify-content:center;padding:1rem">
+    <div style="background:#fff;border-radius:16px;width:100%;max-width:920px;max-height:90vh;overflow:hidden;display:flex;flex-direction:column">
+        <div style="padding:1.05rem 1.5rem;border-bottom:1px solid #f3f4f6;display:flex;justify-content:space-between;align-items:center;gap:1rem">
+            <div>
+                <div id="chunksTitle" style="font-size:1rem;font-weight:700">Chunks indexados</div>
+                <div id="chunksMeta" style="font-size:.78rem;color:#6b7280;margin-top:.2rem"></div>
+            </div>
+            <button onclick="closeChunks()"
+                style="background:none;border:none;font-size:1.4rem;color:#9ca3af;cursor:pointer;line-height:1">×</button>
+        </div>
+        <div style="padding:1rem 1.5rem;overflow:auto">
+            <div id="chunksStatus" style="font-size:.85rem;color:#6b7280"></div>
+            <div id="chunksList" style="margin-top:.75rem;display:grid;gap:.6rem"></div>
+        </div>
     </div>
 </div>
 
@@ -240,4 +284,116 @@
 @if($errors->any())
 <script>document.getElementById('modal-upload').style.display='flex';</script>
 @endif
+
+<script>
+const CSRF = document.querySelector('meta[name="csrf-token"]').content;
+
+async function openChunks(url) {
+    document.getElementById('modal-chunks').style.display = 'flex';
+    document.getElementById('chunksStatus').textContent = 'Carregando...';
+    document.getElementById('chunksList').innerHTML = '';
+    document.getElementById('chunksTitle').textContent = 'Chunks indexados';
+    document.getElementById('chunksMeta').textContent = '';
+
+    try {
+        const res = await fetch(url, { headers: { 'Accept': 'application/json' } });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.erro || 'Falha ao carregar chunks');
+
+        document.getElementById('chunksTitle').textContent = data.doc?.title || 'Chunks indexados';
+        document.getElementById('chunksMeta').textContent = `${data.total} chunks no total (mostrando até ${data.limit})`;
+        document.getElementById('chunksStatus').textContent = data.items.length === 0 ? 'Nenhum chunk encontrado.' : '';
+
+        const list = document.getElementById('chunksList');
+        data.items.forEach((item) => {
+            const el = document.createElement('div');
+            el.style.cssText = 'border:1px solid #e5e7eb;border-radius:12px;padding:.9rem 1rem;background:#fff';
+            const header = document.createElement('div');
+            header.style.cssText = 'display:flex;justify-content:space-between;gap:1rem;align-items:center;margin-bottom:.5rem';
+            header.innerHTML = `
+                <div style="font-weight:700;font-size:.85rem;color:#111827">
+                    Chunk #${item.chunk_index}
+                    <span style="font-weight:600;color:#6b7280;margin-left:.5rem">${item.token_count ?? '—'} tokens</span>
+                </div>
+                <div style="font-size:.75rem;color:#6b7280">${item.source ?? ''}</div>
+            `;
+            const body = document.createElement('div');
+            body.style.cssText = 'font-size:.85rem;color:#374151;line-height:1.6;white-space:pre-wrap';
+            body.textContent = item.content || '';
+            el.appendChild(header);
+            el.appendChild(body);
+            list.appendChild(el);
+        });
+    } catch (e) {
+        document.getElementById('chunksStatus').style.color = '#dc2626';
+        document.getElementById('chunksStatus').textContent = e.message || 'Erro ao carregar chunks';
+    }
+}
+
+function closeChunks() {
+    document.getElementById('modal-chunks').style.display = 'none';
+}
+
+async function runRagTest() {
+    const query = document.getElementById('ragQuery').value.trim();
+    const munId = document.getElementById('ragMun').value;
+    const status = document.getElementById('ragTestStatus');
+    const results = document.getElementById('ragTestResults');
+    results.innerHTML = '';
+    status.style.color = '#6b7280';
+
+    if (!query) {
+        status.textContent = 'Digite uma pergunta para testar.';
+        return;
+    }
+
+    status.textContent = 'Testando busca...';
+
+    try {
+        const res = await fetch('{{ route("admin.diagnostic.test-rag") }}', {
+            method: 'POST',
+            headers: {
+                'X-CSRF-TOKEN': CSRF,
+                'Content-Type': 'application/json',
+                'Accept': 'application/json',
+            },
+            body: JSON.stringify({ query, municipality_id: munId, limit: 10 }),
+        });
+        const data = await res.json();
+        if (!data.ok) throw new Error(data.erro || 'Falha ao testar busca');
+
+        status.textContent = `${data.chunks} chunks retornados em ${data.tempo_ms}ms. Base geral: ${data.breakdown?.knowledge_base_general ?? 0} | Município: ${data.breakdown?.municipality_specific ?? 0}`;
+
+        (data.items || []).forEach((it) => {
+            const el = document.createElement('div');
+            el.style.cssText = 'border:1px solid #e5e7eb;border-radius:12px;padding:.85rem 1rem;background:#fff';
+            el.innerHTML = `
+                <div style="display:flex;justify-content:space-between;gap:1rem;align-items:center">
+                    <div style="font-weight:700;font-size:.85rem;color:#111827">${it.source || 'Fonte'}</div>
+                    <div style="font-size:.75rem;color:#6b7280">camada: ${it.layer || '—'} | similaridade: ${(it.similarity ?? 0).toFixed(3)}</div>
+                </div>
+                <div style="font-size:.82rem;color:#6b7280;margin-top:.2rem">${it.category || '—'} ${it.is_general ? ' | base geral' : ' | município'}</div>
+                <div style="font-size:.85rem;color:#374151;margin-top:.45rem;line-height:1.6">${escapeHtml(it.preview || '')}</div>
+            `;
+            results.appendChild(el);
+        });
+
+        if (!data.items || data.items.length === 0) {
+            const el = document.createElement('div');
+            el.style.cssText = 'font-size:.85rem;color:#9ca3af';
+            el.textContent = 'Nenhuma fonte encontrada acima do limiar de similaridade. Dica: tente uma pergunta mais específica ou reduza o similarity_threshold.';
+            results.appendChild(el);
+        }
+    } catch (e) {
+        status.style.color = '#dc2626';
+        status.textContent = e.message || 'Erro ao testar busca';
+    }
+}
+
+function escapeHtml(text) {
+    const div = document.createElement('div');
+    div.appendChild(document.createTextNode(text));
+    return div.innerHTML;
+}
+</script>
 @endsection

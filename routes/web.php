@@ -77,6 +77,7 @@ Route::middleware(['auth', 'role:admin'])
         Route::prefix('knowledge-base')->name('knowledge-base.')->group(function () {
             Route::get('/',                  [Admin\KnowledgeBaseController::class, 'index'])->name('index');
             Route::post('/upload',           [Admin\KnowledgeBaseController::class, 'upload'])->name('upload');
+            Route::get('/{doc}/chunks',      [Admin\KnowledgeBaseController::class, 'chunks'])->name('chunks');
             Route::patch('/{doc}/toggle',    [Admin\KnowledgeBaseController::class, 'toggleActive'])->name('toggle');
             Route::patch('/{doc}/reindex',   [Admin\KnowledgeBaseController::class, 'reindex'])->name('reindex');
             Route::delete('/{doc}',          [Admin\KnowledgeBaseController::class, 'destroy'])->name('destroy');

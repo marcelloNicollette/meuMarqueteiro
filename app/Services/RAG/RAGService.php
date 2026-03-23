@@ -53,7 +53,7 @@ class RAGService
             FROM document_embeddings
             WHERE
                 (municipality_id = :mun_id OR municipality_id IS NULL)
-                AND expires_at IS NULL OR expires_at > NOW()
+                AND (expires_at IS NULL OR expires_at > NOW())
                 AND 1 - (embedding <=> :vector2::vector) > :threshold
             ORDER BY embedding <=> :vector3::vector
             LIMIT :limit
@@ -68,7 +68,42 @@ class RAGService
             ]
         );
 
-        return collect($results);
+        if (!empty($results)) {
+            return collect($results);
+        }
+
+        $fallbackThreshold = (float) config('ai.rag.fallback_similarity_threshold', 0.35);
+
+        $fallback = DB::select(
+            "
+            SELECT
+                id,
+                municipality_id,
+                layer,
+                category,
+                source,
+                content,
+                metadata,
+                1 - (embedding <=> :vector::vector) AS similarity
+            FROM document_embeddings
+            WHERE
+                (municipality_id = :mun_id OR municipality_id IS NULL)
+                AND (expires_at IS NULL OR expires_at > NOW())
+                AND 1 - (embedding <=> :vector2::vector) > :threshold
+            ORDER BY embedding <=> :vector3::vector
+            LIMIT :limit
+            ",
+            [
+                'vector'     => $vectorStr,
+                'vector2'    => $vectorStr,
+                'vector3'    => $vectorStr,
+                'mun_id'     => $municipality->id,
+                'threshold'  => $fallbackThreshold,
+                'limit'      => $limit,
+            ]
+        );
+
+        return collect($fallback);
     }
 
     /**

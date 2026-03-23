@@ -3,8 +3,12 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\DocumentEmbedding;
 use App\Models\KnowledgeBaseDocument;
+use App\Models\Municipality;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\Storage;
 
 class KnowledgeBaseController extends Controller
@@ -31,13 +35,16 @@ class KnowledgeBaseController extends Controller
         }
         if ($request->filled('search')) {
             $query->where(function ($q) use ($request) {
-                $q->where('title', 'like', '%'.$request->search.'%')
-                  ->orWhere('description', 'like', '%'.$request->search.'%');
+                $q->where('title', 'like', '%' . $request->search . '%')
+                    ->orWhere('description', 'like', '%' . $request->search . '%');
             });
         }
 
         $documents  = $query->paginate(15)->withQueryString();
         $categories = $this->categories;
+        $municipalities = Municipality::where('subscription_active', true)
+            ->orderBy('name')
+            ->get(['id', 'name']);
 
         $stats = [
             'total'       => KnowledgeBaseDocument::count(),
@@ -46,14 +53,58 @@ class KnowledgeBaseController extends Controller
             'com_erro'    => KnowledgeBaseDocument::where('indexing_status', 'failed')->count(),
         ];
 
-        return view('admin.knowledge-base.index', compact('documents', 'categories', 'stats'));
+        return view('admin.knowledge-base.index', compact('documents', 'categories', 'stats', 'municipalities'));
+    }
+
+    public function chunks(KnowledgeBaseDocument $doc): JsonResponse
+    {
+        $query = DocumentEmbedding::query()
+            ->whereNull('municipality_id')
+            ->where('layer', 'knowledge_base')
+            ->where(function ($q) use ($doc) {
+                $q->where('metadata->document_id', $doc->id)
+                    ->orWhere('source', $doc->title);
+            })
+            ->orderBy('chunk_index');
+
+        $total = (clone $query)->count();
+
+        $chunks = $query->limit(200)->get([
+            'id',
+            'chunk_index',
+            'token_count',
+            'category',
+            'source',
+            'content',
+            'metadata',
+            'created_at',
+        ]);
+
+        $items = $chunks->map(fn($c) => [
+            'id'            => $c->id,
+            'chunk_index'   => $c->chunk_index,
+            'token_count'   => $c->token_count,
+            'category'      => $c->category,
+            'source'        => $c->source,
+            'metadata'      => $c->metadata,
+            'content'       => mb_substr($c->content ?? '', 0, 4000),
+            'content_short' => mb_substr(trim(preg_replace('/\s+/', ' ', $c->content ?? '')), 0, 260),
+        ])->values();
+
+        return response()->json([
+            'ok'     => true,
+            'doc'    => ['id' => $doc->id, 'title' => $doc->title],
+            'total'  => $total,
+            'items'  => $items,
+            'limit'  => 200,
+        ]);
     }
 
     public function upload(Request $request)
     {
         $request->validate([
             'title'          => 'required|string|max:255',
-            'category'       => 'required|in:'.implode(',', array_keys($this->categories)),
+            'category'       => 'required|in:' . implode(',', array_keys($this->categories)),
             'description'    => 'nullable|string|max:1000',
             'reference_year' => 'nullable|integer|min:2000|max:2030',
             'valid_until'    => 'nullable|date',
@@ -69,11 +120,11 @@ class KnowledgeBaseController extends Controller
             'reference_year' => $request->reference_year,
             'valid_until'    => $request->valid_until,
             'tags'           => $request->filled('tags')
-                                    ? array_map('trim', explode(',', $request->tags))
-                                    : null,
+                ? array_map('trim', explode(',', $request->tags))
+                : null,
             'content_raw'    => $request->content_raw,
-            'published_by'   => auth()->id(),
-            'indexing_status'=> 'pending',
+            'published_by'   => $request->user()?->id,
+            'indexing_status' => 'pending',
             'is_active'      => true,
             'disk'           => 'local',
         ];
@@ -116,7 +167,16 @@ class KnowledgeBaseController extends Controller
     {
         $doc = KnowledgeBaseDocument::findOrFail($id);
         $doc->update(['indexing_status' => 'pending', 'indexing_error' => null]);
-        // aqui dispararia o job de indexação quando RAG estiver ativo
-        return back()->with('success', 'Documento marcado para re-indexação.');
+
+        // Indexar de forma síncrona via artisan
+        try {
+            Artisan::call('marqueteiro:index-knowledge-base', ['--id' => $id, '--force' => true]);
+            $output = Artisan::output();
+            $status = str_contains($output, 'chunks indexados') ? 'Documento indexado com sucesso.' : 'Indexação iniciada.';
+        } catch (\Throwable $e) {
+            $status = 'Marcado para indexação. Execute manualmente: php artisan marqueteiro:index-knowledge-base';
+        }
+
+        return back()->with('success', $status);
     }
 }
