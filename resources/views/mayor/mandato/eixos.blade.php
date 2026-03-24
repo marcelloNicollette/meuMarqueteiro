@@ -254,7 +254,7 @@
             display: grid;
             grid-template-columns: 1fr 80px 140px;
             gap: .6rem;
-            align-items: start;
+            align-items: end;
         }
 
         @media(max-width:640px) {
