@@ -549,7 +549,16 @@
                         <div class="conv-item-title">{{ 'Conversa - ' . $conv->created_at->format('d/m/Y H:i') }}</div>
                         <div class="conv-item-meta">
                             <span>{{ $conv->messages()->count() }} msgs</span>
-                            <span>{{ $conv->last_message_at?->diffForHumans() ?? 'agora' }}</span>
+                            <span style="display:flex;align-items:center;gap:.4rem">
+                                {{ $conv->last_message_at?->diffForHumans() ?? 'agora' }}
+                                <button type="button" title="Excluir conversa"
+                                    onclick="deleteConv(event, {{ $conv->id }})"
+                                    style="border:none;background:none;cursor:pointer;color:#dc2626;padding:0">
+                                    <svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14">
+                                        <path d="M16 9v10H8V9h8m-1.5-6h-5l-1 1H5v2h14V4h-4.5l-1-1z" />
+                                    </svg>
+                                </button>
+                            </span>
                         </div>
                     </a>
                 @empty
@@ -809,10 +818,10 @@
             const sourcesHtml = (sources && sources.length > 0) ?
                 `<div class="rag-sources">
                  ${sources.slice(0,4).map(s => `
-                                                                                   <span class="rag-source-tag">
-                                                                                     <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                                                                                     ${s.source || 'Fonte'}
-                                                                                   </span>`).join('')}
+                                                                                           <span class="rag-source-tag">
+                                                                                             <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                                                                             ${s.source || 'Fonte'}
+                                                                                           </span>`).join('')}
                </div>` :
                 '';
 
@@ -871,6 +880,37 @@
             el.textContent = msg;
             area.appendChild(el);
             area.scrollTop = area.scrollHeight;
+        }
+
+        async function deleteConv(ev, id) {
+            ev.preventDefault();
+            ev.stopPropagation();
+            if (!confirm('Excluir esta conversa?')) return;
+            const res = await fetch(`/mayor/chat/${id}`, {
+                method: 'DELETE',
+                headers: {
+                    'X-CSRF-TOKEN': CSRF,
+                    'Accept': 'application/json'
+                }
+            });
+            const data = await res.json().catch(() => ({}));
+            if (data && data.success) {
+                const el = document.querySelector(`.conv-item[data-id="${id}"]`);
+                el && el.remove();
+                if (activeConvId === id) {
+                    activeConvId = null;
+                    document.getElementById('messagesArea').innerHTML = `
+                        <div class="chat-empty" id="chatEmpty">
+                            <div class="chat-empty-icon">
+                                <img width="100%" src="/images/icone-robo-redondo.png" alt="">
+                            </div>
+                            <h2>Conversa excluída</h2>
+                            <p>Crie uma nova conversa para continuar.</p>
+                        </div>`;
+                }
+            } else {
+                appendError('Não foi possível excluir esta conversa.');
+            }
         }
 
         // ── Feedback ──────────────────────────────────────────────

@@ -139,6 +139,7 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
             Route::get('/',                    [ChatController::class, 'index'])->name('index');
             Route::post('/new',                [ChatController::class, 'create'])->name('create');
             Route::get('/{conversation}',      [ChatController::class, 'show'])->name('show');
+            Route::delete('/{conversation}',   [ChatController::class, 'destroy'])->name('destroy');
             Route::post('/{conversation}/send', [ChatController::class, 'sendMessage'])->name('send');
             Route::post('/messages/{message}/feedback', [ChatController::class, 'feedback'])->name('feedback');
         });

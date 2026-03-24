@@ -7,6 +7,7 @@ use App\Services\AI\AssistantService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
+use Illuminate\Support\Facades\Auth;
 
 class ChatController extends Controller
 {
@@ -17,7 +18,7 @@ class ChatController extends Controller
      */
     public function index(): View
     {
-        $user          = auth()->user();
+        $user          = Auth::user();
         $conversations = $user->conversations()
             ->latest('last_message_at')
             ->limit(20)
@@ -38,7 +39,7 @@ class ChatController extends Controller
      */
     public function show(Conversation $conversation): View
     {
-        if ($conversation->user_id !== auth()->id()) {
+        if ($conversation->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -52,8 +53,9 @@ class ChatController extends Controller
      */
     public function create(): JsonResponse
     {
-        $conversation = auth()->user()->conversations()->create([
-            'municipality_id' => auth()->user()->municipality_id,
+        $user = Auth::user();
+        $conversation = $user->conversations()->create([
+            'municipality_id' => $user->municipality_id,
             'title'           => 'Nova conversa',
             'is_active'       => true,
             'last_message_at' => now(),
@@ -68,7 +70,7 @@ class ChatController extends Controller
     public function sendMessage(Request $request, Conversation $conversation): JsonResponse
     {
         // Verificar que a conversa pertence ao usuário logado
-        if ($conversation->user_id !== auth()->id()) {
+        if ($conversation->user_id !== Auth::id()) {
             abort(403);
         }
 
@@ -79,7 +81,7 @@ class ChatController extends Controller
         try {
             $assistantMessage = $this->assistant->chat(
                 userMessage: $request->input('message'),
-                mayor: auth()->user(),
+                mayor: Auth::user(),
                 conversation: $conversation,
             );
 
@@ -110,6 +112,7 @@ class ChatController extends Controller
         ]);
 
         $message = auth()->user()
+            ?? Auth::user()
             ->conversations()
             ->with('messages')
             ->get()
@@ -125,6 +128,15 @@ class ChatController extends Controller
             'feedback_note' => $request->note,
         ]);
 
+        return response()->json(['success' => true]);
+    }
+
+    public function destroy(Conversation $conversation): JsonResponse
+    {
+        if ($conversation->user_id !== Auth::id()) {
+            abort(403);
+        }
+        $conversation->delete();
         return response()->json(['success' => true]);
     }
 }
