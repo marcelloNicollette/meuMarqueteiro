@@ -81,6 +81,7 @@ Route::middleware(['auth', 'role:admin'])
             Route::patch('/{doc}/toggle',    [Admin\KnowledgeBaseController::class, 'toggleActive'])->name('toggle');
             Route::patch('/{doc}/reindex',   [Admin\KnowledgeBaseController::class, 'reindex'])->name('reindex');
             Route::delete('/{doc}',          [Admin\KnowledgeBaseController::class, 'destroy'])->name('destroy');
+            Route::post('/cleanup',          [Admin\KnowledgeBaseController::class, 'cleanupOrphanEmbeddings'])->name('cleanup');
         });
 
         // Relatório de mandato

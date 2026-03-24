@@ -199,6 +199,14 @@
             {{ $documents->links() }}
         </div>
         @endif
+        <div style="padding:1rem 1.5rem;border-top:1px solid #f3f4f6;display:flex;justify-content:flex-end">
+            <form method="POST" action="{{ route('admin.knowledge-base.cleanup') }}">
+                @csrf
+                <button type="submit" style="padding:.55rem 1rem;border:1px solid #ef4444;color:#ef4444;background:#fff;border-radius:8px;font-size:.85rem;cursor:pointer">
+                    Limpar embeddings órfãos
+                </button>
+            </form>
+        </div>
         @endif
     </div>
 </div>

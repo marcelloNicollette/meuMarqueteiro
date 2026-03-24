@@ -53,6 +53,15 @@ class RAGService
             FROM document_embeddings
             WHERE
                 (municipality_id = :mun_id OR municipality_id IS NULL)
+                AND (
+                    layer <> 'knowledge_base'
+                    OR EXISTS (
+                        SELECT 1
+                        FROM knowledge_base_documents kbd
+                        WHERE kbd.id = (NULLIF(metadata->>'document_id', ''))::int
+                          AND kbd.is_active = true
+                    )
+                )
                 AND (expires_at IS NULL OR expires_at > NOW())
                 AND 1 - (embedding <=> :vector2::vector) > :threshold
             ORDER BY embedding <=> :vector3::vector
@@ -88,6 +97,15 @@ class RAGService
             FROM document_embeddings
             WHERE
                 (municipality_id = :mun_id OR municipality_id IS NULL)
+                AND (
+                    layer <> 'knowledge_base'
+                    OR EXISTS (
+                        SELECT 1
+                        FROM knowledge_base_documents kbd
+                        WHERE kbd.id = (NULLIF(metadata->>'document_id', ''))::int
+                          AND kbd.is_active = true
+                    )
+                )
                 AND (expires_at IS NULL OR expires_at > NOW())
                 AND 1 - (embedding <=> :vector2::vector) > :threshold
             ORDER BY embedding <=> :vector3::vector

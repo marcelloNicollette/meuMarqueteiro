@@ -9,6 +9,7 @@ use App\Models\Municipality;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
 class KnowledgeBaseController extends Controller
@@ -147,6 +148,14 @@ class KnowledgeBaseController extends Controller
     {
         $doc = KnowledgeBaseDocument::findOrFail($id);
 
+        DocumentEmbedding::whereNull('municipality_id')
+            ->where('layer', 'knowledge_base')
+            ->where(function ($q) use ($doc) {
+                $q->where('metadata->document_id', $doc->id)
+                    ->orWhere('source', $doc->title);
+            })
+            ->delete();
+
         if ($doc->path) {
             Storage::disk($doc->disk)->delete($doc->path);
         }
@@ -159,7 +168,27 @@ class KnowledgeBaseController extends Controller
     public function toggleActive($id)
     {
         $doc = KnowledgeBaseDocument::findOrFail($id);
-        $doc->update(['is_active' => !$doc->is_active]);
+
+        $nextActive = !$doc->is_active;
+        $doc->update([
+            'is_active' => $nextActive,
+            'indexing_status' => $nextActive ? 'pending' : $doc->indexing_status,
+        ]);
+
+        if (!$nextActive) {
+            DocumentEmbedding::whereNull('municipality_id')
+                ->where('layer', 'knowledge_base')
+                ->where(function ($q) use ($doc) {
+                    $q->where('metadata->document_id', $doc->id)
+                        ->orWhere('source', $doc->title);
+                })
+                ->delete();
+
+            $doc->update([
+                'chunks_count' => 0,
+            ]);
+        }
+
         return back()->with('success', 'Status do documento atualizado.');
     }
 
@@ -178,5 +207,23 @@ class KnowledgeBaseController extends Controller
         }
 
         return back()->with('success', $status);
+    }
+
+    public function cleanupOrphanEmbeddings()
+    {
+        $deleted = DB::affectingStatement("
+            DELETE FROM document_embeddings de
+            WHERE de.layer = 'knowledge_base'
+              AND de.municipality_id IS NULL
+              AND (
+                    (de.metadata->>'document_id') IS NULL
+                 OR NOT EXISTS (
+                        SELECT 1 FROM knowledge_base_documents kbd
+                        WHERE kbd.id = (NULLIF(de.metadata->>'document_id',''))::int
+                    )
+              )
+        ");
+
+        return back()->with('success', "Embeddings órfãos removidos: {$deleted}");
     }
 }
