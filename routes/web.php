@@ -158,6 +158,30 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
 
         // ── Módulo 3: Gestão do Mandato ───────────────────────────────────
         Route::prefix('mandato')->name('mandato.')->group(function () {
+
+            // ── Gerenciador de Mandato ──────────────────────────────────
+            Route::get('/painel',                    [Mayor\MandatoController::class, 'index'])->name('painel');
+
+            // Eixos temáticos
+            Route::get('/eixos',                     [Mayor\MandatoController::class, 'eixos'])->name('eixos');
+            Route::post('/eixos',                    [Mayor\MandatoController::class, 'storeEixo'])->name('eixo.store');
+            Route::post('/eixos/seed',               [Mayor\MandatoController::class, 'seedDefaultAxes'])->name('eixos.seed');
+            Route::put('/eixos/{id}',                [Mayor\MandatoController::class, 'updateEixo'])->name('eixo.update');
+            Route::delete('/eixos/{id}',             [Mayor\MandatoController::class, 'destroyEixo'])->name('eixo.destroy');
+            Route::get('/eixos/{id}',                [Mayor\MandatoController::class, 'eixo'])->name('eixo');
+
+            // Promessas
+            Route::post('/promises',                 [Mayor\MandatoController::class, 'storePromise'])->name('promise.store');
+            Route::delete('/promises/{id}',          [Mayor\MandatoController::class, 'destroyPromise'])->name('promise.destroy');
+
+            // Ações de governo
+            Route::get('/acoes',                     [Mayor\MandatoController::class, 'acoes'])->name('acoes');
+            Route::get('/acoes/create',              [Mayor\MandatoController::class, 'createAcao'])->name('acao.create');
+            Route::post('/acoes',                    [Mayor\MandatoController::class, 'storeAcao'])->name('acao.store');
+            Route::get('/acoes/{id}/edit',           [Mayor\MandatoController::class, 'editAcao'])->name('acao.edit');
+            Route::put('/acoes/{id}',                [Mayor\MandatoController::class, 'updateAcao'])->name('acao.update');
+            Route::delete('/acoes/{id}',             [Mayor\MandatoController::class, 'destroyAcao'])->name('acao.destroy');
+
             // Compromissos de campanha
             Route::resource('commitments', Mayor\CommitmentController::class);
 

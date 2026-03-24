@@ -342,7 +342,7 @@
                 data-label="Comunicação">
                 <img src="/images/icone-comunicacao.svg" alt="">
             </a>
-            <a href="{{ route('mayor.mandato.commitments.index') }}"
+            <a href="{{ route('mayor.mandato.painel') }}"
                 class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
                 data-label="Mandato">
                 <img src="/images/icone-mandato.svg" alt="">
