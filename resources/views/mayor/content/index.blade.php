@@ -470,8 +470,8 @@
         }
 
         /* ═══════════════════════════════════════
-               IMAGEM IA — estilos específicos
-            ═══════════════════════════════════════ */
+                   IMAGEM IA — estilos específicos
+                ═══════════════════════════════════════ */
         .image-info-box {
             background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
             border: 1.5px solid #ede9fe;
@@ -954,13 +954,13 @@
                         </svg>
                         Post
                     </button>
-                    <button class="tab-btn image-tab" onclick="switchTab('image',this)">
-                        <svg viewBox="0 0 24 24" fill="currentColor">
-                            <path
-                                d="M21 3H3C2 3 1 4 1 5v14c0 1.1.9 2 2 2h18c1 0 2-1 2-2V5c0-1-1-2-2-2zm0 16H3V5h18v14zm-5-7l-3 3.72L11 13l-4 5h14l-4-5z" />
-                        </svg>
-                        Imagem IA
-                    </button>
+                    <!--<button class="tab-btn image-tab" onclick="switchTab('image',this)">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M21 3H3C2 3 1 4 1 5v14c0 1.1.9 2 2 2h18c1 0 2-1 2-2V5c0-1-1-2-2-2zm0 16H3V5h18v14zm-5-7l-3 3.72L11 13l-4 5h14l-4-5z" />
+                            </svg>
+                            Imagem IA
+                        </button>-->
                     <button class="tab-btn" onclick="switchTab('interview',this)">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path
