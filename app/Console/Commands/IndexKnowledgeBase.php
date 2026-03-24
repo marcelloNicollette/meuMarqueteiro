@@ -201,8 +201,7 @@ class IndexKnowledgeBase extends Command
 
     private function extractDocxText(string $content): string
     {
-        // Salvar temporariamente
-        $tmpFile = tempnam(sys_get_temp_dir(), 'docx_');
+        $tmpFile = $this->makeTmpFile('docx_');
         file_put_contents($tmpFile, $content);
 
         try {
@@ -228,7 +227,7 @@ class IndexKnowledgeBase extends Command
 
     private function extractXlsxText(string $content): string
     {
-        $tmpFile = tempnam(sys_get_temp_dir(), 'xlsx_');
+        $tmpFile = $this->makeTmpFile('xlsx_');
         file_put_contents($tmpFile, $content);
 
         try {
@@ -408,7 +407,7 @@ class IndexKnowledgeBase extends Command
         $bin = is_string($configured) && $configured !== '' ? $configured : trim((string) @shell_exec('command -v pdftotext'));
         if ($bin === '') return null;
 
-        $tmpPdf = tempnam(sys_get_temp_dir(), 'pdf_');
+        $tmpPdf = $this->makeTmpFile('pdf_');
         file_put_contents($tmpPdf, $content);
 
         try {
@@ -424,6 +423,16 @@ class IndexKnowledgeBase extends Command
         } finally {
             @unlink($tmpPdf);
         }
+    }
+
+    private function makeTmpFile(string $prefix): string
+    {
+        $dir = storage_path('app/tmp');
+        if (!is_dir($dir)) {
+            @mkdir($dir, 0775, true);
+        }
+        $file = tempnam($dir, $prefix);
+        return $file;
     }
 
     private function sanitizeUtf8(string $text): string
