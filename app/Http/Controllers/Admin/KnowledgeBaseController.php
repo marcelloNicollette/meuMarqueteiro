@@ -109,7 +109,7 @@ class KnowledgeBaseController extends Controller
             'reference_year' => 'nullable|integer|min:2000|max:2030',
             'valid_until'    => 'nullable|date',
             'tags'           => 'nullable|string',
-            'file'           => 'nullable|file|mimes:pdf,docx,txt,xlsx|max:20480',
+            'file'           => 'nullable|file|mimes:pdf,docx,txt,xlsx|max:51200',
             'content_raw'    => 'nullable|string',
         ]);
 
