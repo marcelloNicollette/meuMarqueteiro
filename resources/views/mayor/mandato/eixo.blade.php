@@ -5,6 +5,171 @@
 
 @push('styles')
     <style>
+        /* ── Botões — alinhados ao layout do projeto ─────────── */
+        .btn-primary {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .55rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .83rem;
+            font-weight: 500;
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background .15s;
+        }
+
+        .btn-primary:hover {
+            background: #1e2230;
+        }
+
+        .btn-primary svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-primary:disabled {
+            background: var(--border);
+            cursor: not-allowed;
+            color: var(--ink-muted);
+        }
+
+        .btn-secondary {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .55rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .83rem;
+            font-weight: 500;
+            background: var(--white);
+            color: var(--ink-soft);
+            border: 1.5px solid var(--border);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--ink);
+            color: var(--ink);
+        }
+
+        .btn-secondary svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .btn-gold {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .55rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .83rem;
+            font-weight: 500;
+            background: var(--gold);
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            text-decoration: none;
+            transition: opacity .15s;
+        }
+
+        .btn-gold:hover {
+            opacity: .88;
+        }
+
+        .btn-danger {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .55rem 1.1rem;
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .83rem;
+            font-weight: 500;
+            background: none;
+            color: var(--red);
+            border: 1.5px solid var(--red-bg);
+            cursor: pointer;
+            text-decoration: none;
+            transition: all .15s;
+        }
+
+        .btn-danger:hover {
+            background: var(--red-bg);
+        }
+
+        /* ── Alertas ──────────────────────────────────────────── */
+        .alert-success {
+            background: var(--green-bg);
+            color: var(--green);
+            border: 1px solid #c3e6d0;
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            font-size: .84rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .alert-error {
+            background: var(--red-bg);
+            color: var(--red);
+            border: 1px solid #f5c6c6;
+            border-radius: 8px;
+            padding: .75rem 1rem;
+            font-size: .84rem;
+        }
+
+        /* ── Inputs ───────────────────────────────────────────── */
+        input[type=text],
+        input[type=number],
+        input[type=date],
+        input[type=url],
+        input[type=email],
+        select,
+        textarea {
+            width: 100%;
+            padding: .5rem .75rem;
+            border: 1.5px solid var(--border);
+            border-radius: 7px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .84rem;
+            color: var(--ink);
+            background: var(--white);
+            transition: border-color .15s;
+            outline: none;
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            border-color: var(--gold);
+        }
+
+        input::placeholder,
+        textarea::placeholder {
+            color: var(--ink-muted);
+        }
+
+        /* ── Submit bar ───────────────────────────────────────── */
+        .submit-bar {
+            display: flex;
+            gap: .6rem;
+            justify-content: flex-end;
+            align-items: center;
+            padding-top: .5rem;
+        }
+
         .eixo-wrap {
             padding: 1.75rem 2rem;
             max-width: 1080px;
@@ -288,14 +453,14 @@
             <div class="alert-success">{{ session('success') }}</div>
         @endif
 
-        {{-- Lista de compromisso --}}
+        {{-- Lista de promessas --}}
         <div class="promises-section">
-            <h2>Compromisso(s) deste eixo</h2>
+            <h2>Compromissos deste eixo</h2>
 
             @if ($axis->promises->isEmpty())
                 <div
                     style="text-align:center;padding:2rem;background:var(--surface);border:1px solid var(--border);border-radius:10px">
-                    <p style="color:var(--ink-muted);font-size:.85rem">Nenhum compromisso cadastrado neste eixo ainda.</p>
+                    <p style="color:var(--ink-muted);font-size:.85rem">Nenhum compromisso neste eixo ainda.</p>
                 </div>
             @else
                 <div class="promise-list">
@@ -366,7 +531,7 @@
                 </div>
             @endif
 
-            {{-- Adicionar nova compromisso --}}
+            {{-- Adicionar nova promessa --}}
             <div style="margin-top:.75rem">
                 <form method="POST" action="{{ route('mayor.mandato.promise.store') }}" class="add-promise-form">
                     @csrf
@@ -408,7 +573,7 @@
                                 @endif
                                 @if ($action->promises->isNotEmpty())
                                     <div style="font-size:.75rem;color:var(--ink-muted);margin-top:.2rem">
-                                        compromissos: {{ $action->promises->pluck('text')->implode(' · ') }}
+                                        Compromissos: {{ $action->promises->pluck('text')->implode(' · ') }}
                                     </div>
                                 @endif
                             </div>
