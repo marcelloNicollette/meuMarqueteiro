@@ -1,7 +1,7 @@
 @extends('layouts.mayor')
 
 @section('title', 'Assistente')
-@section('topbar-title', 'Assistente — ' . auth()->user()->municipality->name)
+@section('topbar-title', 'Assistente — ' . auth()->user()->name)
 
 @push('styles')
     <style>
@@ -546,7 +546,7 @@
                     <a href="{{ route('mayor.chat.show', $conv) }}"
                         class="conv-item {{ isset($activeConversation) && $activeConversation->id === $conv->id ? 'active' : '' }}"
                         data-id="{{ $conv->id }}">
-                        <div class="conv-item-title">{{ $conv->title ?: 'Nova conversa' }}</div>
+                        <div class="conv-item-title">{{ 'Conversa - ' . $conv->created_at->format('d/m/Y H:i') }}</div>
                         <div class="conv-item-meta">
                             <span>{{ $conv->messages()->count() }} msgs</span>
                             <span>{{ $conv->last_message_at?->diffForHumans() ?? 'agora' }}</span>
@@ -554,7 +554,7 @@
                     </a>
                 @empty
                     <p style="padding:1rem .85rem;font-size:.82rem;color:var(--ink-muted)">
-                        Nenhuma conversa ainda.<br>Comece digitando abaixo.
+                        Nenhuma conversa ainda.
                     </p>
                 @endforelse
             </div>
@@ -809,10 +809,10 @@
             const sourcesHtml = (sources && sources.length > 0) ?
                 `<div class="rag-sources">
                  ${sources.slice(0,4).map(s => `
-                                                   <span class="rag-source-tag">
-                                                     <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                                                     ${s.source || 'Fonte'}
-                                                   </span>`).join('')}
+                                                                                   <span class="rag-source-tag">
+                                                                                     <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                                                                     ${s.source || 'Fonte'}
+                                                                                   </span>`).join('')}
                </div>` :
                 '';
 
@@ -896,7 +896,8 @@
                     <img width="100%" src="/images/icone-robo-redondo.png" alt="">
                 </div>
                 <h2>Nova conversa</h2>
-                <p>Como posso ajudar você hoje?</p>
+                Olá, {{ auth()->user()->name }} !
+                <p>O que você gostaria de perguntar ao seu Marqueteiro?</p>
             </div>`;
             document.getElementById('msg-input').focus();
         });

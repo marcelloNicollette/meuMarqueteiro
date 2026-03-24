@@ -6,6 +6,9 @@ use App\Http\Controllers\Controller;
 use App\Models\MorningBriefing;
 use App\Services\AI\MorningBriefingService;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class BriefingController extends Controller
 {
@@ -13,7 +16,9 @@ class BriefingController extends Controller
 
     public function index()
     {
-        $municipality = auth()->user()->municipality;
+        $user = Auth::user();
+        if (!$user) abort(401);
+        $municipality = $user->municipality;
 
         $briefings = $municipality->morningBriefings()
             ->orderByDesc('date')
@@ -49,7 +54,9 @@ class BriefingController extends Controller
      */
     public function generate(): JsonResponse
     {
-        $municipality = auth()->user()->municipality;
+        $user = Auth::user();
+        if (!$user) abort(401);
+        $municipality = $user->municipality;
 
         // Verificar se já existe hoje
         $existing = $municipality->morningBriefings()
@@ -75,14 +82,20 @@ class BriefingController extends Controller
                 'redirect'    => route('mayor.mandato.briefings.show', $briefing),
             ]);
         } catch (\Throwable $e) {
-            \Log::error("Falha ao gerar briefing sob demanda para {$municipality->name}: " . $e->getMessage());
-            return response()->json(['ok' => false, 'error' => 'Não foi possível gerar o briefing agora. Tente novamente em instantes.'], 500);
+            $ref = (string) Str::uuid();
+            Log::error("Falha ao gerar briefing sob demanda ({$ref}) para {$municipality->name}", ['exception' => $e]);
+            return response()->json([
+                'ok' => false,
+                'error' => "Não foi possível gerar o briefing agora (ref: {$ref}). Tente novamente em instantes.",
+            ], 500);
         }
     }
 
     private function authorizeAccess(MorningBriefing $briefing): void
     {
-        if ($briefing->municipality_id !== auth()->user()->municipality_id) {
+        $user = Auth::user();
+        if (!$user) abort(401);
+        if ($briefing->municipality_id !== $user->municipality_id) {
             abort(403);
         }
     }

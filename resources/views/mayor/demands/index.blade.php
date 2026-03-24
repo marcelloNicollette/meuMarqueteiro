@@ -462,9 +462,9 @@
                 </svg>
             </div>
             <div class="vh-text">
-                <h2 id="vhTitle">Gravar demanda por voz</h2>
-                <p>Toque para gravar uma demanda recebida em campo. O assistente irá organizar por tema, localidade e
-                    secretaria responsável.</p>
+                <h2 id="vhTitle">Gravar</h2>
+                <p>Toque para gravar uma demanda. O assistente organizará por tema e encaminhará para providência da
+                    Secretaria ou Órgão Responsável.</p>
                 <div class="vh-status" id="vhStatus"></div>
             </div>
             <div class="vh-shortcut">
@@ -506,7 +506,7 @@
                             placeholder="Ex: Bairro Nova Esperança">
                     </div>
                     <div class="form-group">
-                        <label class="form-label">Área</label>
+                        <label class="form-label">Área demandante</label>
                         <select class="form-select" id="manualArea" name="area">
                             <option value="">Selecione</option>
                             <option value="saude">🏥 Saúde</option>
@@ -525,7 +525,7 @@
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
                         </svg>
-                        Pedir ao assistente para organizar
+                        Pedir para o assistente organizar
                     </button>
                     <button type="submit" class="btn btn-dark btn-sm">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -650,7 +650,7 @@
             const title = document.getElementById('vhTitle');
             const status = document.getElementById('vhStatus');
             btn.classList.remove('recording');
-            title.textContent = 'Gravar demanda por voz';
+            title.textContent = 'Gravar';
             status.textContent = '';
         }
 

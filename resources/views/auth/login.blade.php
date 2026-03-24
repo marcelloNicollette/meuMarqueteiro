@@ -4,9 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Acesso — Meu Marqueteiro</title>
+    <title>Meu Marqueteiro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
         rel="stylesheet">
@@ -92,7 +93,7 @@
         .brand-logo-icon {
             width: 38px;
             height: 38px;
-            background: var(--gold);
+            /*background: var(--white);*/
             border-radius: 8px;
             display: flex;
             align-items: center;
@@ -378,7 +379,7 @@
         }
 
         .robo-bg {
-            background: url('/images/robo01.png') no-repeat;
+            background: url('/images/robo02.png') no-repeat;
             width: 100%;
             height: 100%;
             position: absolute;
@@ -407,30 +408,23 @@
 
             <div class="brand-hero">
                 <p class="brand-hero-eyebrow">Plataforma de IA Municipal</p>
-                <h2 class="brand-hero-title">
-                    O assessor que<br>
-                    todo prefeito<br>
-                    <em>merecia ter.</em>
+                <h2 class="brand-hero-title">MEU MARQUETEIRO
                 </h2>
                 <p class="brand-hero-body">
-                    Inteligência artificial treinada com os dados reais do seu município,
-                    disponível 24 horas no seu smartphone.
+                    O Assistente IA a serviço <br>
+                    do seu mandato e carreira política.
                 </p>
             </div>
 
             <div class="brand-footer">
                 <div class="brand-stats">
                     <div>
-                        <div class="brand-stat-value">3</div>
-                        <div class="brand-stat-label">Módulos</div>
-                    </div>
-                    <div>
                         <div class="brand-stat-value">24h</div>
                         <div class="brand-stat-label">Disponível</div>
                     </div>
                     <div>
                         <div class="brand-stat-value">100%</div>
-                        <div class="brand-stat-label">Personalizado</div>
+                        <div class="brand-stat-label">Treinado</div>
                     </div>
                 </div>
             </div>

@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Painel') — Meu Marqueteiro Admin</title>
+    <title>Meu Marqueteiro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
     <link
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
         rel="stylesheet">

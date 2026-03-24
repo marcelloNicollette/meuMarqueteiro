@@ -1,5 +1,5 @@
 @extends('layouts.mayor')
-@section('title', 'Briefing do Dia')
+@section('title', 'Pra hoje!')
 @section('topbar-title', 'Briefing Matinal')
 
 @push('styles')
@@ -343,15 +343,16 @@
             {{-- Sem briefing hoje → botão para gerar sob demanda --}}
             <div class="empty-today">
                 <div class="empty-today-icon">☀️</div>
-                <h3>Nenhum briefing gerado hoje</h3>
-                <p>O briefing é gerado automaticamente todo dia às 6h30. Se você quiser agora, clique abaixo — leva cerca de
-                    15 segundos.</p>
+                <h3>Nenhuma sugestão de ações para hoje.</h3>
+                <p>Gerado automaticamente todos os dias às 6h30.<br>
+                    Clique no botão para ver as sugestões de prioridades para hoje.
+                </p>
                 <button class="btn-gerar" id="btnGerar" onclick="gerarAgora()">
                     <svg viewBox="0 0 24 24" fill="currentColor">
                         <path
                             d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z" />
                     </svg>
-                    Gerar briefing agora
+                    Gerar Prioridades do Dia
                 </button>
             </div>
         @endif
@@ -363,7 +364,7 @@
                     <path
                         d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
                 </svg>
-                Histórico de briefings
+                Histórico(s)
             </h2>
 
             @if ($briefings->isEmpty())

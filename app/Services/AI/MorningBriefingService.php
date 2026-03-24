@@ -2,13 +2,12 @@
 
 namespace App\Services\AI;
 
-use App\Models\FederalProgramAlert;
 use App\Models\MorningBriefing;
 use App\Models\Municipality;
 use App\Services\RAG\RAGService;
 use App\Services\WebPushService;
 use Carbon\Carbon;
-use Illuminate\Support\Facades\Http;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -20,6 +19,7 @@ class MorningBriefingService
 
     public function __construct(
         private RAGService $rag,
+        private AIProviderService $ai,
     ) {}
 
     public function generate(Municipality $municipality): MorningBriefing
@@ -58,7 +58,7 @@ class MorningBriefingService
         // ── Demandas recentes não resolvidas ──────────────────────────
         $demandasPendentes = 0;
         try {
-            $demandasPendentes = \DB::table('demands')
+            $demandasPendentes = DB::table('demands')
                 ->where('municipality_id', $municipality->id)
                 ->whereNotIn('status', ['resolvida', 'arquivada'])
                 ->count();
@@ -100,7 +100,9 @@ class MorningBriefingService
             : 'Sem novos alertas de alta relevancia esta semana.';
 
         // ── Prompt rico ───────────────────────────────────────────────
-        $prompt = "Voce e o assessor digital pessoal do prefeito {$mayor->name}, de {$municipality->name} ({$municipality->state}).
+        $mayorName = $mayor?->name ?: 'Prefeito(a)';
+
+        $prompt = "Voce e o assessor digital pessoal do prefeito {$mayorName}, de {$municipality->name} ({$municipality->state}).
 
 Hoje e {$today}.
 
@@ -155,21 +157,12 @@ REGRAS ABSOLUTAS:
 - Use emojis com moderacao apenas onde agregar valor visual (⚠️ ✅ 🎯)";
 
         // ── Chamar API ────────────────────────────────────────────────
-        $response = Http::withHeaders([
-            'x-api-key'         => env('ANTHROPIC_API_KEY'),
-            'anthropic-version' => '2023-06-01',
-            'content-type'      => 'application/json',
-        ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
-            'model'      => 'claude-sonnet-4-6',
-            'max_tokens' => 1500,
-            'messages'   => [['role' => 'user', 'content' => $prompt]],
-        ]);
+        $response = $this->ai->chat(
+            [['role' => 'user', 'content' => $prompt]],
+            ['max_tokens' => 1500]
+        );
 
-        if (!$response->successful()) {
-            throw new \RuntimeException("Falha na API ao gerar briefing para {$municipality->name}: HTTP " . $response->status());
-        }
-
-        $content = $response->json()['content'][0]['text'] ?? '';
+        $content = $response->content ?? '';
 
         if (empty(trim($content))) {
             throw new \RuntimeException("Conteudo vazio gerado para {$municipality->name}");
@@ -191,8 +184,8 @@ REGRAS ABSOLUTAS:
             ],
             'delivery_channel' => 'app',
             'delivered_at'     => now(),
-            'ai_provider'      => 'anthropic',
-            'tokens_used'      => $response->json()['usage']['output_tokens'] ?? 0,
+            'ai_provider'      => $response->provider,
+            'tokens_used'      => $response->tokensUsed ?? 0,
         ]);
 
         // ── Disparar notificação push ─────────────────────────────────
@@ -214,7 +207,7 @@ REGRAS ABSOLUTAS:
             }
         } catch (\Exception $e) {
             // Push falhou — não impede o fluxo principal
-            \Log::warning("Push do briefing falhou para {$municipality->name}: " . $e->getMessage());
+            Log::warning("Push do briefing falhou para {$municipality->name}: " . $e->getMessage());
         }
 
         return $briefing;

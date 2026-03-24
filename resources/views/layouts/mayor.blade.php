@@ -5,8 +5,10 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Início') — Meu Marqueteiro</title>
+    <title>Meu Marqueteiro</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
     <link
         href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap"
         rel="stylesheet">
@@ -315,61 +317,45 @@
         </div>
 
         <div class="sidenav-nav">
-            <a href="{{ route('mayor.dashboard') }}"
+            <!--<a href="{{ route('mayor.dashboard') }}"
                 class="sidenav-item {{ request()->routeIs('mayor.dashboard') ? 'active' : '' }}" data-label="Início">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
                 </svg>
+            </a>-->
+
+            <a href="{{ route('mayor.situacao') }}"
+                class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}" data-label="Painel">
+                <img src="/images/icone-painel.svg" alt="">
             </a>
             <a href="{{ route('mayor.chat.index') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}" data-label="Assistente">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
-                </svg>
+                class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}"
+                data-label="Meu marqueteiro">
+                <img src="/images/icone-meu-marqueteiro.svg" alt="">
                 @if (false)
                     {{-- lógica de mensagens não lidas aqui --}}
                     <span class="dot"></span>
                 @endif
             </a>
             <a href="{{ route('mayor.content.index') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.content*') ? 'active' : '' }}" data-label="Conteúdo">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z" />
-                </svg>
+                class="sidenav-item {{ request()->routeIs('mayor.content*') ? 'active' : '' }}"
+                data-label="Comunicação">
+                <img src="/images/icone-comunicacao.svg" alt="">
             </a>
             <a href="{{ route('mayor.mandato.commitments.index') }}"
                 class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
                 data-label="Mandato">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M19 3h-4.18C14.4 1.84 13.3 1 12 1c-1.3 0-2.4.84-2.82 2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 0c.55 0 1 .45 1 1s-.45 1-1 1-1-.45-1-1 .45-1 1-1zm2 14l-4-4 1.41-1.41L14 14.17l6.59-6.59L22 9l-8 8z" />
-                </svg>
+                <img src="/images/icone-mandato.svg" alt="">
             </a>
             <a href="{{ route('mayor.mandato.demands.index') }}"
                 class="sidenav-item {{ request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
-                data-label="Demandas">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm-1-9c0-.55.45-1 1-1s1 .45 1 1v6c0 .55-.45 1-1 1s-1-.45-1-1V5zm6 6c0 2.76-2.24 5-5 5s-5-2.24-5-5H5c0 3.53 2.61 6.43 6 6.92V21h2v-3.08c3.39-.49 6-3.39 6-6.92h-2z" />
-                </svg>
+                data-label="Anota aí!">
+                <img src="/images/icone-anotaai.svg" alt="">
             </a>
             <a href="{{ route('mayor.mandato.federal-programs') }}"
                 class="sidenav-item {{ request()->routeIs('mayor.mandato.federal-programs*') ? 'active' : '' }}"
-                data-label="Programas Federais">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
-                </svg>
-            </a>
-            <a href="{{ route('mayor.situacao') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}"
-                data-label="Situação do Mandato">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zM9 17H7v-7h2v7zm4 0h-2V7h2v10zm4 0h-2v-4h2v4z" />
-                </svg>
+                data-label="Recursos">
+                <img src="/images/icone-recursos.svg" alt="">
             </a>
         </div>
 
@@ -402,7 +388,7 @@
                     <path
                         d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
                 </svg>
-                Briefing do dia
+                Pra hoje!
             </a>
         </div>
 
