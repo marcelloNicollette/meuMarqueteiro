@@ -43,9 +43,14 @@ class ChatController extends Controller
             abort(403);
         }
 
-        $messages = $conversation->messages()->get();
-
-        return view('mayor.chat.show', compact('conversation', 'messages'));
+        $user = Auth::user();
+        $conversations = $user->conversations()
+            ->latest('last_message_at')
+            ->limit(20)
+            ->get();
+        $activeConversation = $conversation;
+        $messages = $conversation->messages()->orderBy('created_at')->get();
+        return view('mayor.chat.index', compact('conversations', 'activeConversation', 'messages'));
     }
 
     /**
