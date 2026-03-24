@@ -404,9 +404,8 @@ class IndexKnowledgeBase extends Command
 
     private function extractPdfTextWithPdftotext(string $content): ?string
     {
-        $bin = trim((string) @shell_exec('command -v pdftotext'));
-        if ($bin === '' && is_executable('/usr/bin/pdftotext')) $bin = '/usr/bin/pdftotext';
-        if ($bin === '' && is_executable('/bin/pdftotext')) $bin = '/bin/pdftotext';
+        $configured = config('ai.tools.pdftotext_bin');
+        $bin = is_string($configured) && $configured !== '' ? $configured : trim((string) @shell_exec('command -v pdftotext'));
         if ($bin === '') return null;
 
         $tmpPdf = tempnam(sys_get_temp_dir(), 'pdf_');
