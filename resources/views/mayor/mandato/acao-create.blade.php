@@ -490,44 +490,71 @@
                     </p>
 
                     <div class="promise-picker" id="promisePicker">
+                        <div style="display:flex;gap:.5rem;align-items:center;margin-bottom:.5rem">
+                            <input type="text" id="promiseSearch" placeholder="Filtrar compromissos por texto..."
+                                style="flex:1;padding:.45rem .7rem;border:1px solid var(--border);border-radius:7px;font-size:.82rem">
+                            <button type="button" class="btn-secondary" onclick="toggleAllPromises(true)">Expandir
+                                todos</button>
+                            <button type="button" class="btn-secondary" onclick="toggleAllPromises(false)">Recolher
+                                todos</button>
+                        </div>
                         @foreach ($axes as $axis)
                             @if ($axis->promises->isNotEmpty())
-                                <div class="axis-group" data-axis="{{ $axis->id }}">
-                                    <div class="axis-group-title">{{ $axis->icon ?? '' }} {{ $axis->name }}</div>
-                                    @foreach ($axis->promises as $promise)
-                                        <div class="promise-pick-item" id="pp_{{ $promise->id }}"
-                                            onclick="togglePromise({{ $promise->id }})">
-                                            <div class="promise-pick-check">
-                                                <input type="checkbox" name="promises[{{ $promise->id }}][id]"
-                                                    value="{{ $promise->id }}" id="chk_{{ $promise->id }}"
-                                                    onclick="event.stopPropagation();"
-                                                    onchange="togglePromise({{ $promise->id }})">
-                                                <span class="promise-pick-text">{{ $promise->text }}</span>
-                                            </div>
-                                            <div class="promise-pick-level">
-                                                <label
-                                                    style="font-size:.72rem;color:var(--ink-muted);margin-bottom:.35rem">Nível
-                                                    de atendimento:</label>
-                                                <div class="level-select">
-                                                    @foreach ([100 => 'Plena (100%)', 75 => 'Parcial 75%', 50 => 'Parcial 50%', 25 => 'Parcial 25%', 0 => 'Pendente (0%)'] as $lv => $lb)
-                                                        <button type="button" class="level-btn"
-                                                            data-level="{{ $lv }}"
-                                                            onclick="setLevel({{ $promise->id }}, {{ $lv }}, this)">
-                                                            {{ $lb }}
-                                                        </button>
-                                                    @endforeach
-                                                </div>
-                                                <input type="hidden" name="promises[{{ $promise->id }}][level]"
-                                                    id="lv_{{ $promise->id }}" value="0">
-                                                <div style="margin-top:.4rem">
-                                                    <input type="text"
-                                                        name="promises[{{ $promise->id }}][justification]"
-                                                        placeholder="Justificativa (opcional)" style="font-size:.78rem"
-                                                        onclick="event.stopPropagation()">
-                                                </div>
-                                            </div>
+                                <div class="axis-group" data-axis="{{ $axis->id }}"
+                                    style="border:1px solid var(--border);border-radius:8px;background:#fff;margin-bottom:.5rem">
+                                    <div class="axis-group-header"
+                                        style="padding:.55rem .8rem;display:flex;justify-content:space-between;align-items:center;background:#fafafa;border-bottom:1px solid var(--border);cursor:pointer"
+                                        onclick="toggleAxisList('{{ $axis->id }}')">
+                                        <div style="font-size:.8rem;font-weight:700;color:var(--ink)">
+                                            {{ $axis->icon ?? '' }} {{ $axis->name }}</div>
+                                        <div
+                                            style="display:flex;align-items:center;gap:.6rem;font-size:.72rem;color:var(--ink-muted)">
+                                            <span>{{ $axis->promises->count() }} compromissos</span>
+                                            <span id="tg_{{ $axis->id }}"
+                                                style="width:22px;height:22px;border:1px solid var(--border);border-radius:6px;display:inline-flex;align-items:center;justify-content:center">
+                                                <svg viewBox="0 0 24 24" fill="currentColor" width="14"
+                                                    height="14">
+                                                    <path d="M7 10l5 5 5-5z" />
+                                                </svg>
+                                            </span>
                                         </div>
-                                    @endforeach
+                                    </div>
+                                    <div id="pl_{{ $axis->id }}" class="promises-list"
+                                        style="display:none;padding:.7rem">
+                                        @foreach ($axis->promises as $promise)
+                                            <div class="promise-pick-item" id="pp_{{ $promise->id }}"
+                                                data-text="{{ Str::slug($promise->text, ' ') }}"
+                                                onclick="togglePromise({{ $promise->id }})">
+                                                <div class="promise-pick-check">
+                                                    <input type="checkbox" name="promises[{{ $promise->id }}][id]"
+                                                        value="{{ $promise->id }}" id="chk_{{ $promise->id }}"
+                                                        onclick="event.stopPropagation();"
+                                                        onchange="togglePromise({{ $promise->id }})">
+                                                    <span class="promise-pick-text">{{ $promise->text }}</span>
+                                                </div>
+                                                <div class="promise-pick-level">
+                                                    <label
+                                                        style="font-size:.72rem;color:var(--ink-muted);margin-bottom:.35rem">Nível
+                                                        de atendimento:</label>
+                                                    <div class="level-select">
+                                                        @foreach ([100 => 'Plena (100%)', 75 => 'Parcial 75%', 50 => 'Parcial 50%', 25 => 'Parcial 25%', 0 => 'Pendente (0%)'] as $lv => $lb)
+                                                            <button type="button" class="level-btn"
+                                                                data-level="{{ $lv }}"
+                                                                onclick="setLevel({{ $promise->id }}, {{ $lv }}, this)">{{ $lb }}</button>
+                                                        @endforeach
+                                                    </div>
+                                                    <input type="hidden" name="promises[{{ $promise->id }}][level]"
+                                                        id="lv_{{ $promise->id }}" value="0">
+                                                    <div style="margin-top:.4rem">
+                                                        <input type="text"
+                                                            name="promises[{{ $promise->id }}][justification]"
+                                                            placeholder="Justificativa (opcional)"
+                                                            style="font-size:.78rem" onclick="event.stopPropagation()">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        @endforeach
+                                    </div>
                                 </div>
                             @endif
                         @endforeach
@@ -633,10 +660,64 @@
             document.querySelectorAll('.axis-group').forEach(g => {
                 g.style.opacity = (!axisId || g.dataset.axis === axisId) ? '1' : '0.4';
             });
+            // Abrir apenas o eixo selecionado
+            document.querySelectorAll('[id^="pl_"]').forEach(el => el.style.display = 'none');
+            document.querySelectorAll('[id^="tg_"]').forEach(t => t.innerHTML =
+                '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 10l5 5 5-5z"/></svg>');
+            if (axisId) {
+                const list = document.getElementById('pl_' + axisId);
+                const tg = document.getElementById('tg_' + axisId);
+                if (list) list.style.display = 'block';
+                if (tg) tg.innerHTML =
+                    '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 14l5-5 5 5z"/></svg>';
+            }
         }
 
         // Inicializar com eixo pré-selecionado
         const axisSelect = document.getElementById('axisSelect');
         if (axisSelect.value) filterPromises(axisSelect.value);
+
+        function toggleAxisList(axisId) {
+            const pl = document.getElementById('pl_' + axisId);
+            const tg = document.getElementById('tg_' + axisId);
+            if (!pl) return;
+            const open = getComputedStyle(pl).display !== 'none';
+            pl.style.display = open ? 'none' : 'block';
+            if (tg) tg.innerHTML = open ?
+                '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 10l5 5 5-5z"/></svg>' :
+                '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 14l5-5 5 5z"/></svg>';
+        }
+
+        function toggleAllPromises(open) {
+            document.querySelectorAll('[id^="pl_"]').forEach(pl => pl.style.display = open ? 'block' : 'none');
+            document.querySelectorAll('[id^="tg_"]').forEach(tg => tg.innerHTML = open ?
+                '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 14l5-5 5 5z"/></svg>' :
+                '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 10l5 5 5-5z"/></svg>');
+        }
+
+        const searchEl = document.getElementById('promiseSearch');
+        if (searchEl) {
+            searchEl.addEventListener('input', (e) => {
+                const q = e.target.value.trim().toLowerCase();
+                document.querySelectorAll('.axis-group').forEach(group => {
+                    const list = group.querySelector('[id^="pl_"]');
+                    const toggle = group.querySelector('[id^="tg_"]');
+                    let anyVisible = false;
+                    group.querySelectorAll('.promise-pick-item').forEach(item => {
+                        const text = (item.querySelector('.promise-pick-text')?.textContent || '')
+                            .toLowerCase();
+                        const show = !q || text.includes(q);
+                        item.style.display = show ? '' : 'none';
+                        anyVisible = anyVisible || show;
+                    });
+                    if (q) {
+                        if (list) list.style.display = anyVisible ? 'block' : 'none';
+                        if (toggle) toggle.innerHTML = anyVisible ?
+                            '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 14l5-5 5 5z"/></svg>' :
+                            '<svg viewBox="0 0 24 24" fill="currentColor" width="14" height="14"><path d="M7 10l5 5 5-5z"/></svg>';
+                    }
+                });
+            });
+        }
     </script>
 @endpush
