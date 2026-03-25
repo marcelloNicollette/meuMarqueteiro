@@ -177,6 +177,7 @@
             align-items: center;
             justify-content: center;
             padding: 3rem 4rem;
+            z-index: 11;
         }
 
         .form-box {
