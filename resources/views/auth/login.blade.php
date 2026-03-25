@@ -91,8 +91,8 @@
         }
 
         .brand-logo-icon {
-            width: 38px;
-            height: 38px;
+            width: 80px;
+            height: 80px;
             /*background: var(--white);*/
             border-radius: 8px;
             display: flex;
@@ -119,9 +119,8 @@
         }
 
         .brand-hero-eyebrow {
-            font-size: .7rem;
-            font-weight: 500;
-            letter-spacing: .2em;
+            font-size: 2.6rem;
+            font-weight: 600;
             text-transform: uppercase;
             color: var(--gold);
             margin-bottom: 1.5rem;
@@ -129,10 +128,11 @@
 
         .brand-hero-title {
             font-family: "Open Sans", sans-serif;
-            font-size: 2.6rem;
+            font-size: 2.5rem;
             line-height: 1.2;
             color: var(--white);
             margin-bottom: 1.5rem;
+            font-weight: 500;
         }
 
         .brand-hero-title em {
@@ -383,6 +383,10 @@
             width: 100%;
             height: 100%;
             position: absolute;
+            top: 0%;
+            z-index: 10;
+            right: 100px;
+            background-position: top;
         }
 
         .logo {
@@ -395,25 +399,22 @@
 <body>
 
     <div class="page">
-
+        <div class="robo-bg"></div>
         {{-- ── Painel esquerdo ──────────────────────────────────────── --}}
         <div class="brand-panel">
-            <div class="robo-bg"></div>
+
             <div class="brand-logo">
                 <div class="brand-logo-icon">
                     <img width="100%" src="/images/logo-borda-white.png" alt="">
                 </div>
-                <span class="brand-logo-name">Meu Marqueteiro</span>
+                <!--<span class="brand-logo-name">Meu Marqueteiro</span>-->
             </div>
 
             <div class="brand-hero">
-                <p class="brand-hero-eyebrow">Plataforma de IA Municipal</p>
-                <h2 class="brand-hero-title">MEU MARQUETEIRO
+                <p class="brand-hero-eyebrow">MEU MARQUETEIRO</p>
+                <h2 class="brand-hero-title">O Assistente IA<br> a serviço
+                    do seu <br>mandato e carreira <br>política
                 </h2>
-                <p class="brand-hero-body">
-                    O Assistente IA a serviço <br>
-                    do seu mandato e carreira política.
-                </p>
             </div>
 
             <div class="brand-footer">
