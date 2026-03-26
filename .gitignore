@@ -37,4 +37,5 @@ Thumbs.db
 /coverage/
 .phpunit.result.cache
 
-sudo docker-compose down.txtbackup.sql
+sudo docker-compose down.txt
+backup.sql
