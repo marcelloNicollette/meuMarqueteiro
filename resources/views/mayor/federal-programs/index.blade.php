@@ -590,9 +590,6 @@
                     </div>
 
                     <div class="program-card-footer">
-                        <span class="prog-status {{ $program->status }}">
-                            {{ $statusLabels[$program->status] ?? $program->status }}
-                        </span>
 
                         @if ($program->source_url)
                             <a href="{{ $program->source_url }}" target="_blank" class="prog-link">
