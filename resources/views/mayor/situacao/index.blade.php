@@ -40,6 +40,113 @@
             gap: .75rem;
         }
 
+        .today-wrap {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1.05rem 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .today-head {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: .75rem;
+            margin-bottom: .85rem;
+            flex-wrap: wrap;
+        }
+
+        .today-head h2 {
+            font-family: 'Lora', serif;
+            font-size: 1.05rem;
+            color: var(--ink);
+        }
+
+        .today-sub {
+            font-size: .78rem;
+            color: var(--ink-muted);
+        }
+
+        .today-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: .85rem;
+        }
+
+        .today-tile {
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: .95rem 1rem;
+            background: var(--surface);
+            display: flex;
+            flex-direction: column;
+            gap: .55rem;
+            min-height: 138px;
+        }
+
+        .today-tile-head {
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .today-tile-head svg {
+            width: 16px;
+            height: 16px;
+            color: var(--gold);
+        }
+
+        .today-tile-kicker {
+            font-size: .7rem;
+            font-weight: 600;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+        }
+
+        .today-tile-title {
+            font-size: .9rem;
+            font-weight: 600;
+            color: var(--ink);
+            line-height: 1.35;
+        }
+
+        .today-tile-desc {
+            font-size: .8rem;
+            color: var(--ink-muted);
+            line-height: 1.55;
+            flex: 1;
+        }
+
+        .today-cta {
+            align-self: flex-start;
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            padding: .5rem .85rem;
+            border-radius: 8px;
+            background: var(--ink);
+            color: #fff;
+            text-decoration: none;
+            font-size: .78rem;
+            font-weight: 600;
+            border: none;
+            cursor: pointer;
+            transition: background .15s, transform .15s;
+        }
+
+        .today-cta:hover {
+            background: #1e2230;
+            transform: translateY(-1px);
+        }
+
+        @media (max-width: 980px) {
+            .today-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* Progresso circular do mandato */
         .mandate-ring {
             position: relative;
@@ -569,6 +676,104 @@
             </div>
         </div>
 
+        @php
+            $criticalCommitment = $emRiscoItems?->first() ?: $prazosProximos?->first();
+            $topProgram = $topProgramas?->first();
+            $topProgramMatch = null;
+            if ($topProgram && $topProgram->match_score !== null) {
+                $topProgramMatch =
+                    $topProgram->match_score <= 1
+                        ? round($topProgram->match_score * 100)
+                        : round($topProgram->match_score);
+            }
+        @endphp
+
+        <div class="today-wrap">
+            <div class="today-head">
+                <h2>Pra hoje!</h2>
+                <div class="today-sub">3 focos rápidos para destravar o dia</div>
+            </div>
+
+            <div class="today-grid">
+                <div class="today-tile">
+                    <div class="today-tile-head">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                        </svg>
+                        <div class="today-tile-kicker">Compromissos</div>
+                    </div>
+
+                    @if ($criticalCommitment)
+                        <div class="today-tile-title">{{ $criticalCommitment->title }}</div>
+                        <div class="today-tile-desc">
+                            @if ($criticalCommitment->status === 'em_risco')
+                                Em risco
+                            @else
+                                Prazo próximo
+                            @endif
+                            @if ($criticalCommitment->deadline)
+                                · {{ $criticalCommitment->deadline->format('d/m/Y') }}
+                            @endif
+                        </div>
+                    @else
+                        <div class="today-tile-title">Nenhum compromisso crítico</div>
+                        <div class="today-tile-desc">Sem itens em risco ou com prazo próximo hoje.</div>
+                    @endif
+
+                    <a class="today-cta" href="{{ route('mayor.mandato.commitments.index') }}">Ver críticos →</a>
+                </div>
+
+                <div class="today-tile">
+                    <div class="today-tile-head">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zm0 7L2 4v13l10 5 10-5V4l-10 5z" />
+                        </svg>
+                        <div class="today-tile-kicker">Oportunidade</div>
+                    </div>
+
+                    @if ($topProgram)
+                        <div class="today-tile-title">{{ $topProgram->program_name }}</div>
+                        <div class="today-tile-desc">
+                            @if ($topProgramMatch !== null)
+                                Match: {{ $topProgramMatch }}%
+                            @endif
+                            @if ($topProgram->status)
+                                · {{ $topProgram->status }}
+                            @endif
+                        </div>
+                    @else
+                        <div class="today-tile-title">Sem destaque no radar</div>
+                        <div class="today-tile-desc">Nenhum programa em alta relevância no momento.</div>
+                    @endif
+
+                    <a class="today-cta" href="{{ route('mayor.mandato.federal-programs') }}">Abrir radar →</a>
+                </div>
+
+                <div class="today-tile">
+                    <div class="today-tile-head">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M12 3c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2s2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2v1h4v-1c0-1.1-.9-2-2-2zm7-6h-1c0 3.31-2.69 6-6 6s-6-2.69-6-6H5c0 3.86 2.78 7.08 6.5 7.86V22h1V18.86C16.22 18.08 19 14.86 19 11z" />
+                        </svg>
+                        <div class="today-tile-kicker">Briefing</div>
+                    </div>
+
+                    @if ($briefingHoje)
+                        <div class="today-tile-title">Briefing do dia disponível</div>
+                        <div class="today-tile-desc">
+                            {{ \Illuminate\Support\Carbon::parse($briefingHoje->date)->format('d/m/Y') }}
+                        </div>
+                        <a class="today-cta" href="{{ route('mayor.mandato.briefings.show', $briefingHoje) }}">Abrir →</a>
+                    @else
+                        <div class="today-tile-title">Gerar briefing do dia</div>
+                        <div class="today-tile-desc">Resumo executivo com alertas e oportunidades do município.</div>
+                        <button class="today-cta" type="button" onclick="generateBriefingNow()">Gerar agora →</button>
+                    @endif
+                </div>
+            </div>
+        </div>
+
         {{-- ══ KPIs principais ══ --}}
         <div class="kpi-grid">
             <div class="kpi-card green">
@@ -863,6 +1068,24 @@
 @push('scripts')
     <script>
         const CSRF_PUSH = document.querySelector('meta[name="csrf-token"]').content;
+
+        async function generateBriefingNow() {
+            try {
+                const res = await fetch('{{ route('mayor.mandato.briefings.generate') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': CSRF_PUSH,
+                        'Accept': 'application/json'
+                    },
+                });
+                const data = await res.json();
+                if (data.ok && data.redirect) {
+                    window.location.href = data.redirect;
+                    return;
+                }
+            } catch (e) {}
+            window.location.href = '{{ route('mayor.mandato.briefings') }}';
+        }
 
         async function checkPushStatus() {
             const badge = document.getElementById('push-status-badge');
