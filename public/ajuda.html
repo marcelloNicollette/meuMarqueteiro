@@ -1,1311 +1,2164 @@
 <!doctype html>
 <html lang="pt-BR">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta name="color-scheme" content="light dark" />
-    <title>Ajuda — Meu Marqueteiro</title>
-    <link rel="icon" href="/favicon.ico" />
-    <style>
-      :root {
-        --bg: #0b1220;
-        --bg2: #0e1730;
-        --card: rgba(255, 255, 255, 0.06);
-        --card2: rgba(255, 255, 255, 0.08);
-        --line: rgba(255, 255, 255, 0.12);
-        --text: rgba(255, 255, 255, 0.92);
-        --muted: rgba(255, 255, 255, 0.72);
-        --muted2: rgba(255, 255, 255, 0.56);
-        --accent: #6ee7ff;
-        --accent2: #a78bfa;
-        --good: #34d399;
-        --warn: #fbbf24;
-        --bad: #fb7185;
-        --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
-        --radius: 16px;
-        --radius2: 22px;
-        --mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono",
-          "Courier New", monospace;
-        --sans: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial,
-          "Apple Color Emoji", "Segoe UI Emoji";
-      }
-
-      @media (prefers-color-scheme: light) {
-        :root {
-          --bg: #f6f7fb;
-          --bg2: #eef1fb;
-          --card: rgba(5, 12, 26, 0.04);
-          --card2: rgba(5, 12, 26, 0.06);
-          --line: rgba(5, 12, 26, 0.10);
-          --text: rgba(5, 12, 26, 0.92);
-          --muted: rgba(5, 12, 26, 0.72);
-          --muted2: rgba(5, 12, 26, 0.56);
-          --shadow: 0 10px 30px rgba(5, 12, 26, 0.14);
-        }
-      }
-
-      html {
-        scroll-behavior: smooth;
-      }
-
-      body {
-        margin: 0;
-        font-family: var(--sans);
-        color: var(--text);
-        background:
-          radial-gradient(1200px 600px at 10% -20%, rgba(110, 231, 255, 0.20), transparent 60%),
-          radial-gradient(900px 500px at 85% -10%, rgba(167, 139, 250, 0.18), transparent 55%),
-          radial-gradient(900px 600px at 80% 90%, rgba(52, 211, 153, 0.08), transparent 60%),
-          linear-gradient(180deg, var(--bg), var(--bg2));
-      }
-
-      a {
-        color: inherit;
-        text-decoration: none;
-      }
-
-      .wrap {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 28px 18px 80px;
-      }
-
-      .topbar {
-        position: sticky;
-        top: 0;
-        z-index: 30;
-        backdrop-filter: blur(12px);
-        background: color-mix(in oklab, var(--bg) 75%, transparent);
-        border-bottom: 1px solid var(--line);
-      }
-
-      .topbar-inner {
-        max-width: 1120px;
-        margin: 0 auto;
-        padding: 14px 18px;
-        display: flex;
-        align-items: center;
-        gap: 14px;
-      }
-
-      .brand {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        min-width: 220px;
-      }
-
-      .brand img {
-        width: 34px;
-        height: 34px;
-        border-radius: 10px;
-        box-shadow: var(--shadow);
-        object-fit: cover;
-      }
-
-      .brand .title {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.05;
-      }
-
-      .brand .title strong {
-        font-weight: 800;
-        letter-spacing: -0.02em;
-      }
-
-      .brand .title span {
-        font-size: 12px;
-        color: var(--muted2);
-      }
-
-      .search {
-        flex: 1;
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 10px 12px;
-        border: 1px solid var(--line);
-        background: color-mix(in oklab, var(--card) 85%, transparent);
-        border-radius: 14px;
-        box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
-      }
-
-      .search svg {
-        width: 18px;
-        height: 18px;
-        opacity: 0.8;
-      }
-
-      .search input {
-        width: 100%;
-        border: 0;
-        outline: none;
-        background: transparent;
-        color: var(--text);
-        font-size: 14px;
-      }
-
-      .pill {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 9px 12px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: color-mix(in oklab, var(--card2) 78%, transparent);
-        font-size: 13px;
-        color: var(--muted);
-      }
-
-      .pill kbd {
-        font-family: var(--mono);
-        font-size: 12px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: color-mix(in oklab, var(--card) 82%, transparent);
-        color: var(--muted);
-      }
-
-      .hero {
-        margin-top: 24px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius2);
-        background:
-          radial-gradient(900px 500px at 20% 0%, rgba(110, 231, 255, 0.18), transparent 60%),
-          radial-gradient(800px 520px at 92% 20%, rgba(167, 139, 250, 0.20), transparent 60%),
-          color-mix(in oklab, var(--card) 70%, transparent);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-      }
-
-      .hero-inner {
-        display: grid;
-        grid-template-columns: 1.2fr 0.8fr;
-        gap: 18px;
-        padding: 22px;
-      }
-
-      @media (max-width: 860px) {
-        .hero-inner {
-          grid-template-columns: 1fr;
-        }
-        .brand {
-          min-width: auto;
-        }
-      }
-
-      .hero h1 {
-        margin: 6px 0 10px;
-        font-size: 34px;
-        line-height: 1.12;
-        letter-spacing: -0.035em;
-      }
-
-      .hero p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
-      }
-
-      .hero .meta {
-        margin-top: 14px;
-        display: flex;
-        gap: 10px;
-        flex-wrap: wrap;
-      }
-
-      .hero .meta .chip {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: color-mix(in oklab, var(--card2) 70%, transparent);
-        font-size: 13px;
-        color: var(--muted);
-      }
-
-      .hero .meta .dot {
-        width: 8px;
-        height: 8px;
-        border-radius: 999px;
-        background: var(--accent);
-        box-shadow: 0 0 0 4px color-mix(in oklab, var(--accent) 22%, transparent);
-      }
-
-      .hero-aside {
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: color-mix(in oklab, var(--card2) 80%, transparent);
-        padding: 14px;
-        display: grid;
-        align-content: start;
-        gap: 12px;
-      }
-
-      .hero-aside .logo {
-        display: flex;
-        align-items: center;
-        gap: 12px;
-      }
-
-      .hero-aside .logo img {
-        width: 56px;
-        height: 56px;
-        border-radius: 18px;
-        object-fit: cover;
-        box-shadow: var(--shadow);
-      }
-
-      .hero-aside .logo strong {
-        font-size: 14px;
-        letter-spacing: -0.01em;
-      }
-
-      .hero-aside .logo span {
-        display: block;
-        font-size: 12px;
-        color: var(--muted2);
-        margin-top: 2px;
-      }
-
-      .quicklinks {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 10px;
-      }
-
-      .q {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        padding: 10px 12px;
-        background: color-mix(in oklab, var(--card) 78%, transparent);
-      }
-
-      .q .ic {
-        width: 30px;
-        height: 30px;
-        border-radius: 12px;
-        display: grid;
-        place-items: center;
-        background: color-mix(in oklab, var(--card2) 80%, transparent);
-        border: 1px solid var(--line);
-      }
-
-      .q small {
-        display: block;
-        color: var(--muted2);
-        font-size: 12px;
-        margin-top: 2px;
-      }
-
-      .grid {
-        margin-top: 18px;
-        display: grid;
-        grid-template-columns: 320px 1fr;
-        gap: 18px;
-        align-items: start;
-      }
-
-      @media (max-width: 980px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .toc {
-        position: sticky;
-        top: 78px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius2);
-        background: color-mix(in oklab, var(--card) 78%, transparent);
-        box-shadow: var(--shadow);
-        padding: 14px;
-      }
-
-      @media (max-width: 980px) {
-        .toc {
-          position: relative;
-          top: auto;
-        }
-      }
-
-      .toc h2 {
-        margin: 4px 0 12px;
-        font-size: 14px;
-        text-transform: uppercase;
-        letter-spacing: 0.1em;
-        color: var(--muted2);
-      }
-
-      .toc a {
-        display: flex;
-        gap: 10px;
-        align-items: center;
-        padding: 10px 10px;
-        border-radius: 14px;
-        border: 1px solid transparent;
-        color: var(--muted);
-      }
-
-      .toc a:hover {
-        border-color: var(--line);
-        background: color-mix(in oklab, var(--card2) 70%, transparent);
-        color: var(--text);
-      }
-
-      .toc .tag {
-        font-family: var(--mono);
-        font-size: 11px;
-        padding: 2px 8px;
-        border: 1px solid var(--line);
-        border-radius: 999px;
-        color: var(--muted2);
-        background: color-mix(in oklab, var(--card) 82%, transparent);
-      }
-
-      .content {
-        display: grid;
-        gap: 14px;
-      }
-
-      .section {
-        border: 1px solid var(--line);
-        border-radius: var(--radius2);
-        background: color-mix(in oklab, var(--card) 78%, transparent);
-        box-shadow: var(--shadow);
-        overflow: hidden;
-      }
-
-      .section header {
-        padding: 16px 18px;
-        border-bottom: 1px solid var(--line);
-        display: flex;
-        align-items: baseline;
-        justify-content: space-between;
-        gap: 12px;
-      }
-
-      .section header h3 {
-        margin: 0;
-        font-size: 18px;
-        letter-spacing: -0.02em;
-      }
-
-      .section header p {
-        margin: 0;
-        color: var(--muted2);
-        font-size: 13px;
-      }
-
-      .section .body {
-        padding: 16px 18px 18px;
-      }
-
-      .cards {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-      }
-
-      @media (max-width: 980px) {
-        .cards {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .card {
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: color-mix(in oklab, var(--card2) 74%, transparent);
-        padding: 14px;
-      }
-
-      .card strong {
-        display: block;
-        margin-bottom: 6px;
-        letter-spacing: -0.01em;
-      }
-
-      .card p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.6;
-        font-size: 14px;
-      }
-
-      .list {
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        display: grid;
-        gap: 10px;
-      }
-
-      .item {
-        border: 1px solid var(--line);
-        border-radius: 14px;
-        background: color-mix(in oklab, var(--card2) 74%, transparent);
-        padding: 12px 12px;
-        display: grid;
-        gap: 6px;
-      }
-
-      .item .k {
-        font-family: var(--mono);
-        font-size: 12px;
-        color: var(--muted2);
-      }
-
-      .item .v {
-        color: var(--muted);
-        line-height: 1.6;
-        font-size: 14px;
-      }
-
-      .routes {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 12px;
-        margin-top: 12px;
-      }
-
-      @media (max-width: 980px) {
-        .routes {
-          grid-template-columns: 1fr;
-        }
-      }
-
-      .routebox {
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: color-mix(in oklab, var(--card2) 74%, transparent);
-        padding: 14px;
-      }
-
-      .routebox h4 {
-        margin: 0 0 10px;
-        font-size: 14px;
-        letter-spacing: -0.01em;
-      }
-
-      .routebox ul {
-        margin: 0;
-        padding-left: 16px;
-        color: var(--muted);
-        line-height: 1.75;
-        font-size: 14px;
-      }
-
-      .route {
-        font-family: var(--mono);
-        font-size: 12px;
-        padding: 2px 7px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: color-mix(in oklab, var(--card) 82%, transparent);
-        color: var(--muted);
-      }
-
-      details {
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        background: color-mix(in oklab, var(--card2) 74%, transparent);
-        padding: 12px 12px;
-      }
-
-      details summary {
-        cursor: pointer;
-        list-style: none;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 10px;
-        color: var(--text);
-        font-weight: 700;
-        letter-spacing: -0.01em;
-      }
-
-      details summary::-webkit-details-marker {
-        display: none;
-      }
-
-      details .inner {
-        margin-top: 10px;
-        color: var(--muted);
-        line-height: 1.7;
-        font-size: 14px;
-      }
-
-      .hint {
-        display: grid;
-        gap: 10px;
-        margin-top: 14px;
-      }
-
-      .alert {
-        border: 1px solid var(--line);
-        border-radius: var(--radius);
-        padding: 12px 12px;
-        background: color-mix(in oklab, var(--card) 82%, transparent);
-      }
-
-      .alert strong {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        margin-bottom: 6px;
-      }
-
-      .badge {
-        font-family: var(--mono);
-        font-size: 11px;
-        padding: 2px 8px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        color: var(--muted);
-        background: color-mix(in oklab, var(--card2) 78%, transparent);
-      }
-
-      .badge.good {
-        color: color-mix(in oklab, var(--good) 70%, var(--text));
-        border-color: color-mix(in oklab, var(--good) 45%, var(--line));
-        background: color-mix(in oklab, var(--good) 12%, transparent);
-      }
-
-      .badge.warn {
-        color: color-mix(in oklab, var(--warn) 75%, var(--text));
-        border-color: color-mix(in oklab, var(--warn) 45%, var(--line));
-        background: color-mix(in oklab, var(--warn) 12%, transparent);
-      }
-
-      .badge.bad {
-        color: color-mix(in oklab, var(--bad) 80%, var(--text));
-        border-color: color-mix(in oklab, var(--bad) 45%, var(--line));
-        background: color-mix(in oklab, var(--bad) 12%, transparent);
-      }
-
-      .alert p {
-        margin: 0;
-        color: var(--muted);
-        line-height: 1.7;
-        font-size: 14px;
-      }
-
-      .footer {
-        margin-top: 26px;
-        border: 1px solid var(--line);
-        border-radius: var(--radius2);
-        background: color-mix(in oklab, var(--card) 78%, transparent);
-        box-shadow: var(--shadow);
-        padding: 16px 18px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 12px;
-        flex-wrap: wrap;
-      }
-
-      .footer small {
-        color: var(--muted2);
-      }
-
-      .btn {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 10px 12px;
-        border-radius: 999px;
-        border: 1px solid var(--line);
-        background: color-mix(in oklab, var(--card2) 78%, transparent);
-        color: var(--muted);
-      }
-
-      .btn:hover {
-        background: color-mix(in oklab, var(--card2) 90%, transparent);
-        color: var(--text);
-      }
-
-      .hidden {
-        display: none !important;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="topbar" role="banner">
-      <div class="topbar-inner">
-        <a class="brand" href="/ajuda.html" aria-label="Ajuda — Meu Marqueteiro">
-          <img src="/images/icone-robo-redondo.png" alt="Ícone Meu Marqueteiro" />
-          <div class="title">
-            <strong>Ajuda</strong>
-            <span>Meu Marqueteiro</span>
-          </div>
-        </a>
-
-        <label class="search" aria-label="Buscar nesta página">
-          <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
-            <path
-              d="M10.5 18.5a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"
-              stroke="currentColor"
-              stroke-width="1.7"
-            />
-            <path
-              d="M16.8 16.8 21 21"
-              stroke="currentColor"
-              stroke-width="1.7"
-              stroke-linecap="round"
-            />
-          </svg>
-          <input id="searchInput" type="search" placeholder="Buscar: mandato, chat, integrações, briefing..." />
-        </label>
-
-        <div class="pill" title="Atalho de busca">
-          <span>Busca</span>
-          <kbd>/</kbd>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <meta name="color-scheme" content="light dark" />
+        <title>Ajuda — Meu Marqueteiro</title>
+        <link rel="icon" href="/favicon.ico" />
+        <style>
+            :root {
+                --bg: #0b1220;
+                --bg2: #0e1730;
+                --card: rgba(255, 255, 255, 0.06);
+                --card2: rgba(255, 255, 255, 0.08);
+                --line: rgba(255, 255, 255, 0.12);
+                --text: rgba(255, 255, 255, 0.92);
+                --muted: rgba(255, 255, 255, 0.72);
+                --muted2: rgba(255, 255, 255, 0.56);
+                --accent: #6ee7ff;
+                --accent2: #a78bfa;
+                --good: #34d399;
+                --warn: #fbbf24;
+                --bad: #fb7185;
+                --shadow: 0 10px 30px rgba(0, 0, 0, 0.35);
+                --radius: 16px;
+                --radius2: 22px;
+                --mono:
+                    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas,
+                    "Liberation Mono", "Courier New", monospace;
+                --sans:
+                    ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto,
+                    Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+            }
+
+            @media (prefers-color-scheme: light) {
+                :root {
+                    --bg: #f6f7fb;
+                    --bg2: #eef1fb;
+                    --card: rgba(5, 12, 26, 0.04);
+                    --card2: rgba(5, 12, 26, 0.06);
+                    --line: rgba(5, 12, 26, 0.1);
+                    --text: rgba(5, 12, 26, 0.92);
+                    --muted: rgba(5, 12, 26, 0.72);
+                    --muted2: rgba(5, 12, 26, 0.56);
+                    --shadow: 0 10px 30px rgba(5, 12, 26, 0.14);
+                }
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                margin: 0;
+                font-family: var(--sans);
+                color: var(--text);
+                background:
+                    radial-gradient(
+                        1200px 600px at 10% -20%,
+                        rgba(110, 231, 255, 0.2),
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        900px 500px at 85% -10%,
+                        rgba(167, 139, 250, 0.18),
+                        transparent 55%
+                    ),
+                    radial-gradient(
+                        900px 600px at 80% 90%,
+                        rgba(52, 211, 153, 0.08),
+                        transparent 60%
+                    ),
+                    linear-gradient(180deg, var(--bg), var(--bg2));
+            }
+
+            a {
+                color: inherit;
+                text-decoration: none;
+            }
+
+            .wrap {
+                max-width: 1120px;
+                margin: 0 auto;
+                padding: 28px 18px 80px;
+            }
+
+            .topbar {
+                position: sticky;
+                top: 0;
+                z-index: 30;
+                backdrop-filter: blur(12px);
+                background: color-mix(in oklab, var(--bg) 75%, transparent);
+                border-bottom: 1px solid var(--line);
+            }
+
+            .topbar-inner {
+                max-width: 1120px;
+                margin: 0 auto;
+                padding: 14px 18px;
+                display: flex;
+                align-items: center;
+                gap: 14px;
+            }
+
+            .brand {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                min-width: 220px;
+            }
+
+            .brand img {
+                width: 34px;
+                height: 34px;
+                border-radius: 10px;
+                box-shadow: var(--shadow);
+                object-fit: cover;
+            }
+
+            .brand .title {
+                display: flex;
+                flex-direction: column;
+                line-height: 1.05;
+            }
+
+            .brand .title strong {
+                font-weight: 800;
+                letter-spacing: -0.02em;
+            }
+
+            .brand .title span {
+                font-size: 12px;
+                color: var(--muted2);
+            }
+
+            .search {
+                flex: 1;
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 10px 12px;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card) 85%, transparent);
+                border-radius: 14px;
+                box-shadow: 0 1px 0 rgba(255, 255, 255, 0.04) inset;
+            }
+
+            .search svg {
+                width: 18px;
+                height: 18px;
+                opacity: 0.8;
+            }
+
+            .search input {
+                width: 100%;
+                border: 0;
+                outline: none;
+                background: transparent;
+                color: var(--text);
+                font-size: 14px;
+            }
+
+            .pill {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 9px 12px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card2) 78%, transparent);
+                font-size: 13px;
+                color: var(--muted);
+            }
+
+            .pill kbd {
+                font-family: var(--mono);
+                font-size: 12px;
+                padding: 2px 8px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card) 82%, transparent);
+                color: var(--muted);
+            }
+
+            .hero {
+                margin-top: 24px;
+                border: 1px solid var(--line);
+                border-radius: var(--radius2);
+                background:
+                    radial-gradient(
+                        900px 500px at 20% 0%,
+                        rgba(110, 231, 255, 0.18),
+                        transparent 60%
+                    ),
+                    radial-gradient(
+                        800px 520px at 92% 20%,
+                        rgba(167, 139, 250, 0.2),
+                        transparent 60%
+                    ),
+                    color-mix(in oklab, var(--card) 70%, transparent);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .hero-inner {
+                display: grid;
+                grid-template-columns: 1.2fr 0.8fr;
+                gap: 18px;
+                padding: 22px;
+            }
+
+            @media (max-width: 860px) {
+                .hero-inner {
+                    grid-template-columns: 1fr;
+                }
+                .brand {
+                    min-width: auto;
+                }
+            }
+
+            .hero h1 {
+                margin: 6px 0 10px;
+                font-size: 34px;
+                line-height: 1.12;
+                letter-spacing: -0.035em;
+            }
+
+            .hero p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.6;
+            }
+
+            .hero .meta {
+                margin-top: 14px;
+                display: flex;
+                gap: 10px;
+                flex-wrap: wrap;
+            }
+
+            .hero .meta .chip {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 8px 12px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card2) 70%, transparent);
+                font-size: 13px;
+                color: var(--muted);
+            }
+
+            .hero .meta .dot {
+                width: 8px;
+                height: 8px;
+                border-radius: 999px;
+                background: var(--accent);
+                box-shadow: 0 0 0 4px
+                    color-mix(in oklab, var(--accent) 22%, transparent);
+            }
+
+            .hero-aside {
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: color-mix(in oklab, var(--card2) 80%, transparent);
+                padding: 14px;
+                display: grid;
+                align-content: start;
+                gap: 12px;
+            }
+
+            .hero-aside .logo {
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+
+            .hero-aside .logo img {
+                width: 56px;
+                height: 56px;
+                border-radius: 18px;
+                object-fit: cover;
+                box-shadow: var(--shadow);
+            }
+
+            .hero-aside .logo strong {
+                font-size: 14px;
+                letter-spacing: -0.01em;
+            }
+
+            .hero-aside .logo span {
+                display: block;
+                font-size: 12px;
+                color: var(--muted2);
+                margin-top: 2px;
+            }
+
+            .quicklinks {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+            }
+
+            .q {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                padding: 10px 12px;
+                background: color-mix(in oklab, var(--card) 78%, transparent);
+            }
+
+            .q .ic {
+                width: 30px;
+                height: 30px;
+                border-radius: 12px;
+                display: grid;
+                place-items: center;
+                background: color-mix(in oklab, var(--card2) 80%, transparent);
+                border: 1px solid var(--line);
+            }
+
+            .q small {
+                display: block;
+                color: var(--muted2);
+                font-size: 12px;
+                margin-top: 2px;
+            }
+
+            .grid {
+                margin-top: 18px;
+                display: grid;
+                grid-template-columns: 320px 1fr;
+                gap: 18px;
+                align-items: start;
+            }
+
+            @media (max-width: 980px) {
+                .grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .toc {
+                position: sticky;
+                top: 78px;
+                border: 1px solid var(--line);
+                border-radius: var(--radius2);
+                background: color-mix(in oklab, var(--card) 78%, transparent);
+                box-shadow: var(--shadow);
+                padding: 14px;
+            }
+
+            @media (max-width: 980px) {
+                .toc {
+                    position: relative;
+                    top: auto;
+                }
+            }
+
+            .toc h2 {
+                margin: 4px 0 12px;
+                font-size: 14px;
+                text-transform: uppercase;
+                letter-spacing: 0.1em;
+                color: var(--muted2);
+            }
+
+            .toc a {
+                display: flex;
+                gap: 10px;
+                align-items: center;
+                padding: 10px 10px;
+                border-radius: 14px;
+                border: 1px solid transparent;
+                color: var(--muted);
+            }
+
+            .toc a:hover {
+                border-color: var(--line);
+                background: color-mix(in oklab, var(--card2) 70%, transparent);
+                color: var(--text);
+            }
+
+            .toc .tag {
+                font-family: var(--mono);
+                font-size: 11px;
+                padding: 2px 8px;
+                border: 1px solid var(--line);
+                border-radius: 999px;
+                color: var(--muted2);
+                background: color-mix(in oklab, var(--card) 82%, transparent);
+            }
+
+            .content {
+                display: grid;
+                gap: 14px;
+            }
+
+            .section {
+                border: 1px solid var(--line);
+                border-radius: var(--radius2);
+                background: color-mix(in oklab, var(--card) 78%, transparent);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+            }
+
+            .section header {
+                padding: 16px 18px;
+                border-bottom: 1px solid var(--line);
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 12px;
+            }
+
+            .section header h3 {
+                margin: 0;
+                font-size: 18px;
+                letter-spacing: -0.02em;
+            }
+
+            .section header p {
+                margin: 0;
+                color: var(--muted2);
+                font-size: 13px;
+            }
+
+            .section .body {
+                padding: 16px 18px 18px;
+            }
+
+            .cards {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 12px;
+            }
+
+            @media (max-width: 980px) {
+                .cards {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .card {
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: color-mix(in oklab, var(--card2) 74%, transparent);
+                padding: 14px;
+            }
+
+            .card strong {
+                display: block;
+                margin-bottom: 6px;
+                letter-spacing: -0.01em;
+            }
+
+            .card p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.6;
+                font-size: 14px;
+            }
+
+            .list {
+                margin: 0;
+                padding: 0;
+                list-style: none;
+                display: grid;
+                gap: 10px;
+            }
+
+            .item {
+                border: 1px solid var(--line);
+                border-radius: 14px;
+                background: color-mix(in oklab, var(--card2) 74%, transparent);
+                padding: 12px 12px;
+                display: grid;
+                gap: 6px;
+            }
+
+            .item .k {
+                font-family: var(--mono);
+                font-size: 12px;
+                color: var(--muted2);
+            }
+
+            .item .v {
+                color: var(--muted);
+                line-height: 1.6;
+                font-size: 14px;
+            }
+
+            .routes {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-top: 12px;
+            }
+
+            @media (max-width: 980px) {
+                .routes {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .routebox {
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: color-mix(in oklab, var(--card2) 74%, transparent);
+                padding: 14px;
+            }
+
+            .routebox h4 {
+                margin: 0 0 10px;
+                font-size: 14px;
+                letter-spacing: -0.01em;
+            }
+
+            .routebox ul {
+                margin: 0;
+                padding-left: 16px;
+                color: var(--muted);
+                line-height: 1.75;
+                font-size: 14px;
+            }
+
+            .route {
+                font-family: var(--mono);
+                font-size: 12px;
+                padding: 2px 7px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card) 82%, transparent);
+                color: var(--muted);
+            }
+
+            details {
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: color-mix(in oklab, var(--card2) 74%, transparent);
+                padding: 12px 12px;
+            }
+
+            details summary {
+                cursor: pointer;
+                list-style: none;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                color: var(--text);
+                font-weight: 700;
+                letter-spacing: -0.01em;
+            }
+
+            details summary::-webkit-details-marker {
+                display: none;
+            }
+
+            details .inner {
+                margin-top: 10px;
+                color: var(--muted);
+                line-height: 1.7;
+                font-size: 14px;
+            }
+
+            .hint {
+                display: grid;
+                gap: 10px;
+                margin-top: 14px;
+            }
+
+            .alert {
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                padding: 12px 12px;
+                background: color-mix(in oklab, var(--card) 82%, transparent);
+            }
+
+            .alert strong {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                margin-bottom: 6px;
+            }
+
+            .badge {
+                font-family: var(--mono);
+                font-size: 11px;
+                padding: 2px 8px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                color: var(--muted);
+                background: color-mix(in oklab, var(--card2) 78%, transparent);
+            }
+
+            .badge.good {
+                color: color-mix(in oklab, var(--good) 70%, var(--text));
+                border-color: color-mix(in oklab, var(--good) 45%, var(--line));
+                background: color-mix(in oklab, var(--good) 12%, transparent);
+            }
+
+            .badge.warn {
+                color: color-mix(in oklab, var(--warn) 75%, var(--text));
+                border-color: color-mix(in oklab, var(--warn) 45%, var(--line));
+                background: color-mix(in oklab, var(--warn) 12%, transparent);
+            }
+
+            .badge.bad {
+                color: color-mix(in oklab, var(--bad) 80%, var(--text));
+                border-color: color-mix(in oklab, var(--bad) 45%, var(--line));
+                background: color-mix(in oklab, var(--bad) 12%, transparent);
+            }
+
+            .alert p {
+                margin: 0;
+                color: var(--muted);
+                line-height: 1.7;
+                font-size: 14px;
+            }
+
+            .footer {
+                margin-top: 26px;
+                border: 1px solid var(--line);
+                border-radius: var(--radius2);
+                background: color-mix(in oklab, var(--card) 78%, transparent);
+                box-shadow: var(--shadow);
+                padding: 16px 18px;
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 12px;
+                flex-wrap: wrap;
+            }
+
+            .footer small {
+                color: var(--muted2);
+            }
+
+            .btn {
+                display: inline-flex;
+                align-items: center;
+                gap: 8px;
+                padding: 10px 12px;
+                border-radius: 999px;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card2) 78%, transparent);
+                color: var(--muted);
+            }
+
+            .btn:hover {
+                background: color-mix(in oklab, var(--card2) 90%, transparent);
+                color: var(--text);
+            }
+
+            .gallery-grid {
+                display: grid;
+                grid-template-columns: repeat(3, minmax(0, 1fr));
+                gap: 12px;
+                margin-top: 12px;
+            }
+
+            @media (max-width: 980px) {
+                .gallery-grid {
+                    grid-template-columns: 1fr;
+                }
+            }
+
+            .shot {
+                width: 100%;
+                padding: 0;
+                border: 1px solid var(--line);
+                border-radius: var(--radius);
+                background: color-mix(in oklab, var(--card2) 74%, transparent);
+                overflow: hidden;
+                cursor: pointer;
+                text-align: left;
+                transition:
+                    transform 140ms ease,
+                    background 140ms ease,
+                    border-color 140ms ease;
+            }
+
+            .shot:hover {
+                transform: translateY(-1px);
+                background: color-mix(in oklab, var(--card2) 86%, transparent);
+            }
+
+            .shot img {
+                width: 100%;
+                height: 190px;
+                display: block;
+                object-fit: cover;
+                background: color-mix(in oklab, var(--card) 82%, transparent);
+            }
+
+            .shot-cap {
+                padding: 10px 12px;
+                border-top: 1px solid var(--line);
+                color: var(--muted);
+                font-size: 13px;
+                line-height: 1.45;
+            }
+
+            .gallery-head {
+                display: flex;
+                align-items: baseline;
+                justify-content: space-between;
+                gap: 10px;
+                margin-top: 14px;
+            }
+
+            .gallery-head:first-of-type {
+                margin-top: 0;
+            }
+
+            .gallery-head h4 {
+                margin: 0;
+                font-size: 14px;
+                letter-spacing: -0.01em;
+            }
+
+            .gallery-head span {
+                color: var(--muted2);
+                font-size: 12px;
+            }
+
+            .lightbox {
+                position: fixed;
+                inset: 0;
+                display: none;
+                align-items: center;
+                justify-content: center;
+                padding: 18px;
+                background: rgba(0, 0, 0, 0.72);
+                z-index: 9999;
+            }
+
+            .lightbox.open {
+                display: flex;
+            }
+
+            .lightbox-card {
+                width: min(1120px, 96vw);
+                max-height: 92vh;
+                border: 1px solid var(--line);
+                border-radius: var(--radius2);
+                background: color-mix(in oklab, var(--bg) 78%, transparent);
+                box-shadow: var(--shadow);
+                overflow: hidden;
+                display: grid;
+                grid-template-rows: auto 1fr auto;
+            }
+
+            .lightbox-top {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 10px;
+                padding: 12px 14px;
+                border-bottom: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card) 78%, transparent);
+            }
+
+            .lightbox-title {
+                color: var(--text);
+                font-weight: 800;
+                letter-spacing: -0.01em;
+            }
+
+            .lightbox-close {
+                appearance: none;
+                border: 1px solid var(--line);
+                background: color-mix(in oklab, var(--card2) 78%, transparent);
+                color: var(--muted);
+                padding: 9px 12px;
+                border-radius: 999px;
+                cursor: pointer;
+            }
+
+            .lightbox-close:hover {
+                background: color-mix(in oklab, var(--card2) 90%, transparent);
+                color: var(--text);
+            }
+
+            .lightbox-img {
+                width: 100%;
+                max-height: 72vh;
+                object-fit: contain;
+                background: color-mix(in oklab, var(--bg2) 55%, transparent);
+            }
+
+            .lightbox-caption {
+                padding: 12px 14px 14px;
+                border-top: 1px solid var(--line);
+                color: var(--muted);
+                font-size: 13px;
+                line-height: 1.6;
+            }
+
+            .hidden {
+                display: none !important;
+            }
+        </style>
+    </head>
+    <body>
+        <div class="topbar" role="banner">
+            <div class="topbar-inner">
+                <a
+                    class="brand"
+                    href="/ajuda.html"
+                    aria-label="Ajuda — Meu Marqueteiro"
+                >
+                    <img
+                        src="/images/icone-robo-redondo.png"
+                        alt="Ícone Meu Marqueteiro"
+                    />
+                    <div class="title">
+                        <strong>Ajuda</strong>
+                        <span>Meu Marqueteiro</span>
+                    </div>
+                </a>
+
+                <label class="search" aria-label="Buscar nesta página">
+                    <svg viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <path
+                            d="M10.5 18.5a8 8 0 1 1 0-16 8 8 0 0 1 0 16Z"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                        />
+                        <path
+                            d="M16.8 16.8 21 21"
+                            stroke="currentColor"
+                            stroke-width="1.7"
+                            stroke-linecap="round"
+                        />
+                    </svg>
+                    <input
+                        id="searchInput"
+                        type="search"
+                        placeholder="Buscar: mandato, chat, integrações, briefing..."
+                    />
+                </label>
+
+                <div class="pill" title="Atalho de busca">
+                    <span>Busca</span>
+                    <kbd>/</kbd>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <main class="wrap" role="main">
-      <section class="hero" aria-label="Introdução">
-        <div class="hero-inner">
-          <div>
-            <h1>Guia rápido do sistema</h1>
-            <p>
-              Esta página reúne, em um só lugar, as funcionalidades e fluxos principais do
-              <strong>Meu Marqueteiro</strong>: gestão do mandato, comunicação e marketing, assistente com IA e RAG,
-              briefings, demandas, integrações e ferramentas de administração.
-            </p>
-            <div class="meta">
-              <div class="chip"><span class="dot"></span><span>Rotas protegidas por login</span></div>
-              <div class="chip"><span class="dot" style="background: var(--accent2)"></span><span>IA configurável (provider/modelo)</span></div>
-              <div class="chip"><span class="dot" style="background: var(--good)"></span><span>RAG com embeddings (quando indexado)</span></div>
-            </div>
-          </div>
+        <main class="wrap" role="main">
+            <section class="hero" aria-label="Introdução">
+                <div class="hero-inner">
+                    <div>
+                        <h1>Guia rápido do sistema</h1>
+                        <p>
+                            Esta página reúne, em um só lugar, as
+                            funcionalidades e fluxos principais do
+                            <strong>Meu Marqueteiro</strong>: gestão do mandato,
+                            comunicação e marketing, assistente com IA e RAG,
+                            briefings, demandas, integrações e ferramentas de
+                            administração.
+                        </p>
+                        <div class="meta">
+                            <div class="chip">
+                                <span class="dot"></span
+                                ><span>Rotas protegidas por login</span>
+                            </div>
+                            <div class="chip">
+                                <span
+                                    class="dot"
+                                    style="background: var(--accent2)"
+                                ></span
+                                ><span>IA configurável (provider/modelo)</span>
+                            </div>
+                            <div class="chip">
+                                <span
+                                    class="dot"
+                                    style="background: var(--good)"
+                                ></span
+                                ><span
+                                    >RAG com embeddings (quando indexado)</span
+                                >
+                            </div>
+                        </div>
+                    </div>
 
-          <aside class="hero-aside" aria-label="Atalhos">
-            <div class="logo">
-              <img src="/images/mascote-robo.jpg" alt="Mascote do Meu Marqueteiro" />
-              <div>
-                <strong>Atalhos úteis</strong>
-                <span>Links rápidos para os módulos</span>
-              </div>
-            </div>
+                    <aside class="hero-aside" aria-label="Atalhos">
+                        <div class="logo">
+                            <img
+                                src="/images/mascote-robo.jpg"
+                                alt="Mascote do Meu Marqueteiro"
+                            />
+                            <div>
+                                <strong>Atalhos úteis</strong>
+                                <span>Links rápidos para os módulos</span>
+                            </div>
+                        </div>
 
-            <div class="quicklinks">
-              <a class="q" href="#acesso">
-                <span class="ic">🔐</span>
-                <span><strong>Acesso</strong><small>login, papéis e bloqueios</small></span>
-              </a>
-              <a class="q" href="#mandato">
-                <span class="ic">🏛️</span>
-                <span><strong>Mandato</strong><small>eixos, promessas e ações</small></span>
-              </a>
-              <a class="q" href="#assistente">
-                <span class="ic">🤖</span>
-                <span><strong>Assistente</strong><small>chat e feedback</small></span>
-              </a>
-              <a class="q" href="#integracoes">
-                <span class="ic">🔌</span>
-                <span><strong>Integrações</strong><small>APIs, sync e RAG</small></span>
-              </a>
-            </div>
+                        <div class="quicklinks">
+                            <a class="q" href="#acesso">
+                                <span class="ic">🔐</span>
+                                <span
+                                    ><strong>Acesso</strong
+                                    ><small
+                                        >login, papéis e bloqueios</small
+                                    ></span
+                                >
+                            </a>
+                            <a class="q" href="#mandato">
+                                <span class="ic">🏛️</span>
+                                <span
+                                    ><strong>Mandato</strong
+                                    ><small
+                                        >eixos, promessas e ações</small
+                                    ></span
+                                >
+                            </a>
+                            <a class="q" href="#assistente">
+                                <span class="ic">🤖</span>
+                                <span
+                                    ><strong>Assistente</strong
+                                    ><small>chat e feedback</small></span
+                                >
+                            </a>
+                            <a class="q" href="#integracoes">
+                                <span class="ic">🔌</span>
+                                <span
+                                    ><strong>Integrações</strong
+                                    ><small>APIs, sync e RAG</small></span
+                                >
+                            </a>
+                            <a class="q" href="#telas">
+                                <span class="ic">🖼️</span>
+                                <span
+                                    ><strong>Telas</strong
+                                    ><small>prints do sistema</small></span
+                                >
+                            </a>
+                        </div>
 
-            <div class="hint">
-              <div class="alert">
-                <strong><span class="badge warn">DICA</span> Se a busca não encontrar</strong>
-                <p>
-                  Use <span class="route">Ctrl/Cmd + F</span> para procurar dentro do navegador também.
-                </p>
-              </div>
-            </div>
-          </aside>
-        </div>
-      </section>
-
-      <section class="grid" aria-label="Conteúdo">
-        <nav class="toc" aria-label="Sumário">
-          <h2>Sumário</h2>
-          <a href="#visao-geral"><span>Visão geral</span><span class="tag">01</span></a>
-          <a href="#acesso"><span>Acesso e permissões</span><span class="tag">02</span></a>
-          <a href="#modulos"><span>Módulos do sistema</span><span class="tag">03</span></a>
-          <a href="#mandato"><span>Gestão do mandato</span><span class="tag">04</span></a>
-          <a href="#comunicacao"><span>Comunicação e marketing</span><span class="tag">05</span></a>
-          <a href="#assistente"><span>Assistente (Chat + RAG)</span><span class="tag">06</span></a>
-          <a href="#briefing"><span>Briefing matinal</span><span class="tag">07</span></a>
-          <a href="#demandas"><span>Demandas</span><span class="tag">08</span></a>
-          <a href="#programas"><span>Programas federais</span><span class="tag">09</span></a>
-          <a href="#push"><span>Notificações (Web Push)</span><span class="tag">10</span></a>
-          <a href="#integracoes"><span>Integrações e sincronização</span><span class="tag">11</span></a>
-          <a href="#admin"><span>Administração</span><span class="tag">12</span></a>
-          <a href="#faq"><span>FAQ</span><span class="tag">13</span></a>
-        </nav>
-
-        <div class="content" id="content">
-          <article class="section" id="visao-geral" data-search="visão geral resumo arquitetura laravel ia rag embeddings pgvector">
-            <header>
-              <div>
-                <h3>Visão geral</h3>
-                <p>Como o Meu Marqueteiro está organizado e o que ele entrega.</p>
-              </div>
-              <span class="badge good">Guia</span>
-            </header>
-            <div class="body">
-              <div class="cards">
-                <div class="card">
-                  <strong>Dois ambientes, uma operação</strong>
-                  <p>
-                    O sistema possui uma área administrativa (back-office) e uma área operacional
-                    do usuário final (prefeitura). Ambas compartilham o mesmo núcleo de dados e serviços.
-                  </p>
+                        <div class="hint">
+                            <div class="alert">
+                                <strong
+                                    ><span class="badge warn">DICA</span> Se a
+                                    busca não encontrar</strong
+                                >
+                                <p>
+                                    Use
+                                    <span class="route">Ctrl/Cmd + F</span> para
+                                    procurar dentro do navegador também.
+                                </p>
+                            </div>
+                        </div>
+                    </aside>
                 </div>
-                <div class="card">
-                  <strong>IA + dados do município</strong>
-                  <p>
-                    O assistente pode responder com base em IA e enriquecer com documentos indexados (RAG),
-                    quando existirem embeddings no banco.
-                  </p>
+            </section>
+
+            <section class="grid" aria-label="Conteúdo">
+                <nav class="toc" aria-label="Sumário">
+                    <h2>Sumário</h2>
+                    <a href="#visao-geral"
+                        ><span>Visão geral</span><span class="tag">01</span></a
+                    >
+                    <a href="#acesso"
+                        ><span>Acesso e permissões</span
+                        ><span class="tag">02</span></a
+                    >
+                    <a href="#modulos"
+                        ><span>Módulos do sistema</span
+                        ><span class="tag">03</span></a
+                    >
+                    <a href="#telas"
+                        ><span>Telas do sistema</span
+                        ><span class="tag">04</span></a
+                    >
+                    <a href="#mandato"
+                        ><span>Gestão do mandato</span
+                        ><span class="tag">05</span></a
+                    >
+                    <a href="#comunicacao"
+                        ><span>Comunicação e marketing</span
+                        ><span class="tag">06</span></a
+                    >
+                    <a href="#assistente"
+                        ><span>Assistente (Chat + RAG)</span
+                        ><span class="tag">07</span></a
+                    >
+                    <a href="#briefing"
+                        ><span>Briefing matinal</span
+                        ><span class="tag">08</span></a
+                    >
+                    <a href="#demandas"
+                        ><span>Demandas</span><span class="tag">09</span></a
+                    >
+                    <a href="#programas"
+                        ><span>Programas federais</span
+                        ><span class="tag">10</span></a
+                    >
+                    <a href="#push"
+                        ><span>Notificações (Web Push)</span
+                        ><span class="tag">11</span></a
+                    >
+                    <a href="#integracoes"
+                        ><span>Integrações e sincronização</span
+                        ><span class="tag">12</span></a
+                    >
+                    <a href="#admin"
+                        ><span>Administração</span
+                        ><span class="tag">13</span></a
+                    >
+                    <a href="#faq"
+                        ><span>FAQ</span><span class="tag">14</span></a
+                    >
+                </nav>
+
+                <div class="content" id="content">
+                    <article
+                        class="section"
+                        id="visao-geral"
+                        data-search="visão geral resumo arquitetura laravel ia rag embeddings pgvector"
+                    >
+                        <header>
+                            <div>
+                                <h3>Visão geral</h3>
+                                <p>
+                                    Como o Meu Marqueteiro está organizado e o
+                                    que ele entrega.
+                                </p>
+                            </div>
+                            <span class="badge good">Guia</span>
+                        </header>
+                        <div class="body">
+                            <div class="cards">
+                                <div class="card">
+                                    <strong
+                                        >Dois ambientes, uma operação</strong
+                                    >
+                                    <p>
+                                        O sistema possui uma área administrativa
+                                        (back-office) e uma área operacional do
+                                        usuário final (prefeitura). Ambas
+                                        compartilham o mesmo núcleo de dados e
+                                        serviços.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>IA + dados do município</strong>
+                                    <p>
+                                        O assistente pode responder com base em
+                                        IA e enriquecer com documentos indexados
+                                        (RAG), quando existirem embeddings no
+                                        banco.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong
+                                        >Foco em gestão e comunicação</strong
+                                    >
+                                    <p>
+                                        Mandato (eixos, promessas, ações),
+                                        monitoramento de compromissos, produção
+                                        de conteúdo, briefings e registro de
+                                        demandas.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="hint">
+                                <div class="alert">
+                                    <strong
+                                        ><span class="badge">NOTA</span> Rotas e
+                                        navegação</strong
+                                    >
+                                    <p>
+                                        A navegação principal acontece por URLs
+                                        como
+                                        <span class="route">/admin/...</span> e
+                                        <span class="route">/mayor/...</span>. O
+                                        acesso depende de autenticação e papel
+                                        do usuário.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="acesso"
+                        data-search="acesso login logout auth role admin mayor prefeitura municipio onboarding bloqueio"
+                    >
+                        <header>
+                            <div>
+                                <h3>Acesso e permissões</h3>
+                                <p>
+                                    Regras de login, papéis e bloqueios de
+                                    acesso.
+                                </p>
+                            </div>
+                            <span class="badge warn">Importante</span>
+                        </header>
+                        <div class="body">
+                            <ul class="list">
+                                <li class="item">
+                                    <div class="k">Login</div>
+                                    <div class="v">
+                                        A entrada ocorre em
+                                        <span class="route">/login</span> e o
+                                        logout em
+                                        <span class="route">/logout</span>.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Papéis</div>
+                                    <div class="v">
+                                        Existem perfis com controle de acesso
+                                        por função:
+                                        <span class="route">admin</span> e
+                                        <span class="route">mayor</span>.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Onboarding</div>
+                                    <div class="v">
+                                        Usuários do município podem ser
+                                        impedidos de acessar algumas áreas
+                                        enquanto o onboarding do município não
+                                        estiver concluído.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Escopo de dados</div>
+                                    <div class="v">
+                                        Recursos como briefings, demandas e
+                                        conversas são restritos ao município do
+                                        usuário.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="modulos"
+                        data-search="módulos painel situação mandato comunicação marketing chat assistente briefing demandas integrações configurações diagnóstico"
+                    >
+                        <header>
+                            <div>
+                                <h3>Módulos do sistema</h3>
+                                <p>Mapa mental do que existe e onde fica.</p>
+                            </div>
+                            <span class="badge">Mapa</span>
+                        </header>
+                        <div class="body">
+                            <div class="routes">
+                                <div class="routebox">
+                                    <h4>Área administrativa (back-office)</h4>
+                                    <ul>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/dashboard</span
+                                            >
+                                            — visão geral e métricas.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/municipalities</span
+                                            >
+                                            — municípios, assinatura e dados.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/users</span
+                                            >
+                                            — gestão de usuários (prefeitos).
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/settings</span
+                                            >
+                                            — IA e integrações externas.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/integrations</span
+                                            >
+                                            — monitor e sincronizações.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/knowledge-base</span
+                                            >
+                                            — base geral (upload/indexação).
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/admin/diagnostic</span
+                                            >
+                                            — diagnóstico de IA/RAG/DB/APIs.
+                                        </li>
+                                    </ul>
+                                </div>
+                                <div class="routebox">
+                                    <h4>Área operacional (município)</h4>
+                                    <ul>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/situacao</span
+                                            >
+                                            — painel e indicadores do mandato.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/chat</span
+                                            >
+                                            — assistente conversacional.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/content</span
+                                            >
+                                            — comunicação e marketing.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/mandato/painel</span
+                                            >
+                                            — eixos, promessas, ações.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/mandato/briefings</span
+                                            >
+                                            — briefing matinal.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/mandato/demands</span
+                                            >
+                                            — demandas registradas.
+                                        </li>
+                                        <li>
+                                            <span class="route"
+                                                >/mayor/mandato/federal-programs</span
+                                            >
+                                            — radar de programas.
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="telas"
+                        data-search="telas prints screenshots imagens login dashboard situacao mandato chat integrações admin"
+                    >
+                        <header>
+                            <div>
+                                <h3>Telas do sistema</h3>
+                                <p>
+                                    Prints reais das telas para consulta rápida
+                                    (clique para ampliar).
+                                </p>
+                            </div>
+                            <span class="badge">Galeria</span>
+                        </header>
+                        <div class="body">
+                            <div class="alert">
+                                <strong
+                                    ><span class="badge warn">DICA</span> Como
+                                    usar</strong
+                                >
+                                <p>
+                                    Use a busca (<span class="route">/</span>)
+                                    para encontrar módulos e, aqui, compare com
+                                    as telas do sistema.
+                                </p>
+                            </div>
+
+                            <div class="gallery-head">
+                                <h4>Acesso (geral)</h4>
+                                <span>telas de entrada/autenticação</span>
+                            </div>
+                            <div id="galleryGeneral" class="gallery-grid"></div>
+
+                            <div class="gallery-head">
+                                <h4>Área administrativa</h4>
+                                <span>back-office</span>
+                            </div>
+                            <div id="galleryAdmin" class="gallery-grid"></div>
+
+                            <div class="gallery-head">
+                                <h4>Área do prefeito</h4>
+                                <span>operação do município</span>
+                            </div>
+                            <div id="galleryMayor" class="gallery-grid"></div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="mandato"
+                        data-search="mandato painel eixos promessas ações score kpis cumprimento secretaria prazo investimento"
+                    >
+                        <header>
+                            <div>
+                                <h3>Gestão do mandato</h3>
+                                <p>
+                                    Eixos, promessas e ações de governo, com
+                                    KPIs e rastreabilidade.
+                                </p>
+                            </div>
+                            <span class="badge good">Core</span>
+                        </header>
+                        <div class="body">
+                            <div class="cards">
+                                <div class="card">
+                                    <strong>Eixos temáticos</strong>
+                                    <p>
+                                        Organização do mandato por temas (ex.:
+                                        Saúde, Educação, Infraestrutura). É
+                                        possível importar eixos padrão e editar
+                                        a qualquer momento.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Promessas</strong>
+                                    <p>
+                                        Cada eixo contém promessas. As promessas
+                                        podem ter score recalculado conforme o
+                                        cumprimento indicado por ações
+                                        associadas.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Ações de governo</strong>
+                                    <p>
+                                        Ações com status, datas, progresso,
+                                        investimento, secretaria, evidências
+                                        (URL) e vínculo a promessas com níveis
+                                        de atendimento e justificativas.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="hint">
+                                <details>
+                                    <summary>
+                                        <span
+                                            >Fluxo recomendado do mandato</span
+                                        >
+                                        <span class="badge">Passo a passo</span>
+                                    </summary>
+                                    <div class="inner">
+                                        <ol>
+                                            <li>
+                                                Configurar eixos temáticos (ou
+                                                importar os eixos padrão).
+                                            </li>
+                                            <li>
+                                                Cadastrar promessas em cada
+                                                eixo.
+                                            </li>
+                                            <li>
+                                                Criar ações de governo e
+                                                vincular às promessas
+                                                impactadas.
+                                            </li>
+                                            <li>
+                                                Atualizar o andamento da ação e
+                                                ajustar o nível de cumprimento.
+                                            </li>
+                                            <li>
+                                                Acompanhar KPIs no painel e na
+                                                situação do mandato.
+                                            </li>
+                                        </ol>
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="comunicacao"
+                        data-search="comunicação marketing conteúdo posts entrevista crise imagem instagram variações publicar"
+                    >
+                        <header>
+                            <div>
+                                <h3>Comunicação e marketing</h3>
+                                <p>
+                                    Geração de conteúdo, preparação de
+                                    entrevistas, crise e apoio visual.
+                                </p>
+                            </div>
+                            <span class="badge">Conteúdo</span>
+                        </header>
+                        <div class="body">
+                            <ul class="list">
+                                <li class="item">
+                                    <div class="k">Posts para redes</div>
+                                    <div class="v">
+                                        Geração de post por tema e canal, com
+                                        variações de tom.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">
+                                        Preparação para entrevista
+                                    </div>
+                                    <div class="v">
+                                        Roteiros e sugestões de abordagem, com
+                                        campos para temas sensíveis.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Gestão de crise</div>
+                                    <div class="v">
+                                        Resposta estruturada para situações
+                                        críticas, com orientação de comunicação.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">
+                                        Imagem para Instagram (prompts)
+                                    </div>
+                                    <div class="v">
+                                        Gera prompts detalhados para ferramentas
+                                        de imagem (sem texto na arte), com
+                                        sugestões de legenda e hashtags.
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="hint">
+                                <div class="alert">
+                                    <strong
+                                        ><span class="badge warn"
+                                            >BOA PRÁTICA</span
+                                        >
+                                        Conteúdo oficial</strong
+                                    >
+                                    <p>
+                                        Revise o texto antes de publicar. Ajuste
+                                        dados, números e nomes de
+                                        programas/obras para evitar
+                                        inconsistências.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="assistente"
+                        data-search="assistente chat conversa mensagens rag fontes feedback thumbs_up thumbs_down"
+                    >
+                        <header>
+                            <div>
+                                <h3>Assistente (Chat + RAG)</h3>
+                                <p>
+                                    Conversas com IA, com fontes quando houver
+                                    dados indexados.
+                                </p>
+                            </div>
+                            <span class="badge good">IA</span>
+                        </header>
+                        <div class="body">
+                            <div class="cards">
+                                <div class="card">
+                                    <strong>Conversas</strong>
+                                    <p>
+                                        Crie uma nova conversa, abra conversas
+                                        antigas e exclua quando não forem mais
+                                        necessárias.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>RAG e fontes</strong>
+                                    <p>
+                                        Se existirem embeddings, as respostas
+                                        podem vir enriquecidas com trechos
+                                        (chunks) e referências (sources).
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Feedback</strong>
+                                    <p>
+                                        Registre avaliação positiva/negativa nas
+                                        respostas. Isso ajuda a melhorar o
+                                        comportamento e a calibragem do sistema.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="hint">
+                                <details>
+                                    <summary>
+                                        <span
+                                            >O que é RAG (em termos
+                                            práticos)?</span
+                                        >
+                                        <span class="badge">Entenda</span>
+                                    </summary>
+                                    <div class="inner">
+                                        RAG é um mecanismo que “busca” trechos
+                                        relevantes dos documentos do município
+                                        (e/ou de uma base geral) e envia esses
+                                        trechos como contexto para a IA
+                                        responder de forma mais precisa e
+                                        aderente à realidade local.
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="briefing"
+                        data-search="briefing matinal diário gerar hoje lido read_at agenda notícias indicadores"
+                    >
+                        <header>
+                            <div>
+                                <h3>Briefing matinal</h3>
+                                <p>
+                                    Resumo do dia com acesso rápido e controle
+                                    de leitura.
+                                </p>
+                            </div>
+                            <span class="badge">Rotina</span>
+                        </header>
+                        <div class="body">
+                            <ul class="list">
+                                <li class="item">
+                                    <div class="k">Listagem</div>
+                                    <div class="v">
+                                        Páginas de briefings por data, com
+                                        destaque para o briefing de hoje (se
+                                        existir).
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Geração sob demanda</div>
+                                    <div class="v">
+                                        Se o briefing do dia ainda não foi
+                                        gerado, o sistema permite criar na hora.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Marcar como lido</div>
+                                    <div class="v">
+                                        Ao abrir (ou via botão), o briefing
+                                        recebe registro de leitura.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="demandas"
+                        data-search="demandas registro texto voz prioridade urgente area localidade pending resolved"
+                    >
+                        <header>
+                            <div>
+                                <h3>Demandas</h3>
+                                <p>
+                                    Registro rápido de solicitações e
+                                    necessidades do município.
+                                </p>
+                            </div>
+                            <span class="badge">Operação</span>
+                        </header>
+                        <div class="body">
+                            <div class="cards">
+                                <div class="card">
+                                    <strong>Cadastro por texto</strong>
+                                    <p>
+                                        Registre a demanda com descrição, área,
+                                        localidade, prioridade
+                                        (alta/média/baixa) e marcação de
+                                        urgência.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Listagem</strong>
+                                    <p>
+                                        Visualize as últimas demandas
+                                        registradas e abra detalhes por item.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Entrada por voz</strong>
+                                    <p>
+                                        Existe rota específica para voz, mas a
+                                        implementação pode estar pendente
+                                        dependendo do ambiente.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="programas"
+                        data-search="programas federais radar transferegov convênios emendas score match open monitoring"
+                    >
+                        <header>
+                            <div>
+                                <h3>Programas federais</h3>
+                                <p>
+                                    Radar e acompanhamento de oportunidades e
+                                    programas.
+                                </p>
+                            </div>
+                            <span class="badge">Recursos</span>
+                        </header>
+                        <div class="body">
+                            <ul class="list">
+                                <li class="item">
+                                    <div class="k">Painel de programas</div>
+                                    <div class="v">
+                                        Acompanhe o que está aberto/monitorado e
+                                        prioridades por score.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Perguntar ao assistente</div>
+                                    <div class="v">
+                                        Faça perguntas sobre um programa
+                                        específico e receba orientação
+                                        contextualizada.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="push"
+                        data-search="push notificações webpush vapid subscribe unsubscribe teste"
+                    >
+                        <header>
+                            <div>
+                                <h3>Notificações (Web Push)</h3>
+                                <p>
+                                    Alertas no navegador, com teste e gestão de
+                                    dispositivos.
+                                </p>
+                            </div>
+                            <span class="badge">Push</span>
+                        </header>
+                        <div class="body">
+                            <ul class="list">
+                                <li class="item">
+                                    <div class="k">Inscrição</div>
+                                    <div class="v">
+                                        Salva ou atualiza a assinatura do
+                                        dispositivo/navegador do usuário.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Cancelar</div>
+                                    <div class="v">
+                                        Desativa a assinatura quando o usuário
+                                        remove permissão.
+                                    </div>
+                                </li>
+                                <li class="item">
+                                    <div class="k">Teste</div>
+                                    <div class="v">
+                                        Envia uma notificação de teste para
+                                        validar se está funcionando.
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="integracoes"
+                        data-search="integrações sync sincronização ingestão ibge siconfi fnde datasus transparência embeddings chunks indexação"
+                    >
+                        <header>
+                            <div>
+                                <h3>Integrações e sincronização</h3>
+                                <p>
+                                    Ativação de APIs, ingestão e indexação de
+                                    dados para RAG.
+                                </p>
+                            </div>
+                            <span class="badge good">Dados</span>
+                        </header>
+                        <div class="body">
+                            <div class="cards">
+                                <div class="card">
+                                    <strong>Ativar APIs</strong>
+                                    <p>
+                                        Habilite integrações externas por grupo
+                                        e salve chaves quando necessário (ex.:
+                                        Transparência/Transferegov).
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Sincronização</strong>
+                                    <p>
+                                        Dispare sincronização por município ou
+                                        para todos, via jobs na fila ou execução
+                                        imediata.
+                                    </p>
+                                </div>
+                                <div class="card">
+                                    <strong>Embeddings e RAG</strong>
+                                    <p>
+                                        A indexação gera embeddings. Sem
+                                        embeddings, o chat funciona, mas perde
+                                        contexto dos dados do município.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="hint">
+                                <div class="alert">
+                                    <strong
+                                        ><span class="badge warn">ATENÇÃO</span>
+                                        Chaves e configuração</strong
+                                    >
+                                    <p>
+                                        Algumas APIs requerem chave. Configure
+                                        em
+                                        <span class="route"
+                                            >/admin/settings/integrations</span
+                                        >. Para RAG com provider Anthropic,
+                                        normalmente é necessário ter chave
+                                        OpenAI configurada para embeddings.
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="admin"
+                        data-search="administração municípios usuários onboarding base conhecimento diagnóstico ia configurações logs relatório"
+                    >
+                        <header>
+                            <div>
+                                <h3>Administração (back-office)</h3>
+                                <p>
+                                    Operação do sistema: clientes, onboarding,
+                                    IA, base de conhecimento e saúde.
+                                </p>
+                            </div>
+                            <span class="badge">Admin</span>
+                        </header>
+                        <div class="body">
+                            <details>
+                                <summary>
+                                    <span>Municípios e onboarding</span>
+                                    <span class="badge">Cliente</span>
+                                </summary>
+                                <div class="inner">
+                                    Criação e gestão de municípios (assinatura
+                                    ativa, dados cadastrais) e onboarding:
+                                    perfil de voz, mapa político, documentos e
+                                    conclusão do processo para liberar acesso do
+                                    município.
+                                </div>
+                            </details>
+                            <div style="height: 10px"></div>
+                            <details>
+                                <summary>
+                                    <span>Configurações de IA</span>
+                                    <span class="badge">IA</span>
+                                </summary>
+                                <div class="inner">
+                                    Definição de provider e modelos,
+                                    armazenamento de chaves, teste de conexão e
+                                    limpeza de cache de config.
+                                </div>
+                            </details>
+                            <div style="height: 10px"></div>
+                            <details>
+                                <summary>
+                                    <span>Diagnóstico e monitoramento</span>
+                                    <span class="badge warn">Saúde</span>
+                                </summary>
+                                <div class="inner">
+                                    Verifica banco, pgvector, embeddings, APIs
+                                    ativas e prontidão de RAG por município.
+                                    Ajuda a encontrar gargalos antes de acionar
+                                    integrações.
+                                </div>
+                            </details>
+                            <div style="height: 10px"></div>
+                            <details>
+                                <summary>
+                                    <span>Base de conhecimento</span>
+                                    <span class="badge">RAG</span>
+                                </summary>
+                                <div class="inner">
+                                    Upload e gestão de documentos gerais
+                                    (categorias), visualização de chunks e
+                                    reindexação. Serve como “camada geral” de
+                                    conhecimento além dos dados específicos do
+                                    município.
+                                </div>
+                            </details>
+                        </div>
+                    </article>
+
+                    <article
+                        class="section"
+                        id="faq"
+                        data-search="faq dúvidas problemas não funciona erro ia chave embeddings rag pgvector login acesso"
+                    >
+                        <header>
+                            <div>
+                                <h3>FAQ</h3>
+                                <p>Respostas rápidas para dúvidas comuns.</p>
+                            </div>
+                            <span class="badge">Ajuda</span>
+                        </header>
+                        <div class="body">
+                            <div class="hint">
+                                <details>
+                                    <summary>
+                                        <span
+                                            >O chat responde, mas parece
+                                            “genérico”.</span
+                                        >
+                                        <span class="badge warn">RAG</span>
+                                    </summary>
+                                    <div class="inner">
+                                        Verifique se existem embeddings
+                                        indexados no sistema e se as
+                                        integrações/documentos do município
+                                        foram processados. Sem embeddings, a IA
+                                        responde sem contexto local.
+                                    </div>
+                                </details>
+                                <details>
+                                    <summary>
+                                        <span
+                                            >Diagnóstico mostra alerta sobre
+                                            embeddings com Anthropic.</span
+                                        >
+                                        <span class="badge warn">Config</span>
+                                    </summary>
+                                    <div class="inner">
+                                        Quando Anthropic é usado para chat, pode
+                                        ser necessário configurar OpenAI para
+                                        geração de embeddings. Ajuste as chaves
+                                        em Configurações → IA.
+                                    </div>
+                                </details>
+                                <details>
+                                    <summary>
+                                        <span
+                                            >Não consigo acessar a área do
+                                            município.</span
+                                        >
+                                        <span class="badge bad">Acesso</span>
+                                    </summary>
+                                    <div class="inner">
+                                        Confirme se o usuário está ativo, se tem
+                                        papel correto e se o onboarding do
+                                        município está concluído. Sem onboarding
+                                        concluído, o sistema pode bloquear rotas
+                                        da operação.
+                                    </div>
+                                </details>
+                            </div>
+                        </div>
+                    </article>
                 </div>
-                <div class="card">
-                  <strong>Foco em gestão e comunicação</strong>
-                  <p>
-                    Mandato (eixos, promessas, ações), monitoramento de compromissos, produção de conteúdo,
-                    briefings e registro de demandas.
-                  </p>
+            </section>
+
+            <footer class="footer" role="contentinfo">
+                <div>
+                    <strong>Meu Marqueteiro — Ajuda</strong>
+                    <div>
+                        <small
+                            >Arquivo estático em
+                            <span class="route">public/ajuda.html</span></small
+                        >
+                    </div>
                 </div>
-              </div>
-
-              <div class="hint">
-                <div class="alert">
-                  <strong><span class="badge">NOTA</span> Rotas e navegação</strong>
-                  <p>
-                    A navegação principal acontece por URLs como <span class="route">/admin/...</span> e
-                    <span class="route">/mayor/...</span>. O acesso depende de autenticação e papel do usuário.
-                  </p>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                    <a class="btn" href="#visao-geral">Topo</a>
+                    <a class="btn" href="/login">Ir para login</a>
                 </div>
-              </div>
-            </div>
-          </article>
+            </footer>
+        </main>
 
-          <article class="section" id="acesso" data-search="acesso login logout auth role admin mayor prefeitura municipio onboarding bloqueio">
-            <header>
-              <div>
-                <h3>Acesso e permissões</h3>
-                <p>Regras de login, papéis e bloqueios de acesso.</p>
-              </div>
-              <span class="badge warn">Importante</span>
-            </header>
-            <div class="body">
-              <ul class="list">
-                <li class="item">
-                  <div class="k">Login</div>
-                  <div class="v">
-                    A entrada ocorre em <span class="route">/login</span> e o logout em <span class="route">/logout</span>.
-                  </div>
-                </li>
-                <li class="item">
-                  <div class="k">Papéis</div>
-                  <div class="v">
-                    Existem perfis com controle de acesso por função: <span class="route">admin</span> e
-                    <span class="route">mayor</span>.
-                  </div>
-                </li>
-                <li class="item">
-                  <div class="k">Onboarding</div>
-                  <div class="v">
-                    Usuários do município podem ser impedidos de acessar algumas áreas enquanto o onboarding do município não estiver concluído.
-                  </div>
-                </li>
-                <li class="item">
-                  <div class="k">Escopo de dados</div>
-                  <div class="v">
-                    Recursos como briefings, demandas e conversas são restritos ao município do usuário.
-                  </div>
-                </li>
-              </ul>
-            </div>
-          </article>
+        <script>
+            (function () {
+                var input = document.getElementById("searchInput");
+                var content = document.getElementById("content");
+                var sections = Array.prototype.slice.call(
+                    content.querySelectorAll(".section"),
+                );
+                var galleryGeneral = document.getElementById("galleryGeneral");
+                var galleryAdmin = document.getElementById("galleryAdmin");
+                var galleryMayor = document.getElementById("galleryMayor");
+                var lightboxEl = null;
+                var lastFocus = null;
 
-          <article class="section" id="modulos" data-search="módulos painel situação mandato comunicação marketing chat assistente briefing demandas integrações configurações diagnóstico">
-            <header>
-              <div>
-                <h3>Módulos do sistema</h3>
-                <p>Mapa mental do que existe e onde fica.</p>
-              </div>
-              <span class="badge">Mapa</span>
-            </header>
-            <div class="body">
-              <div class="routes">
-                <div class="routebox">
-                  <h4>Área administrativa (back-office)</h4>
-                  <ul>
-                    <li><span class="route">/admin/dashboard</span> — visão geral e métricas.</li>
-                    <li><span class="route">/admin/municipalities</span> — municípios, assinatura e dados.</li>
-                    <li><span class="route">/admin/users</span> — gestão de usuários (prefeitos).</li>
-                    <li><span class="route">/admin/settings</span> — IA e integrações externas.</li>
-                    <li><span class="route">/admin/integrations</span> — monitor e sincronizações.</li>
-                    <li><span class="route">/admin/knowledge-base</span> — base geral (upload/indexação).</li>
-                    <li><span class="route">/admin/diagnostic</span> — diagnóstico de IA/RAG/DB/APIs.</li>
-                  </ul>
-                </div>
-                <div class="routebox">
-                  <h4>Área operacional (município)</h4>
-                  <ul>
-                    <li><span class="route">/mayor/situacao</span> — painel e indicadores do mandato.</li>
-                    <li><span class="route">/mayor/chat</span> — assistente conversacional.</li>
-                    <li><span class="route">/mayor/content</span> — comunicação e marketing.</li>
-                    <li><span class="route">/mayor/mandato/painel</span> — eixos, promessas, ações.</li>
-                    <li><span class="route">/mayor/mandato/briefings</span> — briefing matinal.</li>
-                    <li><span class="route">/mayor/mandato/demands</span> — demandas registradas.</li>
-                    <li><span class="route">/mayor/mandato/federal-programs</span> — radar de programas.</li>
-                  </ul>
-                </div>
-              </div>
-            </div>
-          </article>
+                function normalize(s) {
+                    return (s || "")
+                        .toString()
+                        .toLowerCase()
+                        .normalize("NFD")
+                        .replace(/[\u0300-\u036f]/g, "")
+                        .trim();
+                }
 
-          <article class="section" id="mandato" data-search="mandato painel eixos promessas ações score kpis cumprimento secretaria prazo investimento">
-            <header>
-              <div>
-                <h3>Gestão do mandato</h3>
-                <p>Eixos, promessas e ações de governo, com KPIs e rastreabilidade.</p>
-              </div>
-              <span class="badge good">Core</span>
-            </header>
-            <div class="body">
-              <div class="cards">
-                <div class="card">
-                  <strong>Eixos temáticos</strong>
-                  <p>
-                    Organização do mandato por temas (ex.: Saúde, Educação, Infraestrutura). É possível importar eixos padrão e editar a qualquer momento.
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Promessas</strong>
-                  <p>
-                    Cada eixo contém promessas. As promessas podem ter score recalculado conforme o cumprimento indicado por ações associadas.
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Ações de governo</strong>
-                  <p>
-                    Ações com status, datas, progresso, investimento, secretaria, evidências (URL) e vínculo a promessas com níveis de atendimento e justificativas.
-                  </p>
-                </div>
-              </div>
+                function applyFilter(q) {
+                    var query = normalize(q);
+                    if (!query) {
+                        sections.forEach(function (el) {
+                            el.classList.remove("hidden");
+                        });
+                        return;
+                    }
 
-              <div class="hint">
-                <details>
-                  <summary>
-                    <span>Fluxo recomendado do mandato</span>
-                    <span class="badge">Passo a passo</span>
-                  </summary>
-                  <div class="inner">
-                    <ol>
-                      <li>Configurar eixos temáticos (ou importar os eixos padrão).</li>
-                      <li>Cadastrar promessas em cada eixo.</li>
-                      <li>Criar ações de governo e vincular às promessas impactadas.</li>
-                      <li>Atualizar o andamento da ação e ajustar o nível de cumprimento.</li>
-                      <li>Acompanhar KPIs no painel e na situação do mandato.</li>
-                    </ol>
-                  </div>
-                </details>
-              </div>
-            </div>
-          </article>
+                    sections.forEach(function (el) {
+                        var hay =
+                            normalize(el.getAttribute("data-search") || "") +
+                            " " +
+                            normalize(el.textContent || "");
+                        var ok = hay.indexOf(query) !== -1;
+                        el.classList.toggle("hidden", !ok);
+                    });
+                }
 
-          <article class="section" id="comunicacao" data-search="comunicação marketing conteúdo posts entrevista crise imagem instagram variações publicar">
-            <header>
-              <div>
-                <h3>Comunicação e marketing</h3>
-                <p>Geração de conteúdo, preparação de entrevistas, crise e apoio visual.</p>
-              </div>
-              <span class="badge">Conteúdo</span>
-            </header>
-            <div class="body">
-              <ul class="list">
-                <li class="item">
-                  <div class="k">Posts para redes</div>
-                  <div class="v">Geração de post por tema e canal, com variações de tom.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Preparação para entrevista</div>
-                  <div class="v">Roteiros e sugestões de abordagem, com campos para temas sensíveis.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Gestão de crise</div>
-                  <div class="v">Resposta estruturada para situações críticas, com orientação de comunicação.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Imagem para Instagram (prompts)</div>
-                  <div class="v">
-                    Gera prompts detalhados para ferramentas de imagem (sem texto na arte), com sugestões de legenda e hashtags.
-                  </div>
-                </li>
-              </ul>
+                input.addEventListener("input", function () {
+                    applyFilter(input.value);
+                });
 
-              <div class="hint">
-                <div class="alert">
-                  <strong><span class="badge warn">BOA PRÁTICA</span> Conteúdo oficial</strong>
-                  <p>
-                    Revise o texto antes de publicar. Ajuste dados, números e nomes de programas/obras para evitar inconsistências.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </article>
+                function titleFromFileName(fileName) {
+                    var base = (fileName || "").replace(/\.[^/.]+$/, "");
+                    base = base.replace(/^WhatsApp Image\s*/i, "WhatsApp — ");
+                    base = base.replace(
+                        /^Captura de Tela\s*/i,
+                        "Captura de tela — ",
+                    );
+                    base = base.replace(/\s+às\s+/i, " ");
+                    base = base.replace(/\s+at\s+/i, " ");
+                    base = base.replace(/\./g, ":");
+                    return base;
+                }
 
-          <article class="section" id="assistente" data-search="assistente chat conversa mensagens rag fontes feedback thumbs_up thumbs_down">
-            <header>
-              <div>
-                <h3>Assistente (Chat + RAG)</h3>
-                <p>Conversas com IA, com fontes quando houver dados indexados.</p>
-              </div>
-              <span class="badge good">IA</span>
-            </header>
-            <div class="body">
-              <div class="cards">
-                <div class="card">
-                  <strong>Conversas</strong>
-                  <p>
-                    Crie uma nova conversa, abra conversas antigas e exclua quando não forem mais necessárias.
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>RAG e fontes</strong>
-                  <p>
-                    Se existirem embeddings, as respostas podem vir enriquecidas com trechos (chunks) e referências (sources).
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Feedback</strong>
-                  <p>
-                    Registre avaliação positiva/negativa nas respostas. Isso ajuda a melhorar o comportamento e a calibragem do sistema.
-                  </p>
-                </div>
-              </div>
+                function ensureLightbox() {
+                    if (lightboxEl) return lightboxEl;
 
-              <div class="hint">
-                <details>
-                  <summary>
-                    <span>O que é RAG (em termos práticos)?</span>
-                    <span class="badge">Entenda</span>
-                  </summary>
-                  <div class="inner">
-                    RAG é um mecanismo que “busca” trechos relevantes dos documentos do município (e/ou de uma base geral) e envia esses trechos como contexto para a IA responder de forma mais precisa e aderente à realidade local.
-                  </div>
-                </details>
-              </div>
-            </div>
-          </article>
+                    lightboxEl = document.createElement("div");
+                    lightboxEl.className = "lightbox";
+                    lightboxEl.setAttribute("role", "dialog");
+                    lightboxEl.setAttribute("aria-modal", "true");
 
-          <article class="section" id="briefing" data-search="briefing matinal diário gerar hoje lido read_at agenda notícias indicadores">
-            <header>
-              <div>
-                <h3>Briefing matinal</h3>
-                <p>Resumo do dia com acesso rápido e controle de leitura.</p>
-              </div>
-              <span class="badge">Rotina</span>
-            </header>
-            <div class="body">
-              <ul class="list">
-                <li class="item">
-                  <div class="k">Listagem</div>
-                  <div class="v">Páginas de briefings por data, com destaque para o briefing de hoje (se existir).</div>
-                </li>
-                <li class="item">
-                  <div class="k">Geração sob demanda</div>
-                  <div class="v">Se o briefing do dia ainda não foi gerado, o sistema permite criar na hora.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Marcar como lido</div>
-                  <div class="v">Ao abrir (ou via botão), o briefing recebe registro de leitura.</div>
-                </li>
-              </ul>
-            </div>
-          </article>
+                    var card = document.createElement("div");
+                    card.className = "lightbox-card";
 
-          <article class="section" id="demandas" data-search="demandas registro texto voz prioridade urgente area localidade pending resolved">
-            <header>
-              <div>
-                <h3>Demandas</h3>
-                <p>Registro rápido de solicitações e necessidades do município.</p>
-              </div>
-              <span class="badge">Operação</span>
-            </header>
-            <div class="body">
-              <div class="cards">
-                <div class="card">
-                  <strong>Cadastro por texto</strong>
-                  <p>
-                    Registre a demanda com descrição, área, localidade, prioridade (alta/média/baixa) e marcação de urgência.
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Listagem</strong>
-                  <p>
-                    Visualize as últimas demandas registradas e abra detalhes por item.
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Entrada por voz</strong>
-                  <p>
-                    Existe rota específica para voz, mas a implementação pode estar pendente dependendo do ambiente.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </article>
+                    var top = document.createElement("div");
+                    top.className = "lightbox-top";
 
-          <article class="section" id="programas" data-search="programas federais radar transferegov convênios emendas score match open monitoring">
-            <header>
-              <div>
-                <h3>Programas federais</h3>
-                <p>Radar e acompanhamento de oportunidades e programas.</p>
-              </div>
-              <span class="badge">Recursos</span>
-            </header>
-            <div class="body">
-              <ul class="list">
-                <li class="item">
-                  <div class="k">Painel de programas</div>
-                  <div class="v">Acompanhe o que está aberto/monitorado e prioridades por score.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Perguntar ao assistente</div>
-                  <div class="v">Faça perguntas sobre um programa específico e receba orientação contextualizada.</div>
-                </li>
-              </ul>
-            </div>
-          </article>
+                    var title = document.createElement("div");
+                    title.className = "lightbox-title";
 
-          <article class="section" id="push" data-search="push notificações webpush vapid subscribe unsubscribe teste">
-            <header>
-              <div>
-                <h3>Notificações (Web Push)</h3>
-                <p>Alertas no navegador, com teste e gestão de dispositivos.</p>
-              </div>
-              <span class="badge">Push</span>
-            </header>
-            <div class="body">
-              <ul class="list">
-                <li class="item">
-                  <div class="k">Inscrição</div>
-                  <div class="v">Salva ou atualiza a assinatura do dispositivo/navegador do usuário.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Cancelar</div>
-                  <div class="v">Desativa a assinatura quando o usuário remove permissão.</div>
-                </li>
-                <li class="item">
-                  <div class="k">Teste</div>
-                  <div class="v">Envia uma notificação de teste para validar se está funcionando.</div>
-                </li>
-              </ul>
-            </div>
-          </article>
+                    var close = document.createElement("button");
+                    close.type = "button";
+                    close.className = "lightbox-close";
+                    close.setAttribute("aria-label", "Fechar");
+                    close.textContent = "Fechar";
 
-          <article class="section" id="integracoes" data-search="integrações sync sincronização ingestão ibge siconfi fnde datasus transparência embeddings chunks indexação">
-            <header>
-              <div>
-                <h3>Integrações e sincronização</h3>
-                <p>Ativação de APIs, ingestão e indexação de dados para RAG.</p>
-              </div>
-              <span class="badge good">Dados</span>
-            </header>
-            <div class="body">
-              <div class="cards">
-                <div class="card">
-                  <strong>Ativar APIs</strong>
-                  <p>
-                    Habilite integrações externas por grupo e salve chaves quando necessário (ex.: Transparência/Transferegov).
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Sincronização</strong>
-                  <p>
-                    Dispare sincronização por município ou para todos, via jobs na fila ou execução imediata.
-                  </p>
-                </div>
-                <div class="card">
-                  <strong>Embeddings e RAG</strong>
-                  <p>
-                    A indexação gera embeddings. Sem embeddings, o chat funciona, mas perde contexto dos dados do município.
-                  </p>
-                </div>
-              </div>
+                    top.appendChild(title);
+                    top.appendChild(close);
 
-              <div class="hint">
-                <div class="alert">
-                  <strong><span class="badge warn">ATENÇÃO</span> Chaves e configuração</strong>
-                  <p>
-                    Algumas APIs requerem chave. Configure em <span class="route">/admin/settings/integrations</span>.
-                    Para RAG com provider Anthropic, normalmente é necessário ter chave OpenAI configurada para embeddings.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </article>
+                    var img = document.createElement("img");
+                    img.className = "lightbox-img";
+                    img.alt = "";
 
-          <article class="section" id="admin" data-search="administração municípios usuários onboarding base conhecimento diagnóstico ia configurações logs relatório">
-            <header>
-              <div>
-                <h3>Administração (back-office)</h3>
-                <p>Operação do sistema: clientes, onboarding, IA, base de conhecimento e saúde.</p>
-              </div>
-              <span class="badge">Admin</span>
-            </header>
-            <div class="body">
-              <details>
-                <summary>
-                  <span>Municípios e onboarding</span>
-                  <span class="badge">Cliente</span>
-                </summary>
-                <div class="inner">
-                  Criação e gestão de municípios (assinatura ativa, dados cadastrais) e onboarding: perfil de voz, mapa político, documentos e conclusão do processo para liberar acesso do município.
-                </div>
-              </details>
-              <div style="height: 10px"></div>
-              <details>
-                <summary>
-                  <span>Configurações de IA</span>
-                  <span class="badge">IA</span>
-                </summary>
-                <div class="inner">
-                  Definição de provider e modelos, armazenamento de chaves, teste de conexão e limpeza de cache de config.
-                </div>
-              </details>
-              <div style="height: 10px"></div>
-              <details>
-                <summary>
-                  <span>Diagnóstico e monitoramento</span>
-                  <span class="badge warn">Saúde</span>
-                </summary>
-                <div class="inner">
-                  Verifica banco, pgvector, embeddings, APIs ativas e prontidão de RAG por município. Ajuda a encontrar gargalos antes de acionar integrações.
-                </div>
-              </details>
-              <div style="height: 10px"></div>
-              <details>
-                <summary>
-                  <span>Base de conhecimento</span>
-                  <span class="badge">RAG</span>
-                </summary>
-                <div class="inner">
-                  Upload e gestão de documentos gerais (categorias), visualização de chunks e reindexação. Serve como “camada geral” de conhecimento além dos dados específicos do município.
-                </div>
-              </details>
-            </div>
-          </article>
+                    var caption = document.createElement("div");
+                    caption.className = "lightbox-caption";
 
-          <article class="section" id="faq" data-search="faq dúvidas problemas não funciona erro ia chave embeddings rag pgvector login acesso">
-            <header>
-              <div>
-                <h3>FAQ</h3>
-                <p>Respostas rápidas para dúvidas comuns.</p>
-              </div>
-              <span class="badge">Ajuda</span>
-            </header>
-            <div class="body">
-              <div class="hint">
-                <details>
-                  <summary>
-                    <span>O chat responde, mas parece “genérico”.</span>
-                    <span class="badge warn">RAG</span>
-                  </summary>
-                  <div class="inner">
-                    Verifique se existem embeddings indexados no sistema e se as integrações/documentos do município foram processados. Sem embeddings, a IA responde sem contexto local.
-                  </div>
-                </details>
-                <details>
-                  <summary>
-                    <span>Diagnóstico mostra alerta sobre embeddings com Anthropic.</span>
-                    <span class="badge warn">Config</span>
-                  </summary>
-                  <div class="inner">
-                    Quando Anthropic é usado para chat, pode ser necessário configurar OpenAI para geração de embeddings. Ajuste as chaves em Configurações → IA.
-                  </div>
-                </details>
-                <details>
-                  <summary>
-                    <span>Não consigo acessar a área do município.</span>
-                    <span class="badge bad">Acesso</span>
-                  </summary>
-                  <div class="inner">
-                    Confirme se o usuário está ativo, se tem papel correto e se o onboarding do município está concluído. Sem onboarding concluído, o sistema pode bloquear rotas da operação.
-                  </div>
-                </details>
-              </div>
-            </div>
-          </article>
-        </div>
-      </section>
+                    card.appendChild(top);
+                    card.appendChild(img);
+                    card.appendChild(caption);
+                    lightboxEl.appendChild(card);
+                    document.body.appendChild(lightboxEl);
 
-      <footer class="footer" role="contentinfo">
-        <div>
-          <strong>Meu Marqueteiro — Ajuda</strong>
-          <div><small>Arquivo estático em <span class="route">public/ajuda.html</span></small></div>
-        </div>
-        <div style="display: flex; gap: 10px; flex-wrap: wrap">
-          <a class="btn" href="#visao-geral">Topo</a>
-          <a class="btn" href="/login">Ir para login</a>
-        </div>
-      </footer>
-    </main>
+                    function closeLb() {
+                        lightboxEl.classList.remove("open");
+                        img.removeAttribute("src");
+                        img.alt = "";
+                        title.textContent = "";
+                        caption.textContent = "";
+                        if (lastFocus) lastFocus.focus();
+                        lastFocus = null;
+                    }
 
-    <script>
-      (function () {
-        var input = document.getElementById("searchInput");
-        var content = document.getElementById("content");
-        var sections = Array.prototype.slice.call(content.querySelectorAll(".section"));
+                    close.addEventListener("click", closeLb);
+                    lightboxEl.addEventListener("click", function (e) {
+                        if (e.target === lightboxEl) closeLb();
+                    });
 
-        function normalize(s) {
-          return (s || "")
-            .toString()
-            .toLowerCase()
-            .normalize("NFD")
-            .replace(/[\u0300-\u036f]/g, "")
-            .trim();
-        }
+                    window.addEventListener("keydown", function (e) {
+                        if (
+                            e.key === "Escape" &&
+                            lightboxEl.classList.contains("open")
+                        ) {
+                            closeLb();
+                        }
+                    });
 
-        function applyFilter(q) {
-          var query = normalize(q);
-          if (!query) {
-            sections.forEach(function (el) {
-              el.classList.remove("hidden");
-            });
-            return;
-          }
+                    lightboxEl.__open = function (src, t) {
+                        lastFocus = document.activeElement;
+                        title.textContent = t || "Tela do sistema";
+                        caption.textContent = t || "";
+                        img.alt = t || "Tela do sistema";
+                        img.src = encodeURI(src);
+                        lightboxEl.classList.add("open");
+                        close.focus();
+                    };
 
-          sections.forEach(function (el) {
-            var hay = normalize(el.getAttribute("data-search") || "") + " " + normalize(el.textContent || "");
-            var ok = hay.indexOf(query) !== -1;
-            el.classList.toggle("hidden", !ok);
-          });
-        }
+                    return lightboxEl;
+                }
 
-        input.addEventListener("input", function () {
-          applyFilter(input.value);
-        });
+                function renderGallery(container, items) {
+                    if (!container) return;
 
-        window.addEventListener("keydown", function (e) {
-          if (e.key === "/" && document.activeElement !== input) {
-            e.preventDefault();
-            input.focus();
-          }
-          if (e.key === "Escape" && document.activeElement === input) {
-            input.blur();
-            input.value = "";
-            applyFilter("");
-          }
-        });
-      })();
-    </script>
-  </body>
+                    var frag = document.createDocumentFragment();
+                    items.forEach(function (item) {
+                        var src = "/ajuda/" + item.file;
+                        var title = item.title || titleFromFileName(item.file);
+
+                        var btn = document.createElement("button");
+                        btn.type = "button";
+                        btn.className = "shot";
+                        btn.setAttribute("aria-label", "Abrir: " + title);
+
+                        var img = document.createElement("img");
+                        img.loading = "lazy";
+                        img.alt = title;
+                        img.src = encodeURI(src);
+
+                        var cap = document.createElement("div");
+                        cap.className = "shot-cap";
+                        cap.textContent = title;
+
+                        btn.appendChild(img);
+                        btn.appendChild(cap);
+
+                        btn.addEventListener("click", function () {
+                            var lb = ensureLightbox();
+                            lb.__open(src, title);
+                        });
+
+                        frag.appendChild(btn);
+                    });
+
+                    container.innerHTML = "";
+                    container.appendChild(frag);
+                }
+
+                var generalItems = [
+                    {
+                        file: "login.png",
+                        title: "Acesso (geral) — Tela 01",
+                    },
+                ];
+
+                var adminItems = [
+                    {
+                        file: "adm-dashboard.jpeg",
+                        title: "Área administrativa — Tela 01",
+                    },
+                    {
+                        file: "adm-integracoes.jpeg",
+                        title: "Área administrativa — Tela 02",
+                    },
+                    {
+                        file: "adm-base-conhecimento.jpeg",
+                        title: "Área administrativa — Tela 03",
+                    },
+                    {
+                        file: "adm-apis-externas.jpeg",
+                        title: "Área administrativa — Tela 04",
+                    },
+                    {
+                        file: "adm-config-IA.jpeg",
+                        title: "Área administrativa — Tela 05",
+                    },
+                    {
+                        file: "adm-radar-programas-federais.jpeg",
+                        title: "Área administrativa — Tela 06",
+                    },
+                    {
+                        file: "WhatsApp Image 2026-03-24 at 19.19.43 (3).jpeg",
+                        title: "Área administrativa — Tela 07",
+                    },
+                ];
+
+                var mayorItems = [
+                    {
+                        file: "situacao-prefeito.jpeg",
+                        title: "Área do prefeito — Tela 01",
+                    },
+                    {
+                        file: "assistente-prefeito.jpeg",
+                        title: "Área do prefeito — Tela 02",
+                    },
+                    {
+                        file: "comunicacao-prefeito.jpeg",
+                        title: "Área do prefeito — Tela 03",
+                    },
+                    {
+                        file: "demandas-prefeito.jpeg",
+                        title: "Área do prefeito — Tela 04",
+                    },
+                    {
+                        file: "painel-prefeito.jpeg",
+                        title: "Área do prefeito — Tela 05",
+                    },
+                ];
+
+                renderGallery(galleryGeneral, generalItems);
+                renderGallery(galleryAdmin, adminItems);
+                renderGallery(galleryMayor, mayorItems);
+
+                window.addEventListener("keydown", function (e) {
+                    if (e.key === "/" && document.activeElement !== input) {
+                        e.preventDefault();
+                        input.focus();
+                    }
+                    if (
+                        e.key === "Escape" &&
+                        document.activeElement === input
+                    ) {
+                        input.blur();
+                        input.value = "";
+                        applyFilter("");
+                    }
+                });
+            })();
+        </script>
+    </body>
 </html>
