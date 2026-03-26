@@ -6,16 +6,26 @@ use App\Http\Controllers\Controller;
 use App\Models\MandateAction;
 use App\Models\MandateAxis;
 use App\Models\MandatePromise;
+use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class MandatoController extends Controller
 {
+    private function currentMayor(): User
+    {
+        $user = Auth::user();
+        if (!$user instanceof User) abort(401);
+        return $user;
+    }
+
     // ── Painel principal ─────────────────────────────────────────────────
 
     public function index()
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $axes = MandateAxis::where('municipality_id', $municipality->id)
             ->where('is_active', true)
@@ -60,7 +70,7 @@ class MandatoController extends Controller
 
     public function eixo($axisId)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $axis = MandateAxis::where('municipality_id', $municipality->id)
             ->with(['promises.actions'])
@@ -73,7 +83,7 @@ class MandatoController extends Controller
 
     public function acoes(Request $request)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $query = MandateAction::where('municipality_id', $municipality->id)
             ->with(['axis', 'promises'])
@@ -96,9 +106,9 @@ class MandatoController extends Controller
         return view('mayor.mandato.acoes', compact('actions', 'axes', 'municipality'));
     }
 
-    public function createAcao()
+    public function createAcao(Request $request)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $axes = MandateAxis::where('municipality_id', $municipality->id)
             ->where('is_active', true)
@@ -106,12 +116,22 @@ class MandatoController extends Controller
             ->with(['promises' => fn($q) => $q->where('is_active', true)->orderBy('order')])
             ->get();
 
-        return view('mayor.mandato.acao-create', compact('axes', 'municipality'));
+        $axisPrefillId = null;
+        $programArea = $request->query('program_area');
+        if ($programArea) {
+            $needle = Str::slug((string) $programArea);
+            $axisPrefillId = $axes->first(function ($axis) use ($needle) {
+                $name = Str::slug((string) $axis->name);
+                return $needle !== '' && Str::contains($name, $needle);
+            })?->id;
+        }
+
+        return view('mayor.mandato.acao-create', compact('axes', 'municipality', 'axisPrefillId'));
     }
 
     public function storeAcao(Request $request)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $data = $request->validate([
             'mandate_axis_id'       => 'required|exists:mandate_axes,id',
@@ -160,7 +180,7 @@ class MandatoController extends Controller
 
     public function editAcao($id)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $action = MandateAction::where('municipality_id', $municipality->id)
             ->with('promises')
@@ -177,7 +197,7 @@ class MandatoController extends Controller
 
     public function updateAcao(Request $request, $id)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
         $action = MandateAction::where('municipality_id', $municipality->id)->findOrFail($id);
 
         $data = $request->validate([
@@ -230,7 +250,7 @@ class MandatoController extends Controller
 
     public function destroyAcao($id)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
         $action = MandateAction::where('municipality_id', $municipality->id)->findOrFail($id);
 
         $promiseIds = $action->promises()->pluck('mandate_promises.id')->toArray();
@@ -247,7 +267,7 @@ class MandatoController extends Controller
 
     public function eixos()
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $axes = MandateAxis::where('municipality_id', $municipality->id)
             ->orderBy('order')
@@ -259,7 +279,7 @@ class MandatoController extends Controller
 
     public function storeEixo(Request $request)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $data = $request->validate([
             'name'        => 'required|string|max:100',
@@ -280,7 +300,7 @@ class MandatoController extends Controller
 
     public function updateEixo(Request $request, $id)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
         $axis = MandateAxis::where('municipality_id', $municipality->id)->findOrFail($id);
 
         $data = $request->validate([
@@ -296,7 +316,7 @@ class MandatoController extends Controller
 
     public function destroyEixo($id)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
         $axis = MandateAxis::where('municipality_id', $municipality->id)->findOrFail($id);
         $axis->delete();
         return back()->with('success', 'Eixo removido.');
@@ -306,7 +326,7 @@ class MandatoController extends Controller
 
     public function storePromise(Request $request)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         $data = $request->validate([
             'mandate_axis_id' => 'required|exists:mandate_axes,id',
@@ -325,7 +345,7 @@ class MandatoController extends Controller
 
     public function seedDefaultAxes()
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
 
         // Não duplicar se já existem eixos
         if (MandateAxis::where('municipality_id', $municipality->id)->exists()) {
@@ -356,7 +376,7 @@ class MandatoController extends Controller
 
     public function destroyPromise($id)
     {
-        $municipality = auth()->user()->municipality;
+        $municipality = $this->currentMayor()->municipality;
         $promise = MandatePromise::where('municipality_id', $municipality->id)->findOrFail($id);
         $promise->delete();
         return back()->with('success', 'Promessa removida.');

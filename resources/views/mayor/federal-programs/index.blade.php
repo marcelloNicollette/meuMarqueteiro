@@ -157,6 +157,8 @@
             border-radius: 12px;
             overflow: hidden;
             transition: box-shadow .2s, transform .15s;
+            display: flex;
+            flex-direction: column;
         }
 
         .program-card:hover {
@@ -170,6 +172,7 @@
 
         .program-card-head {
             padding: 1rem 1.2rem .85rem;
+            flex: 1;
         }
 
         .prog-head-row {
@@ -291,6 +294,7 @@
             display: flex;
             align-items: center;
             gap: .5rem;
+            margin-top: auto;
         }
 
         .prog-status {
@@ -321,7 +325,6 @@
         }
 
         .prog-ask-btn {
-            margin-left: auto;
             display: inline-flex;
             align-items: center;
             gap: .4rem;
@@ -364,6 +367,42 @@
         .prog-link svg {
             width: 12px;
             height: 12px;
+        }
+
+        .prog-actions {
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: .5rem;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+        }
+
+        .prog-action-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: .4rem;
+            padding: .4rem .85rem;
+            border-radius: 7px;
+            font-family: "Open Sans", sans-serif;
+            font-size: .78rem;
+            font-weight: 600;
+            background: var(--gold);
+            color: var(--ink);
+            border: none;
+            cursor: pointer;
+            transition: background .15s, transform .15s;
+            text-decoration: none;
+        }
+
+        .prog-action-btn:hover {
+            background: var(--gold-lt);
+            transform: translateY(-1px);
+        }
+
+        .prog-action-btn svg {
+            width: 13px;
+            height: 13px;
         }
 
         /* ── Empty state ─── */
@@ -565,12 +604,32 @@
                             </a>
                         @endif
 
-                        <button class="prog-ask-btn" onclick="askAboutProgram('{{ addslashes($program->program_name) }}')">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
-                            </svg>
-                            Perguntar ao assistente
-                        </button>
+                        <div class="prog-actions">
+                            <a class="prog-action-btn"
+                                href="{{ route('mayor.mandato.acao.create', [
+                                    'title' => 'Ação a partir do programa: ' . $program->program_name,
+                                    'description' => trim(
+                                        ($program->description ? $program->description . "\n\n" : '') . 'Origem: ' . ($program->source_url ?? ''),
+                                    ),
+                                    'funding_source' => $program->funding_type ? ucfirst($program->funding_type) : 'Federal',
+                                    'end_date' => optional($program->deadline)->format('Y-m-d'),
+                                    'program_area' => $program->area,
+                                ]) }}">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+                                </svg>
+                                Criar ação
+                            </a>
+                            <form method="POST" action="{{ route('mayor.mandato.federal-programs.ask', $program) }}">
+                                @csrf
+                                <button class="prog-ask-btn" type="submit">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z" />
+                                    </svg>
+                                    Perguntar ao assistente
+                                </button>
+                            </form>
+                        </div>
                     </div>
                 </div>
             @empty

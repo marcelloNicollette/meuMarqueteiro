@@ -403,7 +403,7 @@
                 <div class="form-card-body">
                     <div>
                         <label>Título da ação <span class="req">*</span></label>
-                        <input type="text" name="title" value="{{ old('title') }}" required
+                        <input type="text" name="title" value="{{ old('title', request('title')) }}" required
                             placeholder="ex: Construção de nova UBS no bairro Norte">
                     </div>
                     <div class="form-grid-2">
@@ -413,7 +413,7 @@
                                 <option value="">Selecione o eixo</option>
                                 @foreach ($axes as $axis)
                                     <option value="{{ $axis->id }}"
-                                        {{ old('mandate_axis_id', request('axis')) == $axis->id ? 'selected' : '' }}>
+                                        {{ old('mandate_axis_id', $axisPrefillId ?? request('axis')) == $axis->id ? 'selected' : '' }}>
                                         {{ $axis->icon ? $axis->icon . ' ' : '' }}{{ $axis->name }}
                                     </option>
                                 @endforeach
@@ -427,7 +427,7 @@
                     </div>
                     <div>
                         <label>Descrição</label>
-                        <textarea name="description" rows="3" placeholder="Descreva a ação, objetivos e resultados esperados...">{{ old('description') }}</textarea>
+                        <textarea name="description" rows="3" placeholder="Descreva a ação, objetivos e resultados esperados...">{{ old('description', request('description')) }}</textarea>
                     </div>
                 </div>
             </div>
@@ -469,7 +469,7 @@
                         </div>
                         <div>
                             <label>Data de conclusão</label>
-                            <input type="date" name="end_date" value="{{ old('end_date') }}">
+                            <input type="date" name="end_date" value="{{ old('end_date', request('end_date')) }}">
                         </div>
                     </div>
                 </div>
@@ -580,7 +580,8 @@
                         </div>
                         <div>
                             <label>Fonte de recurso</label>
-                            <input type="text" name="funding_source" value="{{ old('funding_source') }}"
+                            <input type="text" name="funding_source"
+                                value="{{ old('funding_source', request('funding_source')) }}"
                                 placeholder="ex: Federal, Municipal, PAC">
                         </div>
                         <div>
