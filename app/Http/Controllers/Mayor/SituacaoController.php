@@ -99,6 +99,28 @@ class SituacaoController extends Controller
             ->where('status', 'resolved')
             ->count();
 
+        $demandasEmAndamento = Demand::query()
+            ->where('municipality_id', $municipality->id)
+            ->where('status', 'in_progress')
+            ->count();
+
+        $demandasPendentes = Demand::query()
+            ->where('municipality_id', $municipality->id)
+            ->where('status', 'pending')
+            ->count();
+
+        $demandasAbertas = Demand::query()
+            ->where('municipality_id', $municipality->id)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->count();
+
+        $demandasAtrasadas = Demand::query()
+            ->where('municipality_id', $municipality->id)
+            ->whereIn('status', ['pending', 'in_progress'])
+            ->whereNotNull('due_date')
+            ->whereDate('due_date', '<', today())
+            ->count();
+
         // Briefings gerados
         $totalBriefings = $municipality->morningBriefings()->count();
         $briefingHoje   = $municipality->morningBriefings()->whereDate('date', today())->first();
@@ -126,6 +148,10 @@ class SituacaoController extends Controller
             'totalMensagens',
             'totalDemandas',
             'demandasResolvidas',
+            'demandasPendentes',
+            'demandasEmAndamento',
+            'demandasAbertas',
+            'demandasAtrasadas',
             'totalBriefings',
             'briefingHoje'
         ));

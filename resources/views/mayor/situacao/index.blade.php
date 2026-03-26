@@ -577,7 +577,7 @@
             </div>
             <div class="kpi-card blue">
                 <div class="kpi-value blue">{{ $emAndamento }}</div>
-                <div class="kpi-label">Em andamento</div>
+                <div class="kpi-label">Compromissos em andamento</div>
             </div>
             <div class="kpi-card orange">
                 <div class="kpi-value orange">{{ $emRisco }}</div>
@@ -589,7 +589,14 @@
             </div>
             <div class="kpi-card blue">
                 <div class="kpi-value blue">{{ $totalDemandas }}</div>
-                <div class="kpi-label">Demandas recebidas</div>
+                <div class="kpi-label">
+                    Demandas recebidas
+                    · {{ $demandasPendentes }} pendentes
+                    · {{ $demandasEmAndamento }} em andamento
+                    @if ($demandasAtrasadas > 0)
+                        · {{ $demandasAtrasadas }} atrasadas
+                    @endif
+                </div>
             </div>
         </div>
 
