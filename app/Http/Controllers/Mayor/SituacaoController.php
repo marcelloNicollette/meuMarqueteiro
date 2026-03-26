@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Mayor;
 
 use App\Http\Controllers\Controller;
+use App\Models\Demand;
+use App\Models\User;
+use Illuminate\Support\Facades\Auth;
 
 class SituacaoController extends Controller
 {
     public function index()
     {
-        $user         = auth()->user();
+        $user = Auth::user();
+        if (!$user instanceof User) abort(401);
         $municipality = $user->municipality;
 
         // ── Compromissos ──────────────────────────────────────
@@ -86,20 +90,14 @@ class SituacaoController extends Controller
             $q->where('user_id', $user->id)
         )->count();
 
-        $totalDemandas      = 0;
-        $demandasResolvidas = 0;
-        try {
-            // Query direta — model Demand pode ainda nao existir
-            $totalDemandas      = \DB::table('demands')
-                ->where('municipality_id', $municipality->id)
-                ->count();
-            $demandasResolvidas = \DB::table('demands')
-                ->where('municipality_id', $municipality->id)
-                ->where('status', 'resolvida')
-                ->count();
-        } catch (\Exception $e) {
-            // Tabela demands pode nao existir ainda
-        }
+        $totalDemandas = Demand::query()
+            ->where('municipality_id', $municipality->id)
+            ->count();
+
+        $demandasResolvidas = Demand::query()
+            ->where('municipality_id', $municipality->id)
+            ->where('status', 'resolved')
+            ->count();
 
         // Briefings gerados
         $totalBriefings = $municipality->morningBriefings()->count();

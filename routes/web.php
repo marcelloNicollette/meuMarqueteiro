@@ -197,6 +197,7 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
 
             // Registro de demandas por voz
             Route::post('/demands/voice',    [Mayor\DemandController::class, 'storeVoice'])->name('demands.voice');
-            Route::resource('demands',       Mayor\DemandController::class);
+            Route::patch('/demands/{demand}/status', [Mayor\DemandController::class, 'updateStatus'])->name('demands.status');
+            Route::resource('demands',       Mayor\DemandController::class)->only(['index', 'store', 'show']);
         });
     });

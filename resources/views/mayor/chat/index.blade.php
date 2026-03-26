@@ -949,6 +949,15 @@
             return div.innerHTML;
         }
 
+        const prefill = sessionStorage.getItem('chatPrefill');
+        if (prefill) {
+            sessionStorage.removeItem('chatPrefill');
+            const input = document.getElementById('msg-input');
+            input.value = prefill;
+            autoResize(input);
+            input.focus();
+        }
+
         // Scroll para o final ao carregar
         const area = document.getElementById('messagesArea');
         area.scrollTop = area.scrollHeight;

@@ -8,6 +8,6 @@ class DashboardController extends Controller
 {
     public function index()
     {
-        return redirect()->route('mayor.chat.index');
+        return redirect()->route('mayor.situacao');
     }
 }

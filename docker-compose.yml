@@ -1,12 +1,19 @@
 services:
+  # ── Aplicação Laravel ────────────────────────────────────────────────
   app:
     build:
       context: .
       dockerfile: docker/Dockerfile
     container_name: marqueteiro_app
     restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 8.8.4.4
     ports:
       - "8000:8000"
+    # SEM volume local — o Dockerfile instala o Laravel dentro do container
+    env_file:
+      - .env.docker # chaves secretas — NÃO vai para o GitHub
     environment:
       - APP_ENV=local
       - DB_HOST=postgres
@@ -14,14 +21,16 @@ services:
       - DB_USERNAME=postgres
       - DB_PASSWORD=secret
       - REDIS_HOST=redis
-      - ANTHROPIC_API_KEY=sua-chave-aqui
-      - OPENAI_API_KEY=sua-chave-aqui
+      - CACHE_DRIVER=redis
+      - SESSION_DRIVER=file
+      - QUEUE_CONNECTION=redis
     depends_on:
       - postgres
       - redis
     networks:
       - marqueteiro
 
+  # ── PostgreSQL + pgvector ────────────────────────────────────────────
   postgres:
     image: pgvector/pgvector:pg16
     container_name: marqueteiro_postgres
@@ -37,6 +46,7 @@ services:
     networks:
       - marqueteiro
 
+  # ── Redis (cache, filas, sessões) ────────────────────────────────────
   redis:
     image: redis:7-alpine
     container_name: marqueteiro_redis
@@ -48,6 +58,7 @@ services:
     networks:
       - marqueteiro
 
+  # ── MinIO (S3-compatible local storage) ──────────────────────────────
   minio:
     image: minio/minio
     container_name: marqueteiro_minio
@@ -64,6 +75,7 @@ services:
     networks:
       - marqueteiro
 
+  # ── Mailpit (e-mail local para dev) ──────────────────────────────────
   mailpit:
     image: axllent/mailpit
     container_name: marqueteiro_mailpit

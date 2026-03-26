@@ -453,6 +453,13 @@
             </div>
         </div>
 
+        @if (session('success'))
+            <div
+                style="background:var(--green-bg);border:1px solid #cfe9d9;color:var(--green);border-radius:12px;padding:.85rem 1rem;font-size:.85rem">
+                {{ session('success') }}
+            </div>
+        @endif
+
         {{-- Hero de voz --}}
         <div class="voice-hero" id="voiceHero" onclick="toggleVoice()">
             <div class="vh-btn" id="vhBtn">
@@ -492,17 +499,19 @@
         {{-- Registro manual --}}
         <div class="manual-form">
             <h3>Registrar manualmente</h3>
-            <form id="manualForm" onsubmit="submitManual(event)">
+            <form id="manualForm" method="POST" action="{{ route('mayor.mandato.demands.store') }}">
+                @csrf
+                <input type="hidden" name="input_type" value="text">
                 <div class="mf-full">
                     <div class="form-group">
                         <label class="form-label">Descrição da demanda</label>
-                        <textarea class="form-textarea" id="manualText" name="text" placeholder="Descreva a demanda recebida..."></textarea>
+                        <textarea class="form-textarea" id="manualText" name="raw_input" placeholder="Descreva a demanda recebida..."></textarea>
                     </div>
                 </div>
                 <div class="mf-row">
                     <div class="form-group">
                         <label class="form-label">Localidade / Bairro</label>
-                        <input class="form-input" type="text" id="manualLocation" name="location"
+                        <input class="form-input" type="text" id="manualLocation" name="locality"
                             placeholder="Ex: Bairro Nova Esperança">
                     </div>
                     <div class="form-group">
@@ -538,21 +547,52 @@
             </form>
         </div>
 
-        {{-- Demandas salvas (localStorage temporário) --}}
+        {{-- Demandas recentes --}}
         <div>
             <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.85rem">
-                <h2 style="font-family:'Lora',serif;font-size:1rem;color:var(--ink)">Demandas registradas nesta sessão</h2>
-                <button class="btn btn-outline btn-sm" onclick="clearAll()" id="clearAllBtn" style="display:none">Limpar
-                    tudo</button>
+                <h2 style="font-family:'Lora',serif;font-size:1rem;color:var(--ink)">Demandas recentes</h2>
             </div>
-            <div class="demands-list" id="demandsList">
-                <div class="demands-empty" id="demandsEmpty">
-                    <svg viewBox="0 0 24 24" fill="currentColor">
-                        <path
-                            d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z" />
-                    </svg>
-                    Nenhuma demanda registrada ainda.<br>Grave por voz ou preencha o formulário.
-                </div>
+            <div class="demands-list">
+                @forelse ($demands as $d)
+                    <div class="demand-item">
+                        <div class="di-type-dot manual"></div>
+                        <div class="di-body">
+                            <div class="di-text">{{ $d->title ?: $d->raw_input }}</div>
+                            <div class="di-meta">
+                                @if ($d->created_at)
+                                    <span class="di-tag">
+                                        <strong>{{ $d->created_at->format('d/m H:i') }}</strong>
+                                    </span>
+                                @endif
+                                @if ($d->locality)
+                                    <span class="di-tag">
+                                        <strong>{{ $d->locality }}</strong>
+                                    </span>
+                                @endif
+                                @if ($d->area)
+                                    <span class="di-tag">{{ ucfirst(str_replace('_', ' ', $d->area)) }}</span>
+                                @endif
+                                <span class="di-tag">
+                                    {{ match ($d->status) {'resolved' => '✅ resolvida','in_progress' => '🟦 em andamento','cancelled' => '⛔ cancelada',default => '🟨 pendente'} }}
+                                </span>
+                            </div>
+                        </div>
+                        <a class="di-ask-btn" href="{{ route('mayor.mandato.demands.show', $d) }}" title="Ver detalhes">
+                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                <path
+                                    d="M12 8c-1.1 0-2 .9-2 2h2a1 1 0 1 1 1 1c-.55 0-1 .45-1 1v2h2v-1.1c1.15-.4 2-1.5 2-2.8 0-1.66-1.34-3-3-3zm-1 10h2v-2h-2v2zm1-16C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2z" />
+                            </svg>
+                        </a>
+                    </div>
+                @empty
+                    <div class="demands-empty">
+                        <svg viewBox="0 0 24 24" fill="currentColor">
+                            <path
+                                d="M19 3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm-7 3c1.93 0 3.5 1.57 3.5 3.5S13.93 13 12 13s-3.5-1.57-3.5-3.5S10.07 6 12 6zm7 13H5v-.23c0-.62.28-1.2.76-1.58C7.47 15.82 9.64 15 12 15s4.53.82 6.24 2.19c.48.38.76.97.76 1.58V19z" />
+                        </svg>
+                        Nenhuma demanda registrada ainda.<br>Grave por voz ou preencha o formulário.
+                    </div>
+                @endforelse
             </div>
         </div>
 
@@ -561,10 +601,8 @@
 
 @push('scripts')
     <script>
-        // ── Estado ────────────────────────────────────────────────
         let recognition = null;
         let isRecording = false;
-        let demands = JSON.parse(sessionStorage.getItem('demands') || '[]');
 
         const AREA_LABELS = {
             saude: 'Saúde',
@@ -578,11 +616,7 @@
             '': ''
         };
 
-        // ── Inicialização ─────────────────────────────────────────
         document.addEventListener('DOMContentLoaded', () => {
-            renderDemands();
-
-            // Atalho de teclado: Space para gravar (quando não está em input)
             document.addEventListener('keydown', (e) => {
                 if (e.code === 'Space' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(e.target.tagName)) {
                     e.preventDefault();
@@ -591,7 +625,6 @@
             });
         });
 
-        // ── Gravação de voz ───────────────────────────────────────
         function toggleVoice() {
             if (isRecording) {
                 stopVoice();
@@ -654,11 +687,9 @@
             status.textContent = '';
         }
 
-        // ── Transcrição capturada ─────────────────────────────────
         function showTranscript(text) {
             document.getElementById('transcriptText').textContent = text;
             document.getElementById('transcriptPreview').classList.add('visible');
-            // pré-preenche textarea manual
             document.getElementById('manualText').value = text;
         }
 
@@ -675,14 +706,11 @@
             window.location.href = '{{ route('mayor.chat.index') }}';
         }
 
-        // ── Registro manual ───────────────────────────────────────
         function submitManual(e) {
-            e.preventDefault();
             const text = document.getElementById('manualText').value.trim();
             const location = document.getElementById('manualLocation').value.trim();
             const area = document.getElementById('manualArea').value;
             if (!text) {
-                document.getElementById('manualText').focus();
                 return;
             }
             saveDemand({
@@ -709,76 +737,6 @@
                 `Registre e organize esta demanda: "${ctx}". Identifique o tema, localidade, secretaria responsável e sugira próximas ações.`
             );
             window.location.href = '{{ route('mayor.chat.index') }}';
-        }
-
-        // ── Persistência de sessão ────────────────────────────────
-        function saveDemand(demand) {
-            demand.id = Date.now();
-            demand.time = new Date().toLocaleTimeString('pt-BR', {
-                hour: '2-digit',
-                minute: '2-digit'
-            });
-            demands.unshift(demand);
-            sessionStorage.setItem('demands', JSON.stringify(demands));
-            renderDemands();
-        }
-
-        function renderDemands() {
-            const list = document.getElementById('demandsList');
-            const empty = document.getElementById('demandsEmpty');
-            const clearBtn = document.getElementById('clearAllBtn');
-
-            if (!demands.length) {
-                empty.style.display = 'block';
-                clearBtn.style.display = 'none';
-                return;
-            }
-            empty.style.display = 'none';
-            clearBtn.style.display = 'inline-flex';
-
-            // remove itens antigos (mantém o empty)
-            list.querySelectorAll('.demand-item').forEach(el => el.remove());
-
-            demands.forEach(d => {
-                const el = document.createElement('div');
-                el.className = 'demand-item';
-                el.innerHTML = `
-                <div class="di-type-dot ${d.type}"></div>
-                <div class="di-body">
-                    <div class="di-text">${escHtml(d.text)}</div>
-                    <div class="di-meta">
-                        ${d.time ? `<span class="di-tag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.99 2C6.47 2 2 6.48 2 12s4.47 10 9.99 10C17.52 22 22 17.52 22 12S17.52 2 11.99 2zM12 20c-4.42 0-8-3.58-8-8s3.58-8 8-8 8 3.58 8 8-3.58 8-8 8zm.5-13H11v6l5.25 3.15.75-1.23-4.5-2.67V7z"/></svg>${d.time}</span>` : ''}
-                        ${d.location ? `<span class="di-tag"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/></svg><strong>${escHtml(d.location)}</strong></span>` : ''}
-                        ${d.area ? `<span class="di-tag">${AREA_LABELS[d.area] || d.area}</span>` : ''}
-                        <span class="di-tag">${d.type === 'voice' ? '🎙 Voz' : '✏️ Manual'}</span>
-                    </div>
-                </div>
-                <button class="di-ask-btn" onclick="askAboutDemand('${escAttr(d.text)}')" title="Perguntar ao assistente">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/></svg>
-                </button>`;
-                list.appendChild(el);
-            });
-        }
-
-        function askAboutDemand(text) {
-            sessionStorage.setItem('chatPrefill',
-                `Organize esta demanda: "${text}". Identifique tema, localidade e secretaria responsável.`);
-            window.location.href = '{{ route('mayor.chat.index') }}';
-        }
-
-        function clearAll() {
-            if (!confirm('Limpar todas as demandas desta sessão?')) return;
-            demands = [];
-            sessionStorage.removeItem('demands');
-            renderDemands();
-        }
-
-        function escHtml(s) {
-            return s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
-        }
-
-        function escAttr(s) {
-            return s.replace(/'/g, '&#39;').replace(/"/g, '&quot;');
         }
     </script>
 @endpush
