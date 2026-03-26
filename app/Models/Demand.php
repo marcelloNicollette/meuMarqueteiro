@@ -18,6 +18,7 @@ class Demand extends Model
         'locality',
         'responsible_secretary',
         'priority',
+        'due_date',
         'is_urgent',
         'status',
         'resolution_note',
@@ -31,6 +32,7 @@ class Demand extends Model
         return [
             'is_urgent'   => 'boolean',
             'resolved_at' => 'datetime',
+            'due_date'    => 'date',
             'latitude'    => 'decimal:7',
             'longitude'   => 'decimal:7',
         ];
@@ -44,5 +46,10 @@ class Demand extends Model
     public function registeredBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'registered_by');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(DemandComment::class)->orderBy('created_at', 'desc');
     }
 }

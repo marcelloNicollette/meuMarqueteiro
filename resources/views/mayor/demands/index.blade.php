@@ -529,6 +529,20 @@
                         </select>
                     </div>
                 </div>
+                <div class="mf-row">
+                    <div class="form-group">
+                        <label class="form-label">Prioridade</label>
+                        <select class="form-select" name="priority" id="manualPriority">
+                            <option value="alta">Alta</option>
+                            <option value="media" selected>Média</option>
+                            <option value="baixa">Baixa</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Data de entrega (prazo)</label>
+                        <input class="form-input" type="date" name="due_date" id="manualDueDate">
+                    </div>
+                </div>
                 <div style="display:flex;justify-content:flex-end;gap:.6rem">
                     <button type="button" class="btn btn-outline btn-sm" onclick="sendManualToAssistant()">
                         <svg viewBox="0 0 24 24" fill="currentColor">
@@ -564,6 +578,11 @@
                                         <strong>{{ $d->created_at->format('d/m H:i') }}</strong>
                                     </span>
                                 @endif
+                                @if ($d->due_date)
+                                    <span class="di-tag">
+                                        entrega: <strong>{{ $d->due_date->format('d/m/Y') }}</strong>
+                                    </span>
+                                @endif
                                 @if ($d->locality)
                                     <span class="di-tag">
                                         <strong>{{ $d->locality }}</strong>
@@ -571,6 +590,9 @@
                                 @endif
                                 @if ($d->area)
                                     <span class="di-tag">{{ ucfirst(str_replace('_', ' ', $d->area)) }}</span>
+                                @endif
+                                @if ($d->priority)
+                                    <span class="di-tag">prioridade: {{ $d->priority }}</span>
                                 @endif
                                 <span class="di-tag">
                                     {{ match ($d->status) {'resolved' => '✅ resolvida','in_progress' => '🟦 em andamento','cancelled' => '⛔ cancelada',default => '🟨 pendente'} }}

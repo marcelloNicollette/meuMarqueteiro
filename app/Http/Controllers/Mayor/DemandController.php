@@ -41,6 +41,7 @@ class DemandController extends Controller
             'locality'   => ['nullable', 'string', 'max:255'],
             'area'       => ['nullable', 'string', 'max:50'],
             'priority'   => ['nullable', 'in:alta,media,baixa'],
+            'due_date'   => ['nullable', 'date'],
             'is_urgent'  => ['nullable', 'boolean'],
         ]);
 
@@ -54,6 +55,7 @@ class DemandController extends Controller
             'area'            => $data['area'] ?? null,
             'locality'        => $data['locality'] ?? null,
             'priority'        => $data['priority'] ?? 'media',
+            'due_date'        => $data['due_date'] ?? null,
             'is_urgent'       => (bool) ($data['is_urgent'] ?? false),
             'status'          => 'pending',
         ]);
@@ -71,6 +73,7 @@ class DemandController extends Controller
         }
 
         $municipality = $user->municipality;
+        $demand->load(['comments.user']);
         return view('mayor.demands.show', compact('demand', 'municipality'));
     }
 
@@ -99,6 +102,49 @@ class DemandController extends Controller
 
         return redirect()->route('mayor.mandato.demands.show', $demand)
             ->with('success', 'Status da demanda atualizado.');
+    }
+
+    public function update(Request $request, Demand $demand)
+    {
+        $user = Auth::user();
+        if (!$user instanceof User) abort(401);
+        if ($demand->municipality_id !== $user->municipality_id) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'priority' => ['required', 'in:alta,media,baixa'],
+            'due_date' => ['nullable', 'date'],
+        ]);
+
+        $demand->update([
+            'priority' => $data['priority'],
+            'due_date' => $data['due_date'] ?? null,
+        ]);
+
+        return redirect()->route('mayor.mandato.demands.show', $demand)
+            ->with('success', 'Dados da demanda atualizados.');
+    }
+
+    public function addComment(Request $request, Demand $demand)
+    {
+        $user = Auth::user();
+        if (!$user instanceof User) abort(401);
+        if ($demand->municipality_id !== $user->municipality_id) {
+            abort(403);
+        }
+
+        $data = $request->validate([
+            'comment' => ['required', 'string', 'max:2000'],
+        ]);
+
+        $demand->comments()->create([
+            'user_id' => $user->id,
+            'comment' => $data['comment'],
+        ]);
+
+        return redirect()->route('mayor.mandato.demands.show', $demand)
+            ->with('success', 'Comentário adicionado.');
     }
 
     public function storeVoice(Request $request)

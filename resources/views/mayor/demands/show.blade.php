@@ -86,6 +86,24 @@
         .form-select:focus {
             border-color: var(--ink);
         }
+
+        .form-input {
+            padding: .58rem .8rem;
+            border-radius: 9px;
+            border: 1.5px solid var(--border);
+            background: var(--white);
+            font-family: "Open Sans", sans-serif;
+            font-size: .84rem;
+            color: var(--ink);
+            outline: none;
+            transition: border-color .15s;
+            width: 100%;
+            max-width: 240px;
+        }
+
+        .form-input:focus {
+            border-color: var(--ink);
+        }
     </style>
 @endpush
 
@@ -95,7 +113,8 @@
             <div class="demand-title">{{ $demand->title ?: 'Demanda' }}</div>
 
             @if (session('success'))
-                <div style="background:var(--green-bg);border:1px solid #cfe9d9;color:var(--green);border-radius:12px;padding:.85rem 1rem;font-size:.85rem;margin:.85rem 0">
+                <div
+                    style="background:var(--green-bg);border:1px solid #cfe9d9;color:var(--green);border-radius:12px;padding:.85rem 1rem;font-size:.85rem;margin:.85rem 0">
                     {{ session('success') }}
                 </div>
             @endif
@@ -106,6 +125,9 @@
                 @endif
                 @if ($demand->locality)
                     <span class="tag">{{ $demand->locality }}</span>
+                @endif
+                @if ($demand->due_date)
+                    <span class="tag">entrega: {{ $demand->due_date->format('d/m/Y') }}</span>
                 @endif
                 @if ($demand->area)
                     <span class="tag">{{ ucfirst(str_replace('_', ' ', $demand->area)) }}</span>
@@ -143,6 +165,44 @@
                     </select>
                     <button class="btn btn-dark" type="submit">Salvar status</button>
                 </form>
+            </div>
+
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-lt)">
+                <form method="POST" action="{{ route('mayor.mandato.demands.update', $demand) }}" class="status-row">
+                    @csrf
+                    @method('PATCH')
+                    <label class="status-label">Prioridade</label>
+                    <select name="priority" class="form-select">
+                        <option value="alta" @selected($demand->priority === 'alta')>Alta</option>
+                        <option value="media" @selected($demand->priority === 'media')>Média</option>
+                        <option value="baixa" @selected($demand->priority === 'baixa')>Baixa</option>
+                    </select>
+                    <label class="status-label">Data de entrega</label>
+                    <input type="date" class="form-input" name="due_date"
+                        value="{{ optional($demand->due_date)->format('Y-m-d') }}">
+                    <button class="btn btn-dark" type="submit">Salvar</button>
+                </form>
+            </div>
+
+            <div style="margin-top:1rem;padding-top:1rem;border-top:1px solid var(--border-lt)">
+                <h3 style="font-family:'Lora',serif;font-size:1rem;color:var(--ink);margin-bottom:.6rem">Comentários</h3>
+                <form method="POST" action="{{ route('mayor.mandato.demands.comments.add', $demand) }}"
+                    style="display:flex;gap:.6rem;flex-wrap:wrap;margin-bottom:.75rem">
+                    @csrf
+                    <textarea name="comment" class="form-textarea" placeholder="Adicionar comentário..." style="flex:1;min-height:70px"></textarea>
+                    <button class="btn btn-dark" type="submit">Adicionar</button>
+                </form>
+                @forelse ($demand->comments as $c)
+                    <div
+                        style="border:1px solid var(--border);background:var(--surface);border-radius:10px;padding:.7rem .9rem;margin-bottom:.5rem">
+                        <div style="font-size:.8rem;color:var(--ink-muted);margin-bottom:.25rem">
+                            {{ $c->created_at->format('d/m/Y H:i') }} · {{ $c->user?->name }}
+                        </div>
+                        <div style="font-size:.9rem;color:var(--ink)">{{ $c->comment }}</div>
+                    </div>
+                @empty
+                    <p style="font-size:.85rem;color:var(--ink-muted)">Nenhum comentário ainda.</p>
+                @endforelse
             </div>
         </div>
     </div>
