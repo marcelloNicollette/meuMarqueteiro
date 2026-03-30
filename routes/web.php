@@ -39,6 +39,14 @@ Route::middleware(['auth', 'role:admin'])
         Route::patch('municipalities/{municipality}/toggle', [Admin\MunicipalityController::class, 'toggleActive'])
             ->name('municipalities.toggle');
 
+        // Áreas de contato do município
+        Route::prefix('municipalities/{municipality}/contact-areas')->name('municipalities.contact-areas.')->group(function () {
+            Route::get('/', [Admin\ContactAreaController::class, 'index'])->name('index');
+            Route::post('/', [Admin\ContactAreaController::class, 'store'])->name('store');
+            Route::put('/{contactArea}', [Admin\ContactAreaController::class, 'update'])->name('update');
+            Route::delete('/{contactArea}', [Admin\ContactAreaController::class, 'destroy'])->name('destroy');
+        });
+
         // Onboarding
         Route::prefix('municipalities/{municipality}/onboarding')
             ->name('municipalities.onboarding.')

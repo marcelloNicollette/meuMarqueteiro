@@ -516,17 +516,18 @@
                     </div>
                     <div class="form-group">
                         <label class="form-label">Área demandante</label>
-                        <select class="form-select" id="manualArea" name="area">
-                            <option value="">Selecione</option>
-                            <option value="saude">🏥 Saúde</option>
-                            <option value="educacao">📚 Educação</option>
-                            <option value="infraestrutura">🏗 Infraestrutura</option>
-                            <option value="social">🤝 Social</option>
-                            <option value="seguranca">🛡 Segurança</option>
-                            <option value="meio_ambiente">🌿 Meio Ambiente</option>
-                            <option value="economia">💼 Economia</option>
-                            <option value="outros">📋 Outros</option>
-                        </select>
+                        @if (isset($contactAreas) && $contactAreas->count())
+                            <select class="form-select" id="manualArea" name="contact_area_id">
+                                <option value="">Selecione</option>
+                                @foreach ($contactAreas as $a)
+                                    <option value="{{ $a->id }}">
+                                        {{ $a->name }}{{ $a->contact_name ? ' — ' . $a->contact_name : '' }}</option>
+                                @endforeach
+                            </select>
+                        @else
+                            <input class="form-input" type="text" id="manualArea" name="area"
+                                placeholder="Ex: Secretaria de Educação">
+                        @endif
                     </div>
                 </div>
                 <div class="mf-row">
@@ -626,17 +627,7 @@
         let recognition = null;
         let isRecording = false;
 
-        const AREA_LABELS = {
-            saude: 'Saúde',
-            educacao: 'Educação',
-            infraestrutura: 'Infraestrutura',
-            social: 'Social',
-            seguranca: 'Segurança',
-            meio_ambiente: 'Meio Ambiente',
-            economia: 'Economia',
-            outros: 'Outros',
-            '': ''
-        };
+        const AREA_LABELS = {};
 
         document.addEventListener('DOMContentLoaded', () => {
             document.addEventListener('keydown', (e) => {
@@ -731,7 +722,9 @@
         function submitManual(e) {
             const text = document.getElementById('manualText').value.trim();
             const location = document.getElementById('manualLocation').value.trim();
-            const area = document.getElementById('manualArea').value;
+            const areaEl = document.getElementById('manualArea');
+            const area = areaEl ? (areaEl.tagName === 'SELECT' ? areaEl.options[areaEl.selectedIndex]?.text : areaEl
+                .value) : '';
             if (!text) {
                 return;
             }
@@ -748,12 +741,14 @@
         function sendManualToAssistant() {
             const text = document.getElementById('manualText').value.trim();
             const location = document.getElementById('manualLocation').value.trim();
-            const area = document.getElementById('manualArea').value;
+            const areaEl = document.getElementById('manualArea');
+            const area = areaEl ? (areaEl.tagName === 'SELECT' ? areaEl.options[areaEl.selectedIndex]?.text : areaEl
+                .value) : '';
             if (!text) {
                 document.getElementById('manualText').focus();
                 return;
             }
-            const ctx = [text, location ? `Localidade: ${location}` : '', area ? `Área: ${AREA_LABELS[area]}` : ''].filter(
+            const ctx = [text, location ? `Localidade: ${location}` : '', area ? `Área: ${area}` : ''].filter(
                 Boolean).join('. ');
             sessionStorage.setItem('chatPrefill',
                 `Registre e organize esta demanda: "${ctx}". Identifique o tema, localidade, secretaria responsável e sugira próximas ações.`

@@ -17,6 +17,7 @@ class Demand extends Model
         'area',
         'locality',
         'responsible_secretary',
+        'contact_area_id',
         'priority',
         'due_date',
         'is_urgent',
@@ -46,6 +47,11 @@ class Demand extends Model
     public function registeredBy(): BelongsTo
     {
         return $this->belongsTo(User::class, 'registered_by');
+    }
+
+    public function contactArea(): BelongsTo
+    {
+        return $this->belongsTo(ContactArea::class, 'contact_area_id');
     }
 
     public function comments()

@@ -20,13 +20,15 @@ class DemandController extends Controller
         if (!$user instanceof User) abort(401);
         $municipality = $user->municipality;
 
+        $contactAreas = $municipality->contactAreas()->where('active', true)->get();
+
         $demands = Demand::query()
             ->where('municipality_id', $municipality->id)
             ->orderByDesc('created_at')
             ->limit(20)
             ->get();
 
-        return view('mayor.demands.index', compact('municipality', 'demands'));
+        return view('mayor.demands.index', compact('municipality', 'demands', 'contactAreas'));
     }
 
     public function store(Request $request)
@@ -39,11 +41,18 @@ class DemandController extends Controller
             'raw_input'  => ['required', 'string', 'max:4000'],
             'input_type' => ['nullable', 'in:text,voice'],
             'locality'   => ['nullable', 'string', 'max:255'],
-            'area'       => ['nullable', 'string', 'max:50'],
+            'area'       => ['nullable', 'string', 'max:120'],
+            'contact_area_id' => ['nullable', 'exists:contact_areas,id'],
             'priority'   => ['nullable', 'in:alta,media,baixa'],
             'due_date'   => ['nullable', 'date'],
             'is_urgent'  => ['nullable', 'boolean'],
         ]);
+
+        $areaName = $data['area'] ?? null;
+        if (!empty($data['contact_area_id'])) {
+            $ca = $municipality->contactAreas()->where('id', $data['contact_area_id'])->first();
+            if ($ca) $areaName = $ca->name;
+        }
 
         Demand::create([
             'municipality_id' => $municipality->id,
@@ -52,8 +61,9 @@ class DemandController extends Controller
             'raw_input'       => $data['raw_input'],
             'title'           => Str::limit(trim($data['raw_input']), 90),
             'description'     => null,
-            'area'            => $data['area'] ?? null,
+            'area'            => $areaName,
             'locality'        => $data['locality'] ?? null,
+            'contact_area_id' => $data['contact_area_id'] ?? null,
             'priority'        => $data['priority'] ?? 'media',
             'due_date'        => $data['due_date'] ?? null,
             'is_urgent'       => (bool) ($data['is_urgent'] ?? false),

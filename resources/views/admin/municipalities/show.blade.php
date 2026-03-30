@@ -10,6 +10,7 @@
         </div>
         <div style="display:flex;gap:.75rem">
             <a href="{{ route('admin.municipalities.edit', $municipality) }}" style="padding:.6rem 1rem;border:1px solid #d1d5db;border-radius:8px;font-size:.85rem;text-decoration:none;color:#374151">Editar</a>
+            <a href="{{ route('admin.municipalities.contact-areas.index', $municipality) }}" style="padding:.6rem 1rem;border:1px solid #d1d5db;border-radius:8px;font-size:.85rem;text-decoration:none;color:#374151">Áreas de contato</a>
             @if($municipality->onboarding_status !== 'completed')
             <a href="{{ route('admin.municipalities.onboarding.show', $municipality) }}" style="padding:.6rem 1rem;background:var(--gold);color:#fff;border-radius:8px;font-size:.85rem;text-decoration:none;font-weight:600">Onboarding</a>
             @endif

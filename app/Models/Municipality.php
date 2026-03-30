@@ -102,6 +102,11 @@ class Municipality extends Model
         return $this->hasMany(MorningBriefing::class);
     }
 
+    public function contactAreas(): HasMany
+    {
+        return $this->hasMany(ContactArea::class)->orderBy('name');
+    }
+
     // ─── Helpers ─────────────────────────────────────────
 
     public function isOnboarded(): bool

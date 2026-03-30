@@ -145,6 +145,24 @@
 
             <div class="demand-body">{{ $demand->raw_input }}</div>
 
+            @if($demand->contactArea)
+                <div style="margin-top:1rem;padding:1rem;border:1px solid var(--border-lt);border-radius:10px;background:var(--surface)">
+                    <div style="font-size:.85rem;color:var(--ink-soft);margin-bottom:.4rem">Área demandante</div>
+                    <div style="font-size:.9rem;color:var(--ink)">
+                        <strong>{{ $demand->contactArea->name }}</strong>
+                        @if($demand->contactArea->contact_name)
+                            · {{ $demand->contactArea->contact_name }}
+                        @endif
+                        @if($demand->contactArea->email)
+                            · {{ $demand->contactArea->email }}
+                        @endif
+                        @if($demand->contactArea->phone)
+                            · {{ $demand->contactArea->phone }}
+                        @endif
+                    </div>
+                </div>
+            @endif
+
             <div class="actions">
                 <a class="btn btn-outline" href="{{ route('mayor.mandato.demands.index') }}">Voltar</a>
                 <button class="btn btn-gold" type="button" onclick="askAssistant()">
