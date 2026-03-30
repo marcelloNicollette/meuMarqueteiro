@@ -13,6 +13,9 @@ use App\Services\FederalPrograms\FederalProgramSyncService;
 use App\Services\FederalPrograms\TransparenciaClient;
 use App\Services\FederalPrograms\TransferegovClient;
 use App\Services\RAG\RAGService;
+use App\Services\RAG\UrlIndexerService;
+use App\Services\Social\SocialMonitorService;
+use App\Services\WebPushService;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
@@ -27,6 +30,18 @@ class AppServiceProvider extends ServiceProvider
             RAGService::class,
             fn($app) =>
             new RAGService($app->make(AIProviderService::class))
+        );
+
+        $this->app->singleton(
+            UrlIndexerService::class,
+            fn($app) =>
+            new UrlIndexerService($app->make(AIProviderService::class))
+        );
+
+        $this->app->singleton(
+            SocialMonitorService::class,
+            fn($app) =>
+            new SocialMonitorService($app->make(WebPushService::class))
         );
 
         $this->app->singleton(

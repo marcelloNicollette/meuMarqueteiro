@@ -52,6 +52,30 @@ class Kernel extends ConsoleKernel
                 \Log::error('Falha na ingestão semanal de dados públicos.');
             });
 
+
+
+        // ── Monitoramento de Menções ──────────────────────────────────────
+        // Roda a cada 4 horas para buscar novas menções
+        $schedule->command('marqueteiro:monitor-mentions')
+            ->everyFourHours()
+            ->timezone('America/Sao_Paulo')
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->onFailure(function () {
+                \Log::warning('Falha no monitoramento de menções.');
+            });
+
+        // ── URLs Monitoradas ──────────────────────────────────────────────
+        // Re-indexa diariamente as URLs com frequência 'daily'
+        $schedule->command('marqueteiro:index-urls')
+            ->dailyAt('05:00')
+            ->timezone('America/Sao_Paulo')
+            ->withoutOverlapping()
+            ->runInBackground()
+            ->onFailure(function () {
+                \Log::warning('Falha na re-indexação de URLs monitoradas.');
+            });
+
         // ── Limpeza ───────────────────────────────────────────────────────
         // Remover embeddings expirados
         $schedule->call(function () {

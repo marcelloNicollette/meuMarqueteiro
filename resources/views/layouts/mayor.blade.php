@@ -357,6 +357,11 @@
                 data-label="Recursos">
                 <img src="/images/icone-recursos.svg" alt="">
             </a>
+            <a href="{{ route('mayor.mentions.index') }}"
+                class="sidenav-item {{ request()->routeIs('mayor.mentions.index') ? 'active' : '' }}"
+                data-label="Menções">
+                <img width="25" src="/images/icon-mentions.svg" alt="">
+            </a>
         </div>
 
         <div class="sidenav-bottom">

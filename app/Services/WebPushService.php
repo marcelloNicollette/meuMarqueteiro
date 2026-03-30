@@ -13,20 +13,27 @@ use Minishlink\WebPush\Subscription;
  */
 class WebPushService
 {
-    private WebPush $webPush;
+    private ?WebPush $webPush = null;
 
     public function __construct()
     {
-        $auth = [
-            'VAPID' => [
-                'subject'    => config('webpush.vapid_subject', 'mailto:admin@meumarqueteiro.com.br'),
-                'publicKey'  => config('webpush.vapid_public_key'),
-                'privateKey' => config('webpush.vapid_private_key'),
-            ],
-        ];
+        $subject    = config('webpush.vapid_subject', 'mailto:admin@meumarqueteiro.com.br');
+        $publicKey  = config('webpush.vapid_public_key');
+        $privateKey = config('webpush.vapid_private_key');
 
-        $this->webPush = new WebPush($auth);
-        $this->webPush->setReuseVAPIDHeaders(true);
+        if (empty($publicKey) || empty($privateKey)) {
+            Log::info('WebPush desativado: VAPID keys não configuradas');
+            return;
+        }
+
+        try {
+            $auth = ['VAPID' => compact('subject', 'publicKey', 'privateKey')];
+            $this->webPush = new WebPush($auth);
+            $this->webPush->setReuseVAPIDHeaders(true);
+        } catch (\Throwable $e) {
+            Log::warning('WebPush desativado: VAPID inválido — ' . $e->getMessage());
+            $this->webPush = null;
+        }
     }
 
     /**
@@ -34,6 +41,11 @@ class WebPushService
      */
     public function sendToUser(User $user, array $payload): void
     {
+        if (!$this->webPush) {
+            Log::info("Push: ignorado — serviço desativado");
+            return;
+        }
+
         $subscriptions = PushSubscription::where('user_id', $user->id)
             ->where('is_active', true)
             ->get();
@@ -90,6 +102,11 @@ class WebPushService
      */
     public function sendToSubscription(PushSubscription $sub, array $payload): bool
     {
+        if (!$this->webPush) {
+            Log::info("Push: ignorado — serviço desativado");
+            return false;
+        }
+
         try {
             $subscription = Subscription::create([
                 'endpoint'        => $sub->endpoint,

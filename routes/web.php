@@ -84,6 +84,20 @@ Route::middleware(['auth', 'role:admin'])
             Route::post('/cleanup',          [Admin\KnowledgeBaseController::class, 'cleanupOrphanEmbeddings'])->name('cleanup');
         });
 
+
+
+        // URLs Monitoradas (RAG) — base de conhecimento via web
+        Route::prefix('monitored-urls')->name('monitored-urls.')->group(function () {
+            Route::get('/',              [Admin\MonitoredUrlController::class, 'index'])->name('index');
+            Route::post('/',             [Admin\MonitoredUrlController::class, 'store'])->name('store');
+            Route::post('/{id}/reindex', [Admin\MonitoredUrlController::class, 'reindex'])->name('reindex');
+            Route::post('/{id}/toggle',  [Admin\MonitoredUrlController::class, 'toggle'])->name('toggle');
+            Route::delete('/{id}',       [Admin\MonitoredUrlController::class, 'destroy'])->name('destroy');
+            Route::get('/{id}/preview',  [Admin\MonitoredUrlController::class, 'preview'])->name('preview');
+            Route::put('/{id}',          [Admin\MonitoredUrlController::class, 'update'])->name('update');
+        });
+
+
         // Relatório de mandato
         Route::post('/municipalities/{municipality}/generate-report', [Admin\ReportController::class, 'generate'])
             ->name('municipalities.report');
@@ -156,6 +170,16 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
             Route::post('/{content}/publish',    [Mayor\ContentController::class, 'publish'])->name('publish');
         });
 
+        Route::prefix('mentions')->name('mentions.')->group(function () {
+            Route::get('/',                       [Mayor\MentionsController::class, 'index'])->name('index');
+            Route::post('/refresh',               [Mayor\MentionsController::class, 'refresh'])->name('refresh');
+            Route::post('/read',                  [Mayor\MentionsController::class, 'markRead'])->name('read');
+            Route::get('/config',                 [Mayor\MentionsController::class, 'config'])->name('config');
+            Route::post('/keywords',              [Mayor\MentionsController::class, 'storeKeyword'])->name('keyword.store');
+            Route::post('/keywords/{id}/toggle',  [Mayor\MentionsController::class, 'toggleKeyword'])->name('keyword.toggle');
+            Route::delete('/keywords/{id}',       [Mayor\MentionsController::class, 'destroyKeyword'])->name('keyword.destroy');
+        });
+
         // ── Módulo 3: Gestão do Mandato ───────────────────────────────────
         Route::prefix('mandato')->name('mandato.')->group(function () {
 
@@ -194,6 +218,7 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
             Route::get('/briefings/{briefing}', [Mayor\BriefingController::class, 'show'])->name('briefings.show');
             Route::post('/briefings/mark-read/{briefing}', [Mayor\BriefingController::class, 'markRead'])->name('briefings.read');
             Route::post('/briefings/generate', [Mayor\BriefingController::class, 'generate'])->name('briefings.generate');
+
 
             // Registro de demandas por voz
             Route::post('/demands/voice',    [Mayor\DemandController::class, 'storeVoice'])->name('demands.voice');

@@ -6,8 +6,10 @@ use App\Models\MorningBriefing;
 use App\Models\Municipality;
 use App\Services\RAG\RAGService;
 use App\Services\WebPushService;
+use App\Services\Social\SocialMonitorService;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -17,9 +19,11 @@ use Illuminate\Support\Facades\Log;
 class MorningBriefingService
 {
 
+    // Chave lida do .env — nunca hardcode em código-fonte
+
     public function __construct(
-        private RAGService $rag,
-        private AIProviderService $ai,
+        private RAGService           $rag,
+        private ?SocialMonitorService $social = null,
     ) {}
 
     public function generate(Municipality $municipality): MorningBriefing
@@ -54,6 +58,16 @@ class MorningBriefingService
             ->orderByDesc('match_score')
             ->limit(3)
             ->get();
+
+        // ── Monitoramento de menções (últimas 24h) ────────────────────────
+        $mentionsSummary = '';
+        try {
+            if ($this->social) {
+                $mentionsSummary = $this->social->getDailySummary($municipality) ?? '';
+            }
+        } catch (\Exception $e) {
+            Log::warning("Menções no briefing de {$municipality->name}: " . $e->getMessage());
+        }
 
         // ── Demandas recentes não resolvidas ──────────────────────────
         $demandasPendentes = 0;
@@ -157,12 +171,21 @@ REGRAS ABSOLUTAS:
 - Use emojis com moderacao apenas onde agregar valor visual (⚠️ ✅ 🎯)";
 
         // ── Chamar API ────────────────────────────────────────────────
-        $response = $this->ai->chat(
-            [['role' => 'user', 'content' => $prompt]],
-            ['max_tokens' => 1500]
-        );
+        $response = Http::withHeaders([
+            'x-api-key'         => env('ANTHROPIC_API_KEY'),
+            'anthropic-version' => '2023-06-01',
+            'content-type'      => 'application/json',
+        ])->timeout(60)->post('https://api.anthropic.com/v1/messages', [
+            'model'      => 'claude-sonnet-4-6',
+            'max_tokens' => 1500,
+            'messages'   => [['role' => 'user', 'content' => $prompt]],
+        ]);
 
-        $content = $response->content ?? '';
+        if (!$response->successful()) {
+            throw new \RuntimeException("Falha na API ao gerar briefing para {$municipality->name}: HTTP " . $response->status());
+        }
+
+        $content = $response->json()['content'][0]['text'] ?? '';
 
         if (empty(trim($content))) {
             throw new \RuntimeException("Conteudo vazio gerado para {$municipality->name}");
