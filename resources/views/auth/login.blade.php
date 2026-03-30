@@ -358,6 +358,8 @@
             }
         }
 
+
+
         /* ── Animação de entrada ──────────────────────────────── */
         @keyframes fadeUp {
             from {
@@ -393,6 +395,14 @@
         .logo {
             width: 10rem;
             margin: 0 auto;
+        }
+
+
+
+        @media (max-width: 880px) {
+            .robo-bg {
+                background: none;
+            }
         }
     </style>
 </head>
