@@ -58,7 +58,7 @@ class AppServiceProvider extends ServiceProvider
             fn($app) =>
             new MorningBriefingService(
                 $app->make(RAGService::class),
-                $app->make(AIProviderService::class),
+                $app->make(SocialMonitorService::class),
             )
         );
 
