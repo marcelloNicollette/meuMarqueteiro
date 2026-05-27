@@ -171,7 +171,7 @@ class CommitmentsSeeder extends Seeder
             ],
             [
                 'title'                  => 'Programa Bolsa Municipal para famílias em extrema vulnerabilidade',
-                'description'            => 'Benefício mensal de R$200 para 150 famílias identificadas em extrema pobreza não atendidas pelo programa federal.',
+                'description'            => 'Benefício mensal de R$200 para 150 famílias identificadas em extrema pobreza não  atendidas pelo programa federal.',
                 'area'                   => 'social',
                 'priority'               => 'media',
                 'status'                 => 'em_andamento',
@@ -197,7 +197,7 @@ class CommitmentsSeeder extends Seeder
                 'budget_allocated'       => 500000.00,
                 'budget_spent'           => 0,
                 'budget_source'          => 'misto',
-                'notes'                  => 'ATENÇÃO: Parceria com banco prevista ainda não formalizada. Reunião agendada para março.',
+                'notes'                  => 'ATENÇÃO: Parceria com banco prevista ainda não  formalizada. Reunião agendada para março.',
             ],
         ];
 

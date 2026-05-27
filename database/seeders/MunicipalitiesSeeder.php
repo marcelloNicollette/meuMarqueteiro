@@ -15,10 +15,10 @@ class MunicipalitiesSeeder extends Seeder
 {
     public function run(): void
     {
-        $municipios = [
+        $municípios = [
             // Pequeno porte — Nordeste
             [
-                'municipio' => [
+                'município' => [
                     'name'               => 'Serrinha',
                     'ibge_code'          => '2930501',
                     'state'              => 'Bahia',
@@ -36,7 +36,7 @@ class MunicipalitiesSeeder extends Seeder
             ],
             // Médio porte — Sul
             [
-                'municipio' => [
+                'município' => [
                     'name'               => 'Lages',
                     'ibge_code'          => '4209300',
                     'state'              => 'Santa Catarina',
@@ -54,7 +54,7 @@ class MunicipalitiesSeeder extends Seeder
             ],
             // Grande porte — Sudeste
             [
-                'municipio' => [
+                'município' => [
                     'name'               => 'Ribeirão Preto',
                     'ibge_code'          => '3543402',
                     'state'              => 'São Paulo',
@@ -72,7 +72,7 @@ class MunicipalitiesSeeder extends Seeder
             ],
             // Pequeno porte — Norte
             [
-                'municipio' => [
+                'município' => [
                     'name'               => 'Altamira',
                     'ibge_code'          => '1500602',
                     'state'              => 'Pará',
@@ -90,7 +90,7 @@ class MunicipalitiesSeeder extends Seeder
             ],
             // Médio porte — Centro-Oeste
             [
-                'municipio' => [
+                'município' => [
                     'name'               => 'Rondonópolis',
                     'ibge_code'          => '5107602',
                     'state'              => 'Mato Grosso',
@@ -108,14 +108,14 @@ class MunicipalitiesSeeder extends Seeder
             ],
         ];
 
-        foreach ($municipios as $item) {
+        foreach ($municípios as $item) {
             // Não duplica se já existir
-            if (Municipality::where('ibge_code', $item['municipio']['ibge_code'])->exists()) {
-                $this->command->info("  Pulando {$item['municipio']['name']} — já existe.");
+            if (Municipality::where('ibge_code', $item['município']['ibge_code'])->exists()) {
+                $this->command->info("  Pulando {$item['município']['name']} — já existe.");
                 continue;
             }
 
-            $municipality = Municipality::create(array_merge($item['municipio'], [
+            $municipality = Municipality::create(array_merge($item['município'], [
                 'onboarding_status' => 'pending',
             ]));
 

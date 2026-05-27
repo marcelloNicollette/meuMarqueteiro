@@ -1,10 +1,10 @@
 @extends('layouts.admin')
-@section('title', 'Novo Prefeito')
+@section('title', 'Novo Usuário Municipal')
 @section('content')
 <div style="padding:2rem;max-width:600px">
     <div style="margin-bottom:1.5rem">
-        <a href="{{ route('admin.users.index') }}" style="font-size:.85rem;color:#6b7280;text-decoration:none">← Prefeitos</a>
-        <h1 style="font-size:1.4rem;font-weight:700;margin-top:.5rem">Novo Prefeito</h1>
+        <a href="{{ route('admin.users.index') }}" style="font-size:.85rem;color:#6b7280;text-decoration:none">← Usuários municipais</a>
+        <h1 style="font-size:1.4rem;font-weight:700;margin-top:.5rem">Novo Usuário Municipal</h1>
     </div>
     <form method="POST" action="{{ route('admin.users.store') }}" style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb">
         @csrf
@@ -14,11 +14,35 @@
             <div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">E-mail *</label><input name="email" type="email" value="{{ old('email') }}" required style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box"></div>
             <div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Senha *</label><input name="password" type="password" required style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box"></div>
             <div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Telefone</label><input name="phone" value="{{ old('phone') }}" style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box"></div>
+            <div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Perfil *</label>
+                <select name="role" id="roleField" required style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
+                    <option value="mayor" {{ old('role') === 'mayor' ? 'selected' : '' }}>Prefeito</option>
+                    <option value="secretary" {{ old('role') === 'secretary' ? 'selected' : '' }}>Secretário</option>
+                    <option value="advisor" {{ old('role') === 'advisor' ? 'selected' : '' }}>Assessor</option>
+                </select>
+            </div>
             <div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Município *</label>
                 <select name="municipality_id" required style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
                     <option value="">Selecione...</option>
                     @foreach($municipalities as $m)<option value="{{ $m->id }}" {{ old('municipality_id') == $m->id ? 'selected' : '' }}>{{ $m->name }} — {{ $m->state_code }}</option>@endforeach
                 </select>
+            </div>
+            <div><label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Secretaria vinculada</label>
+                <select name="contact_area_id" id="contactAreaField" style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
+                    <option value="">Selecione...</option>
+                    @foreach($contactAreas as $area)
+                        <option value="{{ $area->id }}" data-municipality="{{ $area->municipality_id }}" {{ old('contact_area_id') == $area->id ? 'selected' : '' }}>
+                            {{ $area->name }} — {{ $area->municipality?->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <div style="font-size:.75rem;color:#9ca3af;margin-top:.3rem">Obrigatória para secretário e assessor.</div>
+            </div>
+            <div id="advisorDemandPermission" style="display:none">
+                <label style="display:flex;align-items:center;gap:.5rem;font-size:.88rem;cursor:pointer">
+                    <input type="checkbox" name="can_register_demands" value="1" {{ old('can_register_demands') ? 'checked' : '' }}>
+                    Assessor pode registrar demandas no Resolve ai
+                </label>
             </div>
         </div>
         <div style="display:flex;justify-content:flex-end;gap:1rem">
@@ -28,3 +52,33 @@
     </form>
 </div>
 @endsection
+
+@push('scripts')
+<script>
+    (function () {
+        const roleField = document.getElementById('roleField');
+        const municipalityField = document.querySelector('select[name="municipality_id"]');
+        const contactAreaField = document.getElementById('contactAreaField');
+        const advisorDemandPermission = document.getElementById('advisorDemandPermission');
+
+        function syncContactAreas() {
+            const municipalityId = municipalityField.value;
+            [...contactAreaField.options].forEach((option, index) => {
+                if (index === 0) return;
+                option.hidden = municipalityId !== '' && option.dataset.municipality !== municipalityId;
+            });
+        }
+
+        function syncRoleFields() {
+            const role = roleField.value;
+            contactAreaField.required = role === 'secretary' || role === 'advisor';
+            advisorDemandPermission.style.display = role === 'advisor' ? 'block' : 'none';
+        }
+
+        municipalityField.addEventListener('change', syncContactAreas);
+        roleField.addEventListener('change', syncRoleFields);
+        syncContactAreas();
+        syncRoleFields();
+    })();
+</script>
+@endpush

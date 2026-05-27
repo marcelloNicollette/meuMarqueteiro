@@ -1,7 +1,7 @@
 @extends('layouts.mayor')
 
-@section('title', 'Monitoramento de Menções')
-@section('topbar-title', 'Redes & Notícias')
+@section('title', 'Menções')
+@section('topbar-title', 'Comunicação · Menções')
 
 @push('styles')
     <style>
@@ -103,7 +103,7 @@
         /* ── KPIs ──────────────────────────────────────────────────── */
         .kpi-grid {
             display: grid;
-            grid-template-columns: repeat(5, 1fr);
+            grid-template-columns: repeat(6, 1fr);
             gap: .75rem;
         }
 
@@ -118,6 +118,72 @@
             border: 1px solid var(--border);
             border-radius: 9px;
             padding: .85rem 1rem;
+        }
+
+        .reputation-card,
+        .manual-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1rem 1.1rem;
+        }
+
+        .reputation-title,
+        .manual-title {
+            font-size: .78rem;
+            text-transform: uppercase;
+            letter-spacing: .1em;
+            color: var(--ink-muted);
+            margin-bottom: .8rem;
+        }
+
+        .reputation-bar {
+            display: flex;
+            width: 100%;
+            height: 14px;
+            border-radius: 999px;
+            overflow: hidden;
+            background: var(--bg);
+            border: 1px solid var(--border);
+        }
+
+        .reputation-segment {
+            height: 100%;
+        }
+
+        .reputation-legend {
+            display: grid;
+            grid-template-columns: repeat(4, minmax(0, 1fr));
+            gap: .75rem;
+            margin-top: .85rem;
+        }
+
+        .reputation-item {
+            border: 1px solid var(--border);
+            border-radius: 9px;
+            padding: .7rem .8rem;
+            background: #fff;
+        }
+
+        .reputation-item strong {
+            display: block;
+            font-size: .95rem;
+            color: var(--ink);
+        }
+
+        .reputation-item span {
+            display: inline-flex;
+            align-items: center;
+            gap: .35rem;
+            font-size: .74rem;
+            color: var(--ink-muted);
+        }
+
+        .reputation-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
         }
 
         .kpi-val {
@@ -168,6 +234,54 @@
         .filter-btn.positive.active {
             background: var(--green);
             border-color: var(--green);
+        }
+
+        .filter-btn.urgent.active {
+            background: #ea580c;
+            border-color: #ea580c;
+        }
+
+        .manual-form-grid {
+            display: grid;
+            grid-template-columns: 160px 1fr 1fr;
+            gap: .75rem;
+        }
+
+        .manual-form-grid .full {
+            grid-column: 1 / -1;
+        }
+
+        .manual-form-grid label {
+            display: block;
+            font-size: .76rem;
+            font-weight: 600;
+            color: var(--ink-soft);
+            margin-bottom: .3rem;
+        }
+
+        .manual-form-grid input,
+        .manual-form-grid select,
+        .manual-form-grid textarea {
+            width: 100%;
+            padding: .6rem .75rem;
+            border: 1.5px solid var(--border);
+            border-radius: 8px;
+            font-family: 'DM Sans', sans-serif;
+            font-size: .82rem;
+            color: var(--ink);
+            background: var(--white);
+            outline: none;
+        }
+
+        .manual-form-grid textarea {
+            min-height: 112px;
+            resize: vertical;
+        }
+
+        .manual-form-grid input:focus,
+        .manual-form-grid select:focus,
+        .manual-form-grid textarea:focus {
+            border-color: var(--gold);
         }
 
         /* ── Mention cards ─────────────────────────────────────────── */
@@ -306,6 +420,14 @@
             color: var(--ink-muted);
             margin-bottom: 1rem;
         }
+
+        @media(max-width:960px) {
+
+            .reputation-legend,
+            .manual-form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 @endpush
 
@@ -315,12 +437,13 @@
         {{-- Header --}}
         <div class="mentions-header">
             <div>
-                <h1>Redes & Notícias</h1>
+                <h1>Menções</h1>
                 <p>Monitoramento de menções sobre {{ $municipality->name }} — atualizado automaticamente</p>
                 <p style="font-size:.78rem;color:var(--ink-muted);margin:.35rem 0 0;max-width:62ch">
                     A busca consulta fontes públicas (Google News e Twitter/X via RSS) usando suas palavras‑chave, salva as
                     ocorrências no sistema e
-                    aplica análise de sentimento automaticamente.
+                    aplica análise de sentimento automaticamente, incluindo leitura de urgência para acionar resposta de
+                    crise.
                 </p>
 
             </div>
@@ -356,6 +479,27 @@
                 <a href="{{ route('mayor.mentions.config') }}" class="btn-primary">Configurar palavras-chave</a>
             </div>
         @else
+            <div class="reputation-card">
+                <div class="reputation-title">Termômetro de reputação</div>
+                <div class="reputation-bar">
+                    @foreach ($reputationBoard['segments'] ?? [] as $segment)
+                        <div class="reputation-segment"
+                            style="width:{{ max(0, (float) ($segment['percent'] ?? 0)) }}%;background:{{ $segment['color'] }}">
+                        </div>
+                    @endforeach
+                </div>
+                <div class="reputation-legend">
+                    @foreach ($reputationBoard['segments'] ?? [] as $segment)
+                        <div class="reputation-item">
+                            <strong>{{ $segment['count'] }}</strong>
+                            <span><i class="reputation-dot" style="background:{{ $segment['color'] }}"></i>
+                                {{ $segment['label'] }} ·
+                                {{ number_format((float) $segment['percent'], 1, ',', '.') }}%</span>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
             {{-- KPIs --}}
             <div class="kpi-grid">
                 <div class="kpi-card">
@@ -371,6 +515,10 @@
                     <div class="kpi-label">Negativas</div>
                 </div>
                 <div class="kpi-card">
+                    <div class="kpi-val" style="color:#ea580c">{{ $stats['urgent'] }}</div>
+                    <div class="kpi-label">Urgentes</div>
+                </div>
+                <div class="kpi-card">
                     <div class="kpi-val" style="color:var(--ink-muted)">{{ $stats['neutral'] }}</div>
                     <div class="kpi-label">Neutras</div>
                 </div>
@@ -380,6 +528,51 @@
                     <div class="kpi-label">Não lidas</div>
                 </div>
             </div>
+
+            <details class="manual-card">
+                <summary style="cursor:pointer;list-style:none;font-weight:600;color:var(--ink)">
+                    Registrar menção manual
+                </summary>
+                <div style="font-size:.79rem;color:var(--ink-muted);line-height:1.6;margin:.75rem 0 .95rem">
+                    Use este bloco para registrar capturas vindas de grupos de WhatsApp, encaminhamentos internos ou outras
+                    fontes não automatizáveis. A menção é salva e classificada automaticamente.
+                </div>
+                <form method="POST" action="{{ route('mayor.mentions.manual.store') }}">
+                    @csrf
+                    <div class="manual-form-grid">
+                        <div>
+                            <label>Origem</label>
+                            <select name="channel">
+                                <option value="whatsapp">WhatsApp / grupo</option>
+                                <option value="social">Rede social manual</option>
+                                <option value="news">Portal / notícia</option>
+                                <option value="manual">Outro manual</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label>Título</label>
+                            <input type="text" name="title"
+                                placeholder="Ex: vídeo de crítica circulando em grupo local">
+                        </div>
+                        <div>
+                            <label>Autor ou perfil</label>
+                            <input type="text" name="author" placeholder="Ex: @perfillocal ou grupo Bairro Centro">
+                        </div>
+                        <div class="full">
+                            <label>Conteúdo da menção</label>
+                            <textarea name="content" required
+                                placeholder="Cole aqui o trecho principal, resumo do print, contexto do encaminhamento ou a transcrição da mensagem."></textarea>
+                        </div>
+                        <div class="full">
+                            <label>URL opcional</label>
+                            <input type="url" name="url" placeholder="https://...">
+                        </div>
+                    </div>
+                    <div style="margin-top:.9rem;display:flex;justify-content:flex-end">
+                        <button type="submit" class="btn-primary">Salvar menção manual</button>
+                    </div>
+                </form>
+            </details>
 
             {{-- Gráfico simples --}}
             @if (!empty($chartData))
@@ -391,23 +584,35 @@
                         <span style="display:flex;align-items:center;gap:.3rem"><span
                                 style="width:10px;height:10px;border-radius:2px;background:var(--red);display:inline-block"></span>Negativas</span>
                         <span style="display:flex;align-items:center;gap:.3rem"><span
+                                style="width:10px;height:10px;border-radius:2px;background:#ea580c;display:inline-block"></span>Urgentes</span>
+                        <span style="display:flex;align-items:center;gap:.3rem"><span
                                 style="width:10px;height:10px;border-radius:2px;background:#ccc;display:inline-block"></span>Neutras</span>
                     </div>
                     @php
                         $maxVal =
-                            max(array_map(fn($d) => $d['positive'] + $d['negative'] + $d['neutral'], $chartData)) ?: 1;
+                            max(
+                                array_map(
+                                    fn($d) => $d['positive'] + $d['negative'] + $d['neutral'] + ($d['urgent'] ?? 0),
+                                    $chartData,
+                                ),
+                            ) ?:
+                            1;
                     @endphp
                     <div class="chart-bars">
                         @foreach ($chartData as $day)
                             @php
-                                $total = $day['positive'] + $day['negative'] + $day['neutral'];
+                                $total = $day['positive'] + $day['negative'] + $day['neutral'] + ($day['urgent'] ?? 0);
                                 $posH = $total > 0 ? round(($day['positive'] / $maxVal) * 76) : 0;
                                 $negH = $total > 0 ? round(($day['negative'] / $maxVal) * 76) : 0;
                                 $neuH = $total > 0 ? round(($day['neutral'] / $maxVal) * 76) : 0;
+                                $urgH = $total > 0 ? round((($day['urgent'] ?? 0) / $maxVal) * 76) : 0;
                             @endphp
                             <div class="chart-col">
                                 @if ($neuH > 0)
                                     <div class="chart-bar" style="height:{{ $neuH }}px;background:#ccc"></div>
+                                @endif
+                                @if ($urgH > 0)
+                                    <div class="chart-bar" style="height:{{ $urgH }}px;background:#ea580c"></div>
                                 @endif
                                 @if ($negH > 0)
                                     <div class="chart-bar" style="height:{{ $negH }}px;background:var(--red)">
@@ -441,12 +646,25 @@
                     </a>
                     <a href="{{ route('mayor.mentions.index', array_merge(request()->query(), ['filter' => 'negative'])) }}"
                         class="filter-btn negative {{ $filter === 'negative' ? 'active' : '' }}">⚠️ Negativas</a>
+                    <a href="{{ route('mayor.mentions.index', array_merge(request()->query(), ['filter' => 'urgent'])) }}"
+                        class="filter-btn urgent {{ $filter === 'urgent' ? 'active' : '' }}">🚨 Urgentes</a>
                     <a href="{{ route('mayor.mentions.index', array_merge(request()->query(), ['filter' => 'positive'])) }}"
                         class="filter-btn positive {{ $filter === 'positive' ? 'active' : '' }}">✅ Positivas</a>
                     <a href="{{ route('mayor.mentions.index', array_merge(request()->query(), ['filter' => 'neutral'])) }}"
                         class="filter-btn {{ $filter === 'neutral' ? 'active' : '' }}">Neutras</a>
                 </div>
                 <div style="display:flex;gap:.5rem;align-items:center">
+                    <select onchange="window.location=this.value"
+                        style="font-size:.78rem;padding:.35rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--white)">
+                        <option
+                            value="{{ route('mayor.mentions.index', array_merge(request()->query(), ['source' => 'all'])) }}"
+                            {{ $source === 'all' ? 'selected' : '' }}>Todas as fontes</option>
+                        @foreach ($sourceOptions as $option)
+                            <option
+                                value="{{ route('mayor.mentions.index', array_merge(request()->query(), ['source' => $option['value']])) }}"
+                                {{ $source === $option['value'] ? 'selected' : '' }}>{{ $option['label'] }}</option>
+                        @endforeach
+                    </select>
                     <select onchange="window.location=this.value"
                         style="font-size:.78rem;padding:.35rem .6rem;border:1px solid var(--border);border-radius:6px;background:var(--white)">
                         @foreach ([3 => '3 dias', 7 => '7 dias', 14 => '14 dias', 30 => '30 dias'] as $d => $label)
@@ -516,6 +734,13 @@
                                     <a href="{{ $mention->url }}" target="_blank" rel="noopener" class="btn-secondary"
                                         style="font-size:.72rem;padding:.3rem .6rem">
                                         Abrir →
+                                    </a>
+                                @endif
+                                @if (in_array($mention->sentiment, ['negative', 'urgent'], true))
+                                    <a href="{{ route('mayor.content.index', ['tab' => 'crisis', 'mention' => $mention->id]) }}"
+                                        class="btn-primary"
+                                        style="font-size:.72rem;padding:.3rem .6rem;background:#c0392b">
+                                        Abrir crise
                                     </a>
                                 @endif
                                 @if (!$mention->is_read)

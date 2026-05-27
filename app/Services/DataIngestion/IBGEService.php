@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
  * IBGE — Dados básicos, população, PIB e área territorial.
  *
  * Endpoints usados:
- *  v1/municipios/{code}                                  — dados básicos (instável, fallback local)
+ *  v1/municípios/{code}                                  — dados básicos (instável, fallback local)
  *  v1/pesquisas/indicadores/29171/resultados/{code}      — estimativas populacionais (estável)
  *  v3/agregados/5938/periodos/{ano}/variaveis/37         — PIB municipal
  *  v3/agregados/1301/periodos/{ano}/variaveis/614        — área territorial
@@ -39,7 +39,7 @@ class IBGEService
     {
         $extra = '';
         try {
-            $res = Http::timeout(10)->get("{$this->base1}/municipios/{$municipality->ibge_code}");
+            $res = Http::timeout(10)->get("{$this->base1}/municípios/{$municipality->ibge_code}");
             if ($res->ok()) {
                 $d     = $res->json();
                 $extra = "\nMesorregião: " . ($d['microrregiao']['mesorregiao']['nome'] ?? '—')
@@ -47,7 +47,7 @@ class IBGEService
                     . "\nUF: " . ($d['microrregiao']['mesorregiao']['UF']['nome'] ?? $municipality->state);
             }
         } catch (\Exception $e) {
-            Log::debug("IBGE /municipios/ indisponível: " . $e->getMessage());
+            Log::debug("IBGE /municípios/ indisponível: " . $e->getMessage());
         }
 
         return [

@@ -14,6 +14,11 @@
                 style="background:#d1fae5;border:1px solid #6ee7b7;padding:1rem;border-radius:8px;margin-bottom:1rem;color:#065f46">
                 {{ session('success') }}</div>
         @endif
+        @if (session('error'))
+            <div
+                style="background:#fef2f2;border:1px solid #fca5a5;padding:1rem;border-radius:8px;margin-bottom:1rem;color:#991b1b">
+                {{ session('error') }}</div>
+        @endif
 
         <div style="background:#fff;border-radius:12px;border:1px solid #e5e7eb;overflow:hidden">
             <table style="width:100%;border-collapse:collapse">
@@ -66,6 +71,17 @@
                                 color:{{ $m->onboarding_status === 'completed' ? '#1e40af' : ($m->onboarding_status === 'in_progress' ? '#92400e' : '#6b7280') }}">
                                         {{ $m->onboarding_status === 'completed' ? 'Onboarding OK' : ($m->onboarding_status === 'in_progress' ? 'Em onboarding' : 'Pendente') }}
                                     </span>
+                                    @php($bank = $m->project_bank_summary ?? [])
+                                    <span
+                                        style="padding:.2rem .7rem;border-radius:99px;font-size:.72rem;font-weight:600;
+                                background:{{ ($bank['status_tone'] ?? 'neutral') === 'warning' ? '#fef3c7' : (($bank['status_tone'] ?? 'neutral') === 'success' ? '#d1fae5' : '#f3f4f6') }};
+                                color:{{ ($bank['status_tone'] ?? 'neutral') === 'warning' ? '#92400e' : (($bank['status_tone'] ?? 'neutral') === 'success' ? '#065f46' : '#6b7280') }}">
+                                        Banco:
+                                        {{ $bank['status_label'] ?? 'Pendente' }}
+                                    </span>
+                                    <span style="font-size:.72rem;color:#9ca3af">
+                                        {{ $bank['library_size'] ?? 0 }} tese(s)
+                                    </span>
                                 </div>
                             </td>
                             <td style="padding:.9rem 1rem">
@@ -78,8 +94,18 @@
                                         <a href="{{ route('admin.municipalities.onboarding.show', $m) }}"
                                             style="padding:.3rem .7rem;border:1px solid #d4af37;border-radius:6px;font-size:.78rem;color:#92400e;text-decoration:none">Onboarding</a>
                                     @endif
+                                    @if ($m->subscription_active && $m->onboarding_status === 'completed')
+                                        <form method="POST"
+                                            action="{{ route('admin.municipalities.project-bank.refresh', $m) }}">
+                                            @csrf
+                                            <button type="submit"
+                                                style="padding:.3rem .7rem;border:1px solid #111827;border-radius:6px;font-size:.78rem;color:#111827;background:#fff;cursor:pointer">
+                                                Curar Banco
+                                            </button>
+                                        </form>
+                                    @endif
                                     <form method="POST" action="{{ route('admin.municipalities.destroy', $m) }}"
-                                        onsubmit="return confirm('Excluir {{ addslashes($m->name) }}? Esta ação não pode ser desfeita.')">
+                                        onsubmit="return confirm('Excluir {{ addslashes($m->name) }}? Esta ação não  pode ser desfeita.')">
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                             style="padding:.3rem .7rem;border:1px solid #fca5a5;border-radius:6px;font-size:.78rem;color:#dc2626;background:#fff;cursor:pointer">Excluir</button>

@@ -23,6 +23,11 @@ class RAGService
         private AIProviderService $ai,
     ) {}
 
+    public function isVectorSearchAvailable(): bool
+    {
+        return DB::getDriverName() === 'pgsql';
+    }
+
     /**
      * Recupera os chunks mais relevantes para uma query,
      * filtrados pelo município (isolamento multi-tenant).
@@ -31,6 +36,10 @@ class RAGService
      */
     public function retrieve(string $query, Municipality $municipality, int $limit = 10): Collection
     {
+        if (!$this->isVectorSearchAvailable()) {
+            return collect();
+        }
+
         // 1. Gerar embedding da query
         $queryVector = $this->ai->embed($query);
         $vectorStr   = '[' . implode(',', $queryVector) . ']';
@@ -171,6 +180,10 @@ class RAGService
         $vector    = $this->ai->embed($content);
         $vectorStr = '[' . implode(',', $vector) . ']';
 
+        $embeddingValue = $this->isVectorSearchAvailable()
+            ? DB::raw("'{$vectorStr}'::vector")
+            : $vectorStr;
+
         return DocumentEmbedding::create([
             'municipality_id' => $municipalityId,
             'document_id'     => $documentId,
@@ -179,7 +192,7 @@ class RAGService
             'source'          => $source,
             'chunk_index'     => $chunkIndex,
             'content'         => $content,
-            'embedding'       => DB::raw("'{$vectorStr}'::vector"),
+            'embedding'       => $embeddingValue,
             'metadata'        => $metadata,
             'token_count'     => str_word_count($content),
         ]);

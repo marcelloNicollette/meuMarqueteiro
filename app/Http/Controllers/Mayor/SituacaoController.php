@@ -3,8 +3,10 @@
 namespace App\Http\Controllers\Mayor;
 
 use App\Http\Controllers\Controller;
+use App\Enums\ResourceOpportunityStatus;
 use App\Models\Demand;
 use App\Models\User;
+use App\Services\Radar\HybridRadarReadService;
 use Illuminate\Support\Facades\Auth;
 
 class SituacaoController extends Controller
@@ -66,10 +68,14 @@ class SituacaoController extends Controller
             ->take(4);
 
         // ── Recursos federais captados ────────────────────────
-        $programas         = $municipality->federalPrograms()->get();
+        $programas         = app(HybridRadarReadService::class)->municipalityRadarPrograms($municipality, visibleOnly: false);
         $totalProgramas    = $programas->count();
-        $programasAbertos  = $programas->whereIn('status', ['open'])->count();
-        $programasMonitor  = $programas->whereIn('status', ['monitoring'])->count();
+        $programasAbertos  = $programas->whereIn('status', [
+            ResourceOpportunityStatus::Published->value,
+            ResourceOpportunityStatus::ClosingSoon->value,
+            ResourceOpportunityStatus::Reopened->value,
+        ])->count();
+        $programasMonitor  = $programas->whereIn('status', [ResourceOpportunityStatus::Monitoring->value])->count();
 
         // Valor total captado (convênios com valor)
         $valorCaptado = $programas
@@ -78,7 +84,7 @@ class SituacaoController extends Controller
             ->sum('max_value');
 
         $topProgramas = $programas
-            ->whereIn('status', ['open', 'monitoring'])
+            ->whereIn('status', ResourceOpportunityStatus::activeForRadar())
             ->sortByDesc('match_score')
             ->take(3);
 

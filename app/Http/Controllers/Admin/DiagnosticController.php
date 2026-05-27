@@ -6,14 +6,20 @@ use App\Http\Controllers\Controller;
 use App\Models\DocumentEmbedding;
 use App\Models\Municipality;
 use App\Models\SystemSetting;
+use App\Services\AI\ChatAudioService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class DiagnosticController extends Controller
 {
+    public function __construct(
+        private ChatAudioService $chatAudio,
+    ) {}
+
     public function index()
     {
         $checks = [];
+        $driver = DB::getDriverName();
 
         // ── 1. Provider de IA ────────────────────────────────────────────
         $provider = SystemSetting::get('ai_default_provider', env('AI_DEFAULT_PROVIDER', 'anthropic'));
@@ -24,23 +30,32 @@ class DiagnosticController extends Controller
             'label'  => 'Provider de IA',
             'status' => !empty($apiKey) ? 'ok' : 'error',
             'detalhe'=> "Provider: {$provider} | Modelo: {$model}",
-            'msg'    => !empty($apiKey) ? 'Chave configurada' : 'Chave de API não configurada em Configurações → IA',
+            'msg'    => !empty($apiKey) ? 'Chave configurada' : 'Chave de API não  configurada em Configurações → IA',
         ];
 
         // ── 2. Banco de dados ────────────────────────────────────────────
         try {
             DB::select('SELECT 1');
-            $checks['db'] = ['label'=>'Banco de dados','status'=>'ok','detalhe'=>'PostgreSQL','msg'=>'Conexão OK'];
+            $checks['db'] = ['label'=>'Banco de dados','status'=>'ok','detalhe'=>strtoupper($driver),'msg'=>'Conexão OK'];
         } catch (\Exception $e) {
             $checks['db'] = ['label'=>'Banco de dados','status'=>'error','detalhe'=>'','msg'=>$e->getMessage()];
         }
 
         // ── 3. pgvector ──────────────────────────────────────────────────
-        try {
-            DB::select("SELECT '[1,2,3]'::vector");
-            $checks['pgvector'] = ['label'=>'Extensão pgvector','status'=>'ok','detalhe'=>'RAG habilitado','msg'=>'Extensão instalada e funcional'];
-        } catch (\Exception $e) {
-            $checks['pgvector'] = ['label'=>'Extensão pgvector','status'=>'warning','detalhe'=>'RAG desabilitado','msg'=>'pgvector não instalado — RAG não funcionará'];
+        if ($driver !== 'pgsql') {
+            $checks['pgvector'] = [
+                'label' => 'Extensão pgvector',
+                'status' => 'warning',
+                'detalhe' => 'RAG vetorial desabilitado',
+                'msg' => 'O banco atual não  é PostgreSQL. O chat funciona sem RAG vetorial.',
+            ];
+        } else {
+            try {
+                DB::select("SELECT '[1,2,3]'::vector");
+                $checks['pgvector'] = ['label'=>'Extensão pgvector','status'=>'ok','detalhe'=>'RAG habilitado','msg'=>'Extensão instalada e funcional'];
+            } catch (\Exception $e) {
+                $checks['pgvector'] = ['label'=>'Extensão pgvector','status'=>'warning','detalhe'=>'RAG desabilitado','msg'=>'pgvector não  instalado — RAG não  funcionará'];
+            }
         }
 
         // ── 4. Embeddings no banco ───────────────────────────────────────
@@ -59,7 +74,7 @@ class DiagnosticController extends Controller
 
         // ── 5. APIs externas ativas ──────────────────────────────────────
         $apisCatalog = [
-            'ibge_municipios','ibge_populacao','atlas_brasil','ipea_data',
+            'ibge_municípios','ibge_populacao','atlas_brasil','ipea_data',
             'siconfi','finbra','transparencia','datasus','fns',
             'fnde','inep_censo','inep_ideb','snis','aneel','transferegov','bndes',
         ];
@@ -70,7 +85,12 @@ class DiagnosticController extends Controller
             'status' => $apisAtivas->count() > 0 ? 'ok' : 'warning',
             'detalhe'=> $apisAtivas->count().' de '.count($apisCatalog).' APIs ativas',
             'msg'    => $apisAtivas->count() > 0
-                ? 'APIs marcadas como ativas: '.implode(', ', $apisAtivas->map(fn($k)=>str_replace('_',' ',$k))->toArray())
+                ? 'APIs marcadas como ativas: '.implode(', ', $apisAtivas->map(function ($k) {
+                    return match ($k) {
+                        'transferegov' => 'portal transparencia (captação)',
+                        default => str_replace('_', ' ', $k),
+                    };
+                })->toArray())
                 : 'Nenhuma API externa ativa — ative em Configurações → APIs Externas',
         ];
 
@@ -78,9 +98,9 @@ class DiagnosticController extends Controller
         $openaiKey = SystemSetting::get('openai_api_key', env('OPENAI_API_KEY', ''));
         $embedMsg  = match($provider) {
             'anthropic' => empty($openaiKey)
-                ? 'ATENÇÃO: Anthropic não gera embeddings. É necessário configurar a chave OpenAI para o RAG funcionar.'
+                ? 'ATENÇÃO: Anthropic não  gera embeddings. É necessário configurar a chave OpenAI para o RAG funcionar.'
                 : 'Anthropic como chat + OpenAI para embeddings (configuração correta)',
-            'openai'    => !empty($apiKey) ? 'OpenAI usada para chat e embeddings' : 'Chave OpenAI não configurada',
+            'openai'    => !empty($apiKey) ? 'OpenAI usada para chat e embeddings' : 'Chave OpenAI não  configurada',
             'gemini'    => 'Gemini usado para chat e embeddings',
             default     => '—',
         };
@@ -92,7 +112,21 @@ class DiagnosticController extends Controller
             'msg'    => $embedMsg,
         ];
 
-        // ── 7. Fluxo do chat ─────────────────────────────────────────────
+        // ── 7. Audio server-side do chat ─────────────────────────────────
+        $audioHealth = $this->chatAudio->healthSnapshot();
+        $audioStatus = !$audioHealth['api_key_configured']
+            ? 'warning'
+            : (($audioHealth['speech_files'] + $audioHealth['input_files']) > 250 ? 'warning' : 'ok');
+        $checks['chat_audio'] = [
+            'label' => 'Audio server-side do chat',
+            'status' => $audioStatus,
+            'detalhe' => "Voice: {$audioHealth['voice']} | TTL: {$audioHealth['cache_ttl_minutes']} min",
+            'msg' => !$audioHealth['api_key_configured']
+                ? 'Fallback de audio sem chave OpenAI configurada.'
+                : "Modelos: STT {$audioHealth['transcription_model']} | TTS {$audioHealth['speech_model']} | Cache: {$audioHealth['speech_files']} saida(s), {$audioHealth['input_files']} entrada(s), {$audioHealth['cache_size_bytes']} bytes",
+        ];
+
+        // ── 8. Fluxo do chat ─────────────────────────────────────────────
         $municipalities = Municipality::where('subscription_active', true)
             ->withCount('documents')
             ->get(['id','name','onboarding_status','voice_profile','political_map']);
@@ -138,6 +172,13 @@ class DiagnosticController extends Controller
     public function testRAG(Request $request)
     {
         try {
+            if (DB::getDriverName() !== 'pgsql') {
+                return response()->json([
+                    'ok' => false,
+                    'erro' => 'RAG vetorial desabilitado no banco atual. Use PostgreSQL + pgvector para este teste.',
+                ], 422);
+            }
+
             $municipality = $request->filled('municipality_id')
                 ? Municipality::where('subscription_active', true)->where('id', $request->integer('municipality_id'))->firstOrFail()
                 : Municipality::where('subscription_active', true)->firstOrFail();
@@ -154,7 +195,7 @@ class DiagnosticController extends Controller
 
             return response()->json([
                 'ok'         => true,
-                'municipio'  => $municipality->name,
+                'município'  => $municipality->name,
                 'query'      => $query,
                 'chunks'     => $chunks->count(),
                 'tempo_ms'   => $ms,
@@ -172,6 +213,30 @@ class DiagnosticController extends Controller
                     'preview'         => mb_substr(trim(preg_replace('/\s+/', ' ', $c->content ?? '')), 0, 220),
                     'metadata'        => is_array($c->metadata) ? $c->metadata : json_decode($c->metadata ?? '{}', true),
                 ])->values(),
+            ]);
+        } catch (\Exception $e) {
+            return response()->json(['ok' => false, 'erro' => $e->getMessage()], 500);
+        }
+    }
+
+    public function testAudio(): \Illuminate\Http\JsonResponse
+    {
+        try {
+            $start = microtime(true);
+            $audio = $this->chatAudio->synthesize(
+                text: 'Teste de audio do Meu Marqueteiro.',
+                speed: 1.0,
+            );
+            $ms = round((microtime(true) - $start) * 1000);
+
+            return response()->json([
+                'ok' => true,
+                'provider' => $audio['provider'],
+                'model' => $audio['model'],
+                'voice' => $audio['voice'],
+                'cached' => (bool) ($audio['cached'] ?? false),
+                'tempo_ms' => $ms,
+                'bytes' => strlen($audio['content']),
             ]);
         } catch (\Exception $e) {
             return response()->json(['ok' => false, 'erro' => $e->getMessage()], 500);

@@ -21,7 +21,7 @@ return new class extends Migration
 
             // Metadados do arquivo
             $table->string('name')->comment('Nome amigável do documento');
-            $table->string('type', 50)->comment('programa_governo | ata_camara | orcamento | comunicacao | outros');
+            $table->string('type', 50)->comment('programa_governo | ata_camara | orcamento | comunicação | outros');
             $table->string('disk', 20)->default('s3');
             $table->string('path')->comment('Caminho no storage');
             $table->string('mime_type', 100)->nullable();

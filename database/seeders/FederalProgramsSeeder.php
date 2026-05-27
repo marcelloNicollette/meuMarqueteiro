@@ -4,10 +4,13 @@ namespace Database\Seeders;
 
 use App\Models\FederalProgramAlert;
 use App\Models\Municipality;
+use App\Models\ResourceSource;
 use Illuminate\Database\Seeder;
 
 class FederalProgramsSeeder extends Seeder
 {
+    private ?array $resourceSources = null;
+
     public function run(): void
     {
         $municipality = Municipality::where('subscription_active', true)->first();
@@ -54,7 +57,7 @@ class FederalProgramsSeeder extends Seeder
                 'deadline'        => null,
                 'status'          => 'open',
                 'match_score'     => 0.88,
-                'match_reason'    => 'Município não possui equipe de saúde bucal cadastrada no CNES — alta elegibilidade.',
+                'match_reason'    => 'Município não  possui equipe de saúde bucal cadastrada no CNES — alta elegibilidade.',
                 'source_url'      => 'https://www.gov.br/saude/pt-br/assuntos/saude-de-a-a-z/s/saude-bucal',
                 'source_platform' => 'ministerio',
                 'ai_matched'      => true,
@@ -233,10 +236,77 @@ class FederalProgramsSeeder extends Seeder
         foreach ($programs as $data) {
             $data['municipality_id'] = $municipality->id;
             if (!isset($data['applied_at'])) $data['applied_at'] = null;
+
+            $sourceKey = $this->resolveSourceKey($data);
+            $source = $this->resourceSource($sourceKey);
+
+            $data['source_platform'] = $sourceKey;
+            $data['source_key'] = $sourceKey;
+            $data['resource_source_id'] = $source['id'] ?? null;
+            $data['capture_method'] = $source['capture_method'] ?? ($data['capture_method'] ?? 'human_curation');
+            $data['resource_scope'] = $source['resource_scope'] ?? ($data['resource_scope'] ?? 'federal');
+
             FederalProgramAlert::create($data);
         }
 
         $this->command->info('✅ ' . count($programs) . " programas federais criados para {$municipality->name}.");
         $this->command->line('   Acesse: http://localhost:8000/mayor/mandato/federal-programs');
+    }
+
+    private function resolveSourceKey(array $data): string
+    {
+        $legacyPlatform = (string) ($data['source_platform'] ?? '');
+        $ministry = mb_strtolower((string) ($data['ministry'] ?? ''));
+        $sourceUrl = mb_strtolower((string) ($data['source_url'] ?? ''));
+        $programName = mb_strtolower((string) ($data['program_name'] ?? ''));
+
+        if ($legacyPlatform === 'fnde' || str_contains($ministry, 'fnde')) {
+            return 'fnde';
+        }
+
+        if ($legacyPlatform === 'caixa' || str_contains($ministry, 'caixa')) {
+            return 'caixa';
+        }
+
+        if ($legacyPlatform === 'transferegov') {
+            return 'transferegov';
+        }
+
+        if (str_contains($ministry, 'fundo nacional de saude') || str_contains($programName, 'saude bucal')) {
+            return 'fns';
+        }
+
+        if (str_contains($ministry, 'assistencia social') || str_contains($ministry, 'mds') || str_contains($sourceUrl, '/fnas')) {
+            return 'fnas';
+        }
+
+        return 'portal_transparencia';
+    }
+
+    private function resourceSource(string $key): ?array
+    {
+        $sources = $this->resourceSourceCatalog();
+
+        return $sources[$key] ?? null;
+    }
+
+    private function resourceSourceCatalog(): array
+    {
+        if ($this->resourceSources !== null) {
+            return $this->resourceSources;
+        }
+
+        $this->resourceSources = ResourceSource::query()
+            ->get(['id', 'key', 'capture_method', 'resource_scope'])
+            ->mapWithKeys(fn (ResourceSource $source) => [
+                $source->key => [
+                    'id' => $source->id,
+                    'capture_method' => $source->capture_method,
+                    'resource_scope' => $source->resource_scope,
+                ],
+            ])
+            ->all();
+
+        return $this->resourceSources;
     }
 }

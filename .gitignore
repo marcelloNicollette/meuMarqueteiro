@@ -39,3 +39,7 @@ Thumbs.db
 
 sudo docker-compose down.txt
 backup.sql
+*.sql
+
+dump.sql
+dump.backup

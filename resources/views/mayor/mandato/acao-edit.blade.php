@@ -389,6 +389,24 @@
             </div>
         @endif
 
+        @php
+            $milestoneRows = collect(old('milestones', $action->milestones->map(function ($milestone) {
+                return [
+                    'id' => $milestone->id,
+                    'title' => $milestone->title,
+                    'due_date' => $milestone->due_date?->format('Y-m-d'),
+                    'completed' => (bool) $milestone->completed_at,
+                ];
+            })->values()->all()));
+
+            if ($milestoneRows->isEmpty()) {
+                $milestoneRows = collect([['title' => '', 'due_date' => '', 'completed' => false]]);
+            }
+
+            $milestonesEnabled = (bool) old('uses_milestones_progress', $action->uses_milestones_progress);
+            $progressLogs = $action->progressLogs->take(10);
+        @endphp
+
         <form method="POST" action="{{ route('mayor.mandato.acao.update', $action->id) }}" id="acaoForm">
             @method('PUT')
             @csrf
@@ -427,8 +445,20 @@
                         </div>
                     </div>
                     <div>
+                        <label>Projeto vinculado</label>
+                        <select name="project_id">
+                            <option value="">Nenhum projeto salvo</option>
+                            @foreach ($projects as $project)
+                                <option value="{{ $project->id }}"
+                                    @selected((int) old('project_id', $action->project_id) === (int) $project->id)>
+                                    {{ $project->title }} · {{ $project->status_label }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
                         <label>Descrição</label>
-                        <textarea name="description" rows="3" placeholder="Descreva a ação, objetivos e resultados esperados...">{{ old('description') }}</textarea>
+                        <textarea name="description" rows="3" placeholder="Descreva a ação, objetivos e resultados esperados...">{{ old('description', $action->description) }}</textarea>
                     </div>
                 </div>
             </div>
@@ -446,14 +476,20 @@
                         <div>
                             <label>Status <span class="req">*</span></label>
                             <select name="status" required>
-                                <option value="planejado" {{ old('status') == 'planejado' ? 'selected' : '' }}>Planejado
+                                <option value="planejado"
+                                    {{ old('status', $action->status) == 'planejado' ? 'selected' : '' }}>Planejado
+                                </option>
+                                <option value="nao_iniciado"
+                                    {{ old('status', $action->status) == 'nao_iniciado' ? 'selected' : '' }}>Não iniciado
                                 </option>
                                 <option value="em_andamento"
-                                    {{ old('status', 'em_andamento') == 'em_andamento' ? 'selected' : '' }}>Em andamento
+                                    {{ old('status', $action->status) == 'em_andamento' ? 'selected' : '' }}>Em andamento
                                 </option>
-                                <option value="concluido" {{ old('status') == 'concluido' ? 'selected' : '' }}>Concluído
+                                <option value="concluido"
+                                    {{ old('status', $action->status) == 'concluido' ? 'selected' : '' }}>Concluído
                                 </option>
-                                <option value="suspenso" {{ old('status') == 'suspenso' ? 'selected' : '' }}>Suspenso
+                                <option value="suspenso"
+                                    {{ old('status', $action->status) == 'suspenso' ? 'selected' : '' }}>Suspenso
                                 </option>
                             </select>
                         </div>
@@ -479,6 +515,12 @@
                 </div>
             </div>
 
+            @include('mayor.mandato.partials.action-milestones', [
+                'milestoneRows' => $milestoneRows->values()->all(),
+                'milestonesEnabled' => $milestonesEnabled,
+                'progressLogs' => $progressLogs,
+            ])
+
             {{-- GRUPO 4: Vínculo com promessas (destaque — coração do sistema) --}}
             <div class="form-card">
                 <div class="form-card-header" style="background:#b8902a">
@@ -492,6 +534,17 @@
                     <p style="font-size:.8rem;color:var(--ink-muted);margin:0">
                         Selecione os compromissos que esta ação atende e defina o nível de atendimento para cada uma.
                     </p>
+                    <div
+                        style="display:flex;justify-content:space-between;align-items:center;gap:.75rem;flex-wrap:wrap;margin-top:.8rem">
+                        <div id="promiseSuggestionStatus" style="font-size:.78rem;color:var(--ink-muted)">
+                            A IA pode sugerir vínculos adicionais com base no conteúdo desta ação.
+                        </div>
+                        <button type="button" class="btn-secondary" onclick="suggestPromiseLinks(this)">Sugerir vínculos
+                            por IA</button>
+                    </div>
+                    <div id="promiseSuggestionList"
+                        style="display:none;margin-top:.75rem;padding:.85rem 1rem;border-radius:10px;background:#f8fafc;border:1px solid var(--border)">
+                    </div>
 
                     <div class="promise-picker" id="promisePicker">
                         @foreach ($axes as $axis)
@@ -664,5 +717,90 @@
 
         const axisSelect = document.getElementById('axisSelect');
         if (axisSelect.value) filterPromises(axisSelect.value);
+
+        async function suggestPromiseLinks(button) {
+            const title = document.querySelector('input[name="title"]').value.trim();
+            const description = document.querySelector('textarea[name="description"]').value.trim();
+            const axisId = document.getElementById('axisSelect').value;
+            const status = document.getElementById('promiseSuggestionStatus');
+            const list = document.getElementById('promiseSuggestionList');
+
+            if (!title) {
+                status.textContent = 'Informe ao menos o título da ação para receber sugestões.';
+                return;
+            }
+
+            const original = button.textContent;
+            button.disabled = true;
+            button.textContent = 'Sugerindo...';
+            status.textContent = 'Buscando compromissos compatíveis na base do município...';
+
+            try {
+                const response = await fetch('{{ route('mayor.mandato.promise.suggest') }}', {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').getAttribute(
+                            'content'),
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: title,
+                        description: description,
+                        mandate_axis_id: axisId || null,
+                    })
+                });
+
+                const data = await response.json();
+                if (!response.ok || !data.success) {
+                    throw new Error(data.message || 'Não foi possível sugerir vínculos agora.');
+                }
+
+                if (!data.suggestions.length) {
+                    status.textContent = 'Nenhum compromisso compatível foi sugerido para esta ação.';
+                    list.style.display = 'none';
+                    list.innerHTML = '';
+                    return;
+                }
+
+                status.textContent =
+                    'Sugestões aplicadas como seleção inicial. Revise e ajuste os níveis de atendimento antes de salvar.';
+                list.style.display = 'block';
+                list.innerHTML = data.suggestions.map(function(item) {
+                    selectSuggestedPromise(item.id);
+                    return '<div style="display:flex;justify-content:space-between;gap:.75rem;padding:.45rem 0;border-bottom:1px solid #e5e7eb">' +
+                        '<div style="font-size:.82rem;color:var(--ink)"><strong>' + escapeHtml(item.axis_name ||
+                            'Eixo') + ':</strong> ' + escapeHtml(item.text) + '</div>' +
+                        '<div style="font-size:.75rem;color:#64748b;white-space:nowrap">' + item
+                        .similarity_percent + '%</div>' +
+                        '</div>';
+                }).join('');
+            } catch (error) {
+                status.textContent = error.message || 'Erro ao sugerir vínculos.';
+                list.style.display = 'none';
+                list.innerHTML = '';
+            } finally {
+                button.disabled = false;
+                button.textContent = original;
+            }
+        }
+
+        function selectSuggestedPromise(id) {
+            const checkbox = document.getElementById('chk_' + id);
+            const item = document.getElementById('pp_' + id);
+            if (checkbox && item) {
+                checkbox.checked = true;
+                item.classList.add('selected');
+            }
+        }
+
+        function escapeHtml(value) {
+            return String(value || '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#039;');
+        }
     </script>
 @endpush

@@ -127,6 +127,79 @@
             color: var(--ink-soft);
         }
 
+        .pra-hoje-opening {
+            border: 1px solid var(--border-lt);
+            border-radius: 16px;
+            background: linear-gradient(180deg, #fffbe8 0%, #fff 100%);
+            padding: 1rem 1.1rem;
+            margin-bottom: 1rem;
+            font-size: .94rem;
+            line-height: 1.75;
+            color: var(--ink);
+        }
+
+        .pra-hoje-cards {
+            display: grid;
+            gap: .9rem;
+            margin-bottom: 1.35rem;
+        }
+
+        .pra-hoje-card {
+            border: 1px solid var(--border-lt);
+            border-radius: 16px;
+            background: #fff;
+            padding: 1rem 1.05rem;
+        }
+
+        .pra-hoje-card-head {
+            display: flex;
+            justify-content: space-between;
+            gap: .75rem;
+            align-items: flex-start;
+            margin-bottom: .55rem;
+        }
+
+        .pra-hoje-card-module {
+            font-size: .72rem;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+            color: var(--gold);
+            font-weight: 700;
+        }
+
+        .pra-hoje-card-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: var(--ink);
+            margin-top: .2rem;
+            line-height: 1.35;
+        }
+
+        .pra-hoje-card-priority {
+            font-size: .72rem;
+            color: var(--ink-muted);
+            white-space: nowrap;
+        }
+
+        .pra-hoje-card-copy {
+            display: grid;
+            gap: .45rem;
+            font-size: .88rem;
+            color: var(--ink-muted);
+            line-height: 1.6;
+        }
+
+        .pra-hoje-card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: .55rem;
+            margin-top: .85rem;
+        }
+
+        .pra-hoje-card-actions form {
+            margin: 0;
+        }
+
         /* Estilizar o markdown renderizado */
         .briefing-content h2 {
             font-family: 'Lora', serif;
@@ -245,7 +318,7 @@
 
         {{-- Navegação de volta --}}
         <div style="margin-bottom:1.25rem">
-            <a href="{{ route('mayor.mandato.briefings') }}"
+            <a href="{{ route('pra-hoje.index') }}"
                 style="display:inline-flex;align-items:center;gap:.35rem;font-size:.82rem;color:var(--ink-muted);text-decoration:none">
                 <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor">
                     <path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20v-2z" />
@@ -311,7 +384,54 @@
         {{-- Conteúdo do briefing --}}
         <div class="briefing-body">
             <div class="briefing-content">
-                {!! nl2br(e($briefing->content)) !!}
+                @if ($briefing->opening_text)
+                    <div class="pra-hoje-opening">{{ $briefing->opening_text }}</div>
+                @endif
+
+                @if (!empty($briefing->cards))
+                    <div class="pra-hoje-cards">
+                        @foreach ($briefing->cards as $index => $card)
+                            <div class="pra-hoje-card">
+                                <div class="pra-hoje-card-head">
+                                    <div>
+                                        <div class="pra-hoje-card-module">{{ $card['module_label'] ?? 'Pra Hoje' }}</div>
+                                        <div class="pra-hoje-card-title">{{ $card['title'] ?? 'Prioridade do dia' }}</div>
+                                    </div>
+                                    <div class="pra-hoje-card-priority">
+                                        {{ match ($card['priority_bucket'] ?? null) {
+                                            'urgências_com_prazo' => 'Urgência com prazo',
+                                            'riscos_de_mandato' => 'Risco de mandato',
+                                            'alertas_operacionais' => 'Alerta operacional',
+                                            default => 'Oportunidade',
+                                        } }}
+                                    </div>
+                                </div>
+                                <div class="pra-hoje-card-copy">
+                                    <div><strong>Situacao:</strong> {{ $card['situation'] ?? 'Sem situacao resumida.' }}
+                                    </div>
+                                    <div><strong>Sugestao:</strong> {{ $card['suggestion'] ?? 'Sem sugestao registrada.' }}
+                                    </div>
+                                </div>
+                                <div class="pra-hoje-card-actions">
+                                    @if (!empty($card['deep_link_url']))
+                                        <a href="{{ $card['deep_link_url'] }}" class="btn-action">
+                                            {{ $card['deep_link_label'] ?? 'Abrir item' }}
+                                        </a>
+                                    @endif
+                                    <form method="POST"
+                                        action="{{ route('pra-hoje.cards.conversation', [$briefing, $index]) }}">
+                                        @csrf
+                                        <button type="submit" class="btn-action gold">Falar com o Meu Marqueteiro</button>
+                                    </form>
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if (empty($briefing->cards))
+                    {!! nl2br(e($briefing->content)) !!}
+                @endif
             </div>
             <div class="briefing-footer">
                 <span>{{ $briefing->date->locale('pt_BR')->isoFormat('D [de] MMMM [de] YYYY') }}</span>
@@ -323,8 +443,7 @@
                         </svg>
                         Copiar
                     </button>
-                    <a href="{{ route('mayor.chat.index') }}?context=briefing_{{ $briefing->id }}"
-                        class="btn-action gold">
+                    <a href="{{ route('chat.index') }}?context=briefing_{{ $briefing->id }}" class="btn-action gold">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path
                                 d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
@@ -338,7 +457,7 @@
         {{-- Navegação entre briefings --}}
         <div class="briefing-nav">
             <span style="font-size:.8rem;color:var(--ink-muted)">
-                <a href="{{ route('mayor.mandato.briefings') }}" style="color:var(--ink-muted);text-decoration:none">←
+                <a href="{{ route('pra-hoje.index') }}" style="color:var(--ink-muted);text-decoration:none">←
                     Todos os briefings</a>
             </span>
             <span style="font-size:.8rem;color:var(--ink-muted)">

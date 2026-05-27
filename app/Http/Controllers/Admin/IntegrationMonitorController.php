@@ -7,6 +7,7 @@ use App\Jobs\IngestPublicDataJob;
 use App\Models\DocumentEmbedding;
 use App\Models\Municipality;
 use App\Models\SystemSetting;
+use Illuminate\Support\Facades\Queue;
 use Illuminate\Http\Request;
 
 class IntegrationMonitorController extends Controller
@@ -14,7 +15,7 @@ class IntegrationMonitorController extends Controller
     private function getApisCatalog(): array
     {
         return [
-            'ibge_municipios' => ['nome' => 'IBGE Cidades',        'grupo' => 'Socioeconômico'],
+            'ibge_municípios' => ['nome' => 'IBGE Cidades',        'grupo' => 'Socioeconômico'],
             'ibge_populacao'  => ['nome' => 'IBGE Estimativas',    'grupo' => 'Socioeconômico'],
             'atlas_brasil'    => ['nome' => 'Atlas Brasil (PNUD)', 'grupo' => 'Socioeconômico'],
             'ipea_data'       => ['nome' => 'IPEA Data',           'grupo' => 'Socioeconômico'],
@@ -28,7 +29,7 @@ class IntegrationMonitorController extends Controller
             'inep_ideb'       => ['nome' => 'INEP IDEB',           'grupo' => 'Educação'],
             'snis'            => ['nome' => 'SNIS Saneamento',     'grupo' => 'Infraestrutura'],
             'aneel'           => ['nome' => 'ANEEL / SIGEL',       'grupo' => 'Infraestrutura'],
-            'transferegov'    => ['nome' => 'Transferegov',        'grupo' => 'Captação'],
+            'transferegov'    => ['nome' => 'Portal Transparência (Captação)', 'grupo' => 'Captação'],
             'bndes'           => ['nome' => 'BNDES',               'grupo' => 'Captação'],
         ];
     }
@@ -54,7 +55,7 @@ class IntegrationMonitorController extends Controller
         }
 
         $stats = [
-            'municipios_ativos' => $municipalities->count(),
+            'municípios_ativos' => $municipalities->count(),
             'apis_ativas'       => count($apisAtivas),
             'apis_total'        => count($catalog),
             'ultima_sync'       => Municipality::whereNotNull('data_last_synced_at')->max('data_last_synced_at'),
@@ -72,8 +73,16 @@ class IntegrationMonitorController extends Controller
 
     public function sync(Request $request, Municipality $municipality)
     {
+        $job = new IngestPublicDataJob($municipality);
+        $connection = $this->resolveAsyncQueueConnection();
+
+        if ($connection) {
+            Queue::connection($connection)->push($job);
+            return back()->with('success', "Sincronizacao enfileirada para {$municipality->name} na fila {$connection}. Os dados serao indexados em breve.");
+        }
+
         IngestPublicDataJob::dispatch($municipality);
-        return back()->with('success', "Job enfileirado para {$municipality->name}. Os dados serão indexados em breve.");
+        return back()->with('warning', "A fila padrao esta configurada como sync. O processamento pode bloquear a requisicao enquanto indexa {$municipality->name}.");
     }
 
     public function syncNow(Municipality $municipality)
@@ -106,9 +115,43 @@ class IntegrationMonitorController extends Controller
     public function syncAll(Request $request)
     {
         $municipalities = Municipality::where('subscription_active', true)->get();
+        $connection = $this->resolveAsyncQueueConnection();
+
         foreach ($municipalities as $m) {
+            $job = new IngestPublicDataJob($m);
+
+            if ($connection) {
+                Queue::connection($connection)->push($job);
+                continue;
+            }
+
             IngestPublicDataJob::dispatch($m);
         }
-        return back()->with('success', "Jobs enfileirados para {$municipalities->count()} município(s).");
+
+        if ($connection) {
+            return back()->with('success', "Sincronizacoes enfileiradas para {$municipalities->count()} município(s) na fila {$connection}.");
+        }
+
+        return back()->with('warning', "A fila padrao esta configurada como sync. O processamento pode bloquear a requisicao ao sincronizar {$municipalities->count()} município(s).");
+    }
+
+    private function resolveAsyncQueueConnection(): ?string
+    {
+        $default = (string) config('queue.default', 'sync');
+        $connections = array_keys((array) config('queue.connections', []));
+
+        if ($default !== 'sync') {
+            return $default;
+        }
+
+        // Prefer the persisted queue first so ingestion can survive long retries
+        // without depending on the request/response lifecycle.
+        foreach (['database', 'background', 'deferred'] as $candidate) {
+            if (in_array($candidate, $connections, true)) {
+                return $candidate;
+            }
+        }
+
+        return null;
     }
 }

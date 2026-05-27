@@ -18,7 +18,7 @@ class EnsureMunicipalityOnboarded
 
         if (!$user || !$user->municipality) {
             return redirect()->route('login')
-                ->withErrors(['email' => 'Seu município ainda não foi configurado. Entre em contato com o consultor.']);
+                ->withErrors(['email' => 'Seu município ainda não  foi configurado. Entre em contato com o consultor.']);
         }
 
         if (!$user->municipality->isOnboarded()) {

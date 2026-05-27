@@ -87,6 +87,26 @@ class Municipality extends Model
         return $this->hasMany(FederalProgramAlert::class);
     }
 
+    public function resourceOpportunities(): HasMany
+    {
+        return $this->hasMany(FederalProgramAlert::class);
+    }
+
+    public function resourceCurationQueueEntries(): HasMany
+    {
+        return $this->hasMany(ResourceCurationQueue::class)->latest('created_at');
+    }
+
+    public function resourceUserSaves(): HasMany
+    {
+        return $this->hasMany(ResourceUserSave::class)->latest('created_at');
+    }
+
+    public function resourceReopenNotifications(): HasMany
+    {
+        return $this->hasMany(ResourceReopenNotification::class)->latest('created_at');
+    }
+
     public function fiscalData(): HasMany
     {
         return $this->hasMany(FiscalData::class);
@@ -97,6 +117,16 @@ class Municipality extends Model
         return $this->hasMany(GeneratedContent::class);
     }
 
+    public function contentTemplates(): HasMany
+    {
+        return $this->hasMany(ContentTemplate::class)->latest('updated_at');
+    }
+
+    public function projects(): HasMany
+    {
+        return $this->hasMany(Project::class)->latest('updated_at');
+    }
+
     public function morningBriefings(): HasMany
     {
         return $this->hasMany(MorningBriefing::class);
@@ -105,6 +135,11 @@ class Municipality extends Model
     public function contactAreas(): HasMany
     {
         return $this->hasMany(ContactArea::class)->orderBy('name');
+    }
+
+    public function localities(): HasMany
+    {
+        return $this->hasMany(MunicipalityLocality::class)->orderBy('name');
     }
 
     // ─── Helpers ─────────────────────────────────────────

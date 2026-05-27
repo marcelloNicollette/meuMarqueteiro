@@ -10,7 +10,7 @@ class MonitorSocialMentions extends Command
 {
     protected $signature = 'marqueteiro:monitor-mentions
                                 {--municipality= : ID do município (omitir = todos)}
-                                {--analyze-only  : Só analisar sentimento das pendentes, não buscar novas}';
+                                {--analyze-only  : Só analisar sentimento das pendentes, não  buscar novas}';
 
     protected $description = 'Monitora menções nas redes sociais e notícias para todos os municípios';
 

@@ -43,7 +43,7 @@ if ! grep -q "RoleMiddleware" "$BOOTSTRAP" 2>/dev/null; then
     php /meu-marqueteiro-src/docker/patch-bootstrap.php
 fi
 
-# ── 4. Criar controllers stub que ainda não existem ──────────
+# ── 4. Criar controllers stub que ainda não  existem ──────────
 echo "➤ Criando controllers..."
 mkdir -p app/Http/Controllers/Admin
 mkdir -p app/Http/Controllers/Mayor
@@ -161,7 +161,7 @@ echo "➤ Aguardando PostgreSQL..."
 TRIES=0
 until php -r "\$c=pg_connect('host=${DB_HOST:-postgres} port=${DB_PORT:-5432} dbname=${DB_DATABASE:-meu_marqueteiro} user=${DB_USERNAME:-postgres} password=${DB_PASSWORD:-secret}');if(\$c){pg_close(\$c);exit(0);}exit(1);" 2>/dev/null; do
     TRIES=$((TRIES+1))
-    [ $TRIES -gt 20 ] && echo "  ✗ Postgres não respondeu." && break
+    [ $TRIES -gt 20 ] && echo "  ✗ Postgres não  respondeu." && break
     echo "  ... aguardando ($TRIES/20)"
     sleep 3
 done

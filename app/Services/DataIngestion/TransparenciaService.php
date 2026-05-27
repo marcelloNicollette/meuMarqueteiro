@@ -22,7 +22,7 @@ class TransparenciaService
 
         if (empty($apiKey)) {
             return [[
-                'content'  => "Portal da Transparência — {$municipality->name}\nChave de API não configurada. Configure em Configurações → APIs Externas.",
+                'content'  => "Portal da Transparência — {$municipality->name}\nChave de API não  configurada. Configure em Configurações → APIs Externas.",
                 'category' => 'fiscal',
                 'source'   => 'Portal da Transparência',
                 'metadata' => ['status' => 'sem_chave'],
@@ -37,7 +37,7 @@ class TransparenciaService
         try {
             $res = Http::timeout(20)
                 ->withHeaders(['chave-api-dados' => $apiKey])
-                ->get("{$this->baseUrl}/transferencias/municipios", [
+                ->get("{$this->baseUrl}/transferencias/municípios", [
                     'codigoIbge' => $ibgeCode,
                     'ano'        => $ano,
                     'pagina'     => 1,
@@ -54,7 +54,7 @@ class TransparenciaService
                         "Últimas transferências:",
                     ];
                     foreach (array_slice($items, 0, 8) as $t) {
-                        $lines[] = "  - {$t['descricaoPrograma']}: R$ " . number_format($t['valor'], 2, ',', '.');
+                        $lines[] = "  - {$t['descriçãoPrograma']}: R$ " . number_format($t['valor'], 2, ',', '.');
                     }
                     $chunks[] = [
                         'content'  => implode("\n", $lines),
@@ -90,7 +90,7 @@ class TransparenciaService
                     }
                     $chunks[] = [
                         'content'  => implode("\n", $lines),
-                        'category' => 'captacao',
+                        'category' => 'captação',
                         'source'   => 'Portal da Transparência — Convênios',
                         'metadata' => ['ibge_code'=>$ibgeCode, 'tipo'=>'convenios_vigentes'],
                     ];

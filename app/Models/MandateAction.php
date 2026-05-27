@@ -5,12 +5,14 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class MandateAction extends Model
 {
     protected $fillable = [
         'municipality_id',
         'mandate_axis_id',
+        'project_id',
         'title',
         'description',
         'secretaria',
@@ -18,6 +20,7 @@ class MandateAction extends Model
         'start_date',
         'end_date',
         'physical_progress',
+        'uses_milestones_progress',
         'investment',
         'funding_source',
         'region',
@@ -34,6 +37,7 @@ class MandateAction extends Model
             'investment'        => 'decimal:2',
             'is_public'         => 'boolean',
             'physical_progress' => 'integer',
+            'uses_milestones_progress' => 'boolean',
         ];
     }
 
@@ -47,6 +51,11 @@ class MandateAction extends Model
         return $this->belongsTo(Municipality::class);
     }
 
+    public function project(): BelongsTo
+    {
+        return $this->belongsTo(Project::class);
+    }
+
     public function promises(): BelongsToMany
     {
         return $this->belongsToMany(MandatePromise::class, 'mandate_action_promise')
@@ -54,10 +63,21 @@ class MandateAction extends Model
             ->withTimestamps();
     }
 
+    public function milestones(): HasMany
+    {
+        return $this->hasMany(MandateActionMilestone::class)->orderBy('order');
+    }
+
+    public function progressLogs(): HasMany
+    {
+        return $this->hasMany(MandateActionProgressLog::class)->orderByDesc('occurred_at');
+    }
+
     public function getStatusLabelAttribute(): string
     {
         return match ($this->status) {
             'planejado'    => 'Planejado',
+            'nao_iniciado' => 'Não iniciado',
             'em_andamento' => 'Em andamento',
             'concluido'    => 'Concluído',
             'suspenso'     => 'Suspenso',
@@ -70,6 +90,7 @@ class MandateAction extends Model
         return match ($this->status) {
             'concluido'    => '#1e7e48',
             'em_andamento' => '#b8902a',
+            'nao_iniciado' => '#6b7280',
             'planejado'    => '#1e3a5f',
             'suspenso'     => '#b52b2b',
             default        => '#b8902a',

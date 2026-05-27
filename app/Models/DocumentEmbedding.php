@@ -18,7 +18,7 @@ class DocumentEmbedding extends Model
         'municipality_id',
         'document_id',       // FK para MunicipalityDocument (nullable para knowledge base geral)
         'layer',             // public_data | knowledge_base | client_data
-        'category',          // fiscal | education | health | political | communication | federal_programs
+        'category',          // fiscal | education | health | polítical | communication | federal_programs
         'source',            // nome da fonte (SICONFI, IBGE, programa de governo, etc.)
         'chunk_index',       // índice do chunk dentro do documento
         'content',           // texto do chunk

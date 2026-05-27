@@ -50,11 +50,11 @@ class IngestPublicData extends Command
     private function displayReport(array $report): void
     {
         if ($report['status'] === 'nenhuma_api_ativa') {
-            $this->warn("    Nenhuma API ativa para {$report['municipio']}");
+            $this->warn("    Nenhuma API ativa para {$report['município']}");
             return;
         }
 
-        $this->info("    {$report['municipio']}: {$report['total_indexados']} chunks indexados");
+        $this->info("    {$report['município']}: {$report['total_indexados']} chunks indexados");
 
         foreach ($report['chunks'] as $api => $count) {
             $this->line("      {$api}: {$count} blocos coletados");

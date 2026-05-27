@@ -12,7 +12,7 @@ class IndexMonitoredUrls extends Command
                                 {--municipality= : ID do município (omitir = todos)}
                                 {--id=           : ID de uma URL específica}
                                 {--force         : Re-indexar mesmo as já indexadas}
-                                {--all           : Indexar todas, não só as que precisam de refresh}';
+                                {--all           : Indexar todas, não  só as que precisam de refresh}';
 
     protected $description = 'Indexa URLs monitoradas no RAG (fetch + embeddings)';
 

@@ -181,7 +181,7 @@ class UrlIndexerService
             if (preg_match('/^Title:\s*(.+)$/m', $text, $m)) {
                 return trim($m[1]);
             }
-            // Fallback: primeira linha não vazia
+            // Fallback: primeira linha não  vazia
             foreach (explode("\n", $text) as $line) {
                 $line = trim($line);
                 if (!empty($line)) return $line;
@@ -344,7 +344,7 @@ class UrlIndexerService
      */
     /**
      * Fetch do HTML bruto sem Jina — para extrair links <a href>.
-     * Se HTML não tiver links suficientes (site com JS), extrai do Jina.
+     * Se HTML não  tiver links suficientes (site com JS), extrai do Jina.
      */
     private function fetchRawHtml(string $url): string
     {

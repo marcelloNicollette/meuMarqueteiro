@@ -14,7 +14,7 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # ── PHP.ini customizado ───────────────────────────────────────
 COPY docker/php.ini /usr/local/etc/php/conf.d/custom.ini
 
-COPY . /meu-marqueteiro-src/
+WORKDIR /var/www/html
 
 COPY docker/entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh

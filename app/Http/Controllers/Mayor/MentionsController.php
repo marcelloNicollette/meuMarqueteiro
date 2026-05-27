@@ -7,6 +7,7 @@ use App\Models\MentionKeyword;
 use App\Models\SocialMention;
 use App\Services\Social\SocialMonitorService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class MentionsController extends Controller
 {
@@ -16,52 +17,12 @@ class MentionsController extends Controller
 
     public function index(Request $request)
     {
-        $user = $request->user();
-        $municipality = $user->municipality;
-
-        // Filtros
-        $filter    = $request->get('filter', 'all'); // all | negative | positive | neutral | unread
-        $source    = $request->get('source', 'all');
-        $days      = (int) $request->get('days', 7);
-
-        $query = SocialMention::where('municipality_id', $municipality->id)
-            ->where('created_at', '>=', now()->subDays($days))
-            ->orderByDesc('published_at');
-
-        if ($filter === 'unread')  $query->where('is_read', false);
-        elseif ($filter !== 'all') $query->where('sentiment', $filter);
-
-        if ($source !== 'all') $query->where('source', $source);
-
-        $mentions = $query->paginate(20)->withQueryString();
-
-        // Stats
-        $since = now()->subDays($days);
-        $stats = [
-            'total'    => SocialMention::where('municipality_id', $municipality->id)->where('created_at', '>=', $since)->count(),
-            'positive' => SocialMention::where('municipality_id', $municipality->id)->where('created_at', '>=', $since)->where('sentiment', 'positive')->count(),
-            'negative' => SocialMention::where('municipality_id', $municipality->id)->where('created_at', '>=', $since)->where('sentiment', 'negative')->count(),
-            'neutral'  => SocialMention::where('municipality_id', $municipality->id)->where('created_at', '>=', $since)->where('sentiment', 'neutral')->count(),
-            'unread'   => SocialMention::where('municipality_id', $municipality->id)->where('is_read', false)->count(),
-        ];
-
-        // Gráfico de sentimento por dia (últimos 7 dias)
-        $chartData = $this->getChartData($municipality->id, $days);
-
-        // Keywords configuradas
-        $keywords = MentionKeyword::where('municipality_id', $municipality->id)
-            ->orderBy('type')->get();
-
-        return view('mayor.mentions.index', compact(
-            'mentions',
-            'stats',
-            'chartData',
-            'keywords',
-            'filter',
-            'source',
-            'days',
-            'municipality'
-        ));
+        return redirect()->route('mayor.content.index', [
+            'area' => 'mentions',
+            'mention_filter' => $request->get('filter', 'all'),
+            'mention_source' => $request->get('source', 'all'),
+            'mention_days' => (int) $request->get('days', 7),
+        ]);
     }
 
     // ── Marcar como lida ─────────────────────────────────────────────
@@ -152,6 +113,63 @@ class MentionsController extends Controller
         return back()->with('success', "Palavra-chave \"{$data['keyword']}\" adicionada.");
     }
 
+    public function storeManualMention(Request $request)
+    {
+        $user = $request->user();
+        $municipality = $user->municipality;
+
+        $data = $request->validate([
+            'channel' => 'required|in:whatsapp,news,social,manual',
+            'title' => 'nullable|string|max:255',
+            'content' => 'required|string|max:4000',
+            'author' => 'nullable|string|max:255',
+            'url' => 'nullable|url|max:2000',
+        ]);
+
+        $mention = SocialMention::create([
+            'municipality_id' => $municipality->id,
+            'source' => 'manual_' . $data['channel'],
+            'platform' => match ($data['channel']) {
+                'whatsapp' => 'whatsapp',
+                'news' => 'news',
+                'social' => 'social',
+                default => 'manual',
+            },
+            'keyword' => null,
+            'title' => $data['title'] ?: Str::limit($data['content'], 120, ''),
+            'content' => $data['content'],
+            'url' => $data['url'] ?? null,
+            'author' => $data['author'] ?? null,
+            'published_at' => now(),
+            'sentiment' => 'pending',
+            'is_read' => false,
+            'alert_sent' => false,
+            'external_id' => md5($municipality->id . '|' . now()->timestamp . '|' . Str::random(12)),
+        ]);
+
+        $this->monitor->analyzeMentionNow($mention, $municipality);
+
+        return back()->with('success', 'Menção manual registrada e classificada com sucesso.');
+    }
+
+    public function reclassify(Request $request, SocialMention $mention)
+    {
+        $user = $request->user();
+        $municipality = $user->municipality;
+
+        abort_if((int) $mention->municipality_id !== (int) $municipality->id, 403);
+
+        $data = $request->validate([
+            'sentiment' => 'required|in:positive,neutral,negative,urgent',
+        ]);
+
+        $mention->update([
+            'sentiment' => $data['sentiment'],
+        ]);
+
+        return back()->with('success', 'Classificação da menção atualizada manualmente.');
+    }
+
     public function destroyKeyword($id)
     {
         $user = request()->user();
@@ -189,8 +207,61 @@ class MentionsController extends Controller
                 'positive' => $counts['positive'] ?? 0,
                 'negative' => $counts['negative'] ?? 0,
                 'neutral'  => $counts['neutral']  ?? 0,
+                'urgent'   => $counts['urgent'] ?? 0,
             ];
         }
         return $data;
+    }
+
+    private function buildReputationBoard(array $stats): array
+    {
+        $total = max(1, (int) ($stats['total'] ?? 0));
+
+        return [
+            'segments' => [
+                [
+                    'key' => 'positive',
+                    'label' => 'Positivas',
+                    'count' => (int) ($stats['positive'] ?? 0),
+                    'percent' => round(((int) ($stats['positive'] ?? 0) / $total) * 100, 1),
+                    'color' => '#1e7e48',
+                ],
+                [
+                    'key' => 'neutral',
+                    'label' => 'Neutras',
+                    'count' => (int) ($stats['neutral'] ?? 0),
+                    'percent' => round(((int) ($stats['neutral'] ?? 0) / $total) * 100, 1),
+                    'color' => '#94a3b8',
+                ],
+                [
+                    'key' => 'negative',
+                    'label' => 'Negativas',
+                    'count' => (int) ($stats['negative'] ?? 0),
+                    'percent' => round(((int) ($stats['negative'] ?? 0) / $total) * 100, 1),
+                    'color' => '#b52b2b',
+                ],
+                [
+                    'key' => 'urgent',
+                    'label' => 'Urgentes',
+                    'count' => (int) ($stats['urgent'] ?? 0),
+                    'percent' => round(((int) ($stats['urgent'] ?? 0) / $total) * 100, 1),
+                    'color' => '#ea580c',
+                ],
+            ],
+        ];
+    }
+
+    private function mapSourceLabel(string $source): string
+    {
+        return match ($source) {
+            'google_news' => 'Google News',
+            'nitter' => 'Twitter/X',
+            'rss' => 'RSS',
+            'manual_whatsapp' => 'WhatsApp manual',
+            'manual_news' => 'Portal manual',
+            'manual_social' => 'Rede social manual',
+            'manual_manual' => 'Manual',
+            default => Str::headline(str_replace('_', ' ', $source)),
+        };
     }
 }

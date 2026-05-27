@@ -5,13 +5,24 @@ namespace App\Providers;
 use App\Http\Middleware\EnsureMunicipalityOnboarded;
 use App\Listeners\UpdateLastLogin;
 use App\Services\AI\AIProviderService;
+use App\Services\AI\AssistantContextService;
+use App\Services\AI\ConversationMemoryService;
 use App\Services\AI\AssistantService;
+use App\Services\AI\ConversationMetadataService;
 use App\Services\AI\MorningBriefingService;
 use App\Services\Communication\ContentGenerationService;
 use App\Services\FederalPrograms\ClaudeMatchingService;
+use App\Services\FederalPrograms\DiaryMonitorRadarFetcher;
+use App\Services\FederalPrograms\DiaryMonitorRadarPipelineService;
 use App\Services\FederalPrograms\FederalProgramSyncService;
-use App\Services\FederalPrograms\TransparenciaClient;
+use App\Services\FederalPrograms\OfficialApiRadarPipelineService;
+use App\Services\FederalPrograms\OfficialSources\PortalTransparenciaRadarSource;
+use App\Services\FederalPrograms\OfficialSources\TransferegovRadarSource;
+use App\Services\FederalPrograms\StructuredScrapingRadarFetcher;
+use App\Services\FederalPrograms\StructuredScrapingRadarPipelineService;
 use App\Services\FederalPrograms\TransferegovClient;
+use App\Services\FederalPrograms\TransparenciaClient;
+use App\Services\Radar\CanonicalResourceSyncService;
 use App\Services\RAG\RAGService;
 use App\Services\RAG\UrlIndexerService;
 use App\Services\Social\SocialMonitorService;
@@ -45,11 +56,30 @@ class AppServiceProvider extends ServiceProvider
         );
 
         $this->app->singleton(
+            ConversationMetadataService::class
+        );
+
+        $this->app->singleton(
+            AssistantContextService::class
+        );
+
+        $this->app->singleton(
+            ConversationMemoryService::class,
+            fn($app) =>
+            new ConversationMemoryService(
+                $app->make(AIProviderService::class),
+            )
+        );
+
+        $this->app->singleton(
             AssistantService::class,
             fn($app) =>
             new AssistantService(
                 $app->make(AIProviderService::class),
                 $app->make(RAGService::class),
+                $app->make(ConversationMetadataService::class),
+                $app->make(AssistantContextService::class),
+                $app->make(ConversationMemoryService::class),
             )
         );
 
@@ -57,8 +87,11 @@ class AppServiceProvider extends ServiceProvider
             MorningBriefingService::class,
             fn($app) =>
             new MorningBriefingService(
-                $app->make(RAGService::class),
-                $app->make(SocialMonitorService::class),
+                $app->make(AIProviderService::class),
+                $app->make(\App\Services\Mandato\MandateProjectionService::class),
+                $app->make(\App\Services\Radar\HybridRadarReadService::class),
+                $app->make(\App\Services\Projects\ProjectFundingMatchService::class),
+                $app->make(WebPushService::class),
             )
         );
 
@@ -69,16 +102,33 @@ class AppServiceProvider extends ServiceProvider
         );
 
         // ── Radar de Programas Federais ─────────────────────────────────
-        $this->app->singleton(TransferegovClient::class);
         $this->app->singleton(TransparenciaClient::class);
+        $this->app->singleton(TransferegovClient::class);
         $this->app->singleton(ClaudeMatchingService::class);
+        $this->app->singleton(CanonicalResourceSyncService::class);
+        $this->app->singleton(PortalTransparenciaRadarSource::class);
+        $this->app->singleton(TransferegovRadarSource::class);
+        $this->app->singleton(StructuredScrapingRadarFetcher::class);
+        $this->app->singleton(StructuredScrapingRadarPipelineService::class);
+        $this->app->singleton(DiaryMonitorRadarFetcher::class);
+        $this->app->singleton(DiaryMonitorRadarPipelineService::class);
+        $this->app->singleton(
+            OfficialApiRadarPipelineService::class,
+            fn($app) =>
+            new OfficialApiRadarPipelineService([
+                $app->make(PortalTransparenciaRadarSource::class),
+                $app->make(TransferegovRadarSource::class),
+            ])
+        );
         $this->app->singleton(
             FederalProgramSyncService::class,
             fn($app) =>
             new FederalProgramSyncService(
-                $app->make(TransferegovClient::class),
-                $app->make(TransparenciaClient::class),
+                $app->make(OfficialApiRadarPipelineService::class),
+                $app->make(StructuredScrapingRadarPipelineService::class),
+                $app->make(DiaryMonitorRadarPipelineService::class),
                 $app->make(ClaudeMatchingService::class),
+                $app->make(CanonicalResourceSyncService::class),
             )
         );
     }

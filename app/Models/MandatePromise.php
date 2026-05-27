@@ -11,7 +11,10 @@ class MandatePromise extends Model
     protected $fillable = [
         'municipality_id',
         'mandate_axis_id',
+        'source_document_id',
         'text',
+        'keywords',
+        'specificity',
         'order',
         'score',
         'status',
@@ -24,6 +27,7 @@ class MandatePromise extends Model
             'score'     => 'integer',
             'order'     => 'integer',
             'is_active' => 'boolean',
+            'keywords'  => 'array',
         ];
     }
 
@@ -35,6 +39,11 @@ class MandatePromise extends Model
     public function municipality(): BelongsTo
     {
         return $this->belongsTo(Municipality::class);
+    }
+
+    public function sourceDocument(): BelongsTo
+    {
+        return $this->belongsTo(MunicipalityDocument::class, 'source_document_id');
     }
 
     public function actions(): BelongsToMany

@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Log;
  *   ✅ Filtra por município — retorna convênios onde o município é convenente
  *   ✅ Funciona sem filtro de data quando codigoIBGE está presente
  *   Campos úteis: objeto, situacao, convenente, valorTotal, valorLiberado,
- *                 dataInicioVigencia, dataFinalVigencia, orgaoSuperior
+ *                 dataInícioVigencia, dataFinalVigencia, orgaoSuperior
  *
  * /emendas?ano=YYYY
  *   ✅ Retorna emendas do ano, ordenadas por valor
- *   ❌ NÃO filtra por município (parâmetro municipio/codigoIbge/uf ignorado)
+ *   ❌ NÃO filtra por município (parâmetro município/codigoIbge/uf ignorado)
  *   → Usamos apenas emendas com localidadeDoGasto = "Nacional"
  *      pois essas são as que qualquer município pode captar
  *
@@ -34,6 +34,7 @@ class TransparenciaClient
     private function apiKey(): ?string
     {
         return \App\Models\SystemSetting::get('integration_transparencia_chave')
+            ?: \App\Models\SystemSetting::get('integration_transferegov_chave')
             ?: \App\Models\SystemSetting::get('transparencia_api_key');
     }
 
@@ -49,7 +50,7 @@ class TransparenciaClient
     {
         $key = $this->apiKey();
         if (!$key) {
-            Log::info('Transparência: chave de API não configurada — pulando.');
+            Log::info('Transparência: chave de API não  configurada — pulando.');
             return [];
         }
 
@@ -158,7 +159,7 @@ class TransparenciaClient
                     }
 
                     // Emendas são ordenadas por valor crescente.
-                    // Quando chegamos a valores altos (>50mi) a maioria não é captável por municípios pequenos.
+                    // Quando chegamos a valores altos (>50mi) a maioria não  é captável por municípios pequenos.
                     // Paramos na página 20 para evitar excesso de requisições.
                     $isLast = count($items) < 100;
                     $pagina++;
@@ -183,14 +184,15 @@ class TransparenciaClient
         $situacao = $item['situacao'] ?? 'DESCONHECIDA';
 
         // Datas
-        $inicio     = $item['dataInicioVigencia'] ?? null;
+        $início     = $item['dataInícioVigencia'] ?? null;
         $fim        = $item['dataFinalVigencia']  ?? null;
-        $ano        = $inicio ? (int) substr($inicio, 0, 4) : (int) date('Y');
+        $ano        = $início ? (int) substr($início, 0, 4) : (int) date('Y');
 
         $numero = $conv['numero'] ?? $conv['codigo'] ?? null;
 
         return [
             'source'          => 'transparencia_convenio',
+            'source_key'      => 'portal_transparencia',
             'program_name'    => mb_substr(trim($objeto), 0, 255),
             'program_code'    => 'TRP-CVN-' . ($numero ?? substr(md5($objeto . $ano), 0, 8)),
             'ministry'        => $orgao,
@@ -199,7 +201,9 @@ class TransparenciaClient
             'funding_type'    => 'convenio',
             'deadline'        => $fim,
             'source_url'      => 'https://portaldatransparencia.gov.br/convenios/consulta',
-            'source_platform' => 'transparencia',
+            'source_platform' => 'portal_transparencia',
+            'capture_method'  => 'api_official',
+            'resource_scope'  => 'federal',
             'status'          => 'historical',
             'area'            => FederalProgramSyncService::inferArea($objeto),
             'reference_year'  => $ano,
@@ -230,6 +234,7 @@ class TransparenciaClient
 
         return [
             'source'          => 'transparencia_emenda',
+            'source_key'      => 'emendas_parlamentares',
             'program_name'    => mb_substr("Emenda Nacional: {$funcao}", 0, 255),
             'program_code'    => 'TRP-EMD-' . ($item['codigoEmenda'] ?? substr(md5($name . $autor . $ano), 0, 8)),
             'ministry'        => null,
@@ -238,7 +243,9 @@ class TransparenciaClient
             'funding_type'    => 'emenda',
             'deadline'        => null,
             'source_url'      => 'https://portaldatransparencia.gov.br/emendas/consulta',
-            'source_platform' => 'transparencia',
+            'source_platform' => 'portal_transparencia',
+            'capture_method'  => 'api_official',
+            'resource_scope'  => 'federal',
             'status'          => 'historical',
             'area'            => FederalProgramSyncService::inferArea("{$funcao} {$subfuncao}"),
             'reference_year'  => $ano,

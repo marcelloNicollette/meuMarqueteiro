@@ -1,0 +1,461 @@
+ETAPA 1 - CHAT COMO MODULO CENTRAL
+
+Objetivo desta etapa
+
+- Reposicionar o item CHAT = Meu Marqueteiro como o módulo central da plataforma sem alterar ainda o comportamento em producao.
+- Consolidar o alvo funcional, o gap tecnico e as implementacoes necessárias para evoluir com seguranca.
+- Definir o que entra em MVP, o que entra em fase 2 e o que deve ficar para uma fase futura.
+
+Resumo executivo
+
+- O projeto ja possui uma base forte para o assistente: chat persistido, RAG vetorial, memoria resumida entre sessoes, prompt dinamico e sinais proativos fora do chat.
+- O problema atual não e ausencia de IA; e ausencia de centralidade do módulo. Hoje o chat conversa bem, mas ainda não orquestra demandas, mandato, acoes, radar de recursos e conteudo de forma unificada.
+- A Etapa 1 não pede refatoracao pesada imediata. Ela pede preparacao arquitetural para o chat virar a porta de entrada principal da plataforma.
+
+Escopo alvo do CHAT = Meu Marqueteiro
+
+- O chat deixa de ser apenas "assistente pessoal do prefeito" e passa a ser a camada central de orquestracao dos demais módulos.
+- O assistente preserva identidade, avatar, tom direto e especializacao política.
+- Cada conversa deve ser compreendida como um fluxo de trabalho potencial, não apenas um histórico textual.
+- O assistente deve responder com base em:
+- dados do município
+- contexto politico e perfil de voz
+- compromissos e riscos do mandato
+- demandas abertas, urgentes, atrasadas e comentadas
+- acoes, eixos e promessas do módulo de mandato
+- programas federais e oportunidades
+- memoria de conversas anteriores
+- conteudos ja gerados no sistema
+
+Estado atual do projeto
+
+- O nucleo atual esta em `app/Http/Controllers/ChatController.php`, `app/Services/AI/AssistantService.php` e `resources/views/mayor/chat/index.blade.php`.
+- O banco ja suporta conversas, mensagens, `input_type`, `voice_transcript`, `rag_sources`, feedback e metadados.
+- O assistente ja monta prompt dinamico com:
+- dados do município
+- perfil de voz
+- mapa politico
+- compromissos ativos
+- alertas de programas federais
+- O projeto ja possui:
+- RAG vetorial por pgvector
+- embeddings de documentos
+- memoria resumida entre sessoes em `conversations.context`
+- briefing matinal com alertas e push notification
+- módulo de conteudo salvo que pode ser reutilizado para exportacao
+
+Gap funcional entre o estado atual e o alvo
+
+1. Centralidade do módulo
+
+- Hoje o chat consulta parte do contexto, mas não e a porta principal de operacao dos outros módulos.
+- Falta transformar conversa em acao: registrar demanda, abrir plano de acao, salvar conteudo, sinalizar risco, criar follow-up.
+
+2. Contexto integrado real
+
+- Demandas não entram de forma estruturada no prompt principal.
+- Eixos, promessas e acoes do mandato tambem não entram de forma estruturada.
+- Programas federais entram parcialmente.
+- Briefings e conteudos gerados não retroalimentam o chat como memoria operacional.
+
+3. Organização do histórico
+
+- Conversas não possuem titulo util.
+- Conversas não possuem tags automaticas.
+- Nao ha busca, filtro, agrupamento ou classificacao por assunto.
+
+4. Audio
+
+- O schema foi preparado, mas o chat não tem entrada por voz ativa.
+- Nao existe saida por audio.
+- Nao existe pipeline proprio de transcricao para o chat.
+
+5. Exportacao assistida
+
+- O chat não detecta quando uma resposta virou plano, comunicado, roteiro, resumo ou conteudo publicavel.
+- Nao existe CTA para salvar no módulo de `generated_contents`.
+
+6. Memoria vetorial de conversa
+
+- Hoje existe memoria resumida em texto.
+- Ainda não existe indexacao vetorial de conversas nem busca de memorias por relevancia.
+
+7. Compartilhamento seletivo
+
+- Nao existe entidade, permissao, fluxo ou interface para compartilhar trecho de conversa.
+
+8. Proatividade dentro do chat
+
+- O ecossistema tem briefing e push.
+- O chat continua essencialmente reativo.
+
+O que ja existe e deve ser preservado
+
+- Persistencia de conversas e mensagens.
+- RAG vetorial e infraestrutura de embeddings.
+- Prompt dinamico com variaveis reais do município.
+- Modulo de briefings.
+- Push notifications.
+- Modulo de conteudo salvo.
+- Fluxo de "perguntar ao assistente" a partir de programas federais.
+
+Problemas e riscos identificados antes de implementar
+
+1. Feedback do chat com alta chance de defeito
+
+- O metodo `feedback()` em `ChatController` parece montar a consulta de forma incorreta e pode não localizar a mensagem corretamente.
+
+2. Títulos de conversa sem valor operacional
+
+- Conversas nascem como `Nova conversa` e não recebem resumo automatico.
+- Isso inviabiliza a futura organização por tags e busca.
+
+3. Inconsistencia de status de demandas
+
+- O briefing usa statuses diferentes dos usados no módulo de demandas.
+- Isso pode contaminar qualquer camada proativa futura.
+
+4. Falta de documentacao tecnica do produto
+
+- Sem consolidar o desenho do módulo central, ha risco de crescer por remendos.
+
+Arquivos atuais mais impactados na evolucao
+
+- `app/Http/Controllers/ChatController.php`
+- `app/Services/AI/AssistantService.php`
+- `resources/views/mayor/chat/index.blade.php`
+- `routes/web.php`
+- `app/Services/AI/MorningBriefingService.php`
+- `app/Http/Controllers/Mayor/DemandController.php`
+- `app/Http/Controllers/Mayor/MandatoController.php`
+- `app/Http/Controllers/Mayor/FederalProgramController.php`
+- `app/Http/Controllers/Mayor/SituacaoController.php`
+- `app/Models/Conversation.php`
+- `app/Models/Message.php`
+- `app/Models/GeneratedContent.php`
+
+Contextos de negocio que o chat deve passar a consumir
+
+1. Demandas
+
+- Fonte atual: `app/Models/Demand.php` e `app/Http/Controllers/Mayor/DemandController.php`
+- Dados relevantes para o chat:
+- demandas abertas
+- demandas urgentes
+- demandas atrasadas
+- demandas com prazo
+- area responsável
+- comentarios recentes
+- Possiveis usos:
+- responder com prioridade operacional
+- sugerir encaminhamentos
+- alertar sobre gargalos
+- gerar sumario de riscos do dia
+
+2. Mandato
+
+- Fontes atuais:
+- `app/Models/GovernmentCommitment.php`
+- `app/Models/MandateAxis.php`
+- `app/Models/MandatePromise.php`
+- `app/Models/MandateAction.php`
+- Dados relevantes para o chat:
+- compromissos em risco
+- promessas pendentes
+- acoes em andamento
+- eixo mais fraco
+- eixo com maior entrega
+- Possiveis usos:
+- analise de desempenho politico
+- orientacao de narrativa publica
+- priorizacao de entregas
+
+3. Radar de recursos
+
+- Fonte atual: `app/Models/FederalProgramAlert.php`
+- Dados relevantes para o chat:
+- programas abertos
+- match score
+- prazo
+- valor potencial
+- area
+- Possiveis usos:
+- identificar oportunidades
+- priorizar editais
+- montar plano de acao
+
+4. Comunicação e conteudo
+
+- Fonte atual: `app/Models/GeneratedContent.php` e `app/Http/Controllers/Mayor/ContentController.php`
+- Dados relevantes para o chat:
+- conteudos recentes
+- temas recorrentes
+- histórico de pecas geradas
+- Possiveis usos:
+- evitar repeticao
+- sugerir reaproveitamento
+- exportar conversa conclusiva
+
+Implementacoes necessárias - banco de dados
+
+MVP de banco
+
+- Criar suporte a titulos automáticos de conversa:
+- manter `conversations.title`, mas passar a preenche-lo automaticamente apos primeiras interacoes
+- Criar suporte a tags automaticas de conversa:
+- opcao A: adicionar JSON `auto_tags` em `conversations`
+- opcao B: criar tabela `conversation_tags`
+- recomendacao: comecar por JSON em `conversations` para reduzir complexidade
+- Criar suporte a sumario operacional da conversa:
+- adicionar em `conversations.context` campos como `summary`, `intent`, `last_topic`, `suggested_exports`
+- Padronizar estados usados em briefing e chat para demandas
+
+Banco para fase 2
+
+- Criar tabela de memorias vetoriais de conversa, por exemplo:
+- `conversation_memories`
+- campos sugeridos:
+- `conversation_id`
+- `user_id`
+- `municipality_id`
+- `source_message_ids`
+- `memory_text`
+- `memory_type`
+- `embedding`
+- `metadata`
+- `created_at`
+- Criar estrutura para compartilhamento seletivo:
+- `conversation_shares`
+- `conversation_share_segments`
+
+Banco para futuro
+
+- Estrutura para eventos proativos do assistente:
+- `assistant_events`
+- `assistant_alerts`
+- `assistant_suggestions`
+
+Implementacoes necessárias - backend
+
+1. Camada de orquestracao do contexto do chat
+
+- Criar um servico proprio para montar contexto operacional do assistente.
+- Nome sugerido: `AssistantContextService`
+- Responsabilidades:
+- buscar demandas relevantes
+- buscar compromissos e acoes do mandato
+- buscar programas federais prioritarios
+- buscar conteudos recentes
+- devolver bloco estruturado unico para o prompt
+
+2. Refatorar a montagem do prompt
+
+- Hoje tudo esta concentrado em `AssistantService`.
+- O ideal e separar em:
+- `AssistantPromptBuilder`
+- `AssistantContextService`
+- `ConversationMemoryService`
+- Beneficio:
+- reduz risco
+- melhora manutencao
+- permite evolucao por módulo
+
+3. Títulos e tags automáticas
+
+- Criar logica para gerar:
+- titulo curto da conversa
+- lista de tags automáticas
+- intencao principal
+- Isso pode rodar:
+- apos a 1a resposta do assistente
+- ou apos N mensagens
+
+4. Exportacao sugerida
+
+- Criar heuristica para detectar respostas conclusivas:
+- plano de acao
+- discurso
+- comunicado
+- legenda
+- resumo executivo
+- entrevista
+- Ao detectar, o backend retorna `suggested_export` no payload do chat.
+
+5. Integracao com demandas
+
+- O chat deve poder:
+- consultar demandas no contexto
+- sugerir abertura de demanda
+- no futuro, registrar demanda a partir da conversa
+
+6. Integracao com mandato
+
+- O chat deve poder:
+- responder com base em eixos, promessas e acoes
+- identificar risco politico e risco de entrega
+- sugerir narrativa alinhada ao estagio do mandato
+
+7. Integracao com briefings e push
+
+- Unificar criterios de risco e prioridade entre:
+- `MorningBriefingService`
+- chat
+- dashboard
+
+8. Correcao de defeitos existentes
+
+- Corrigir `feedback()` em `ChatController`
+- Corrigir a regra de statuses de demandas no briefing
+
+Implementacoes necessárias - rotas e contratos
+
+- Manter as rotas atuais do chat na Etapa 1.
+- Acrescentar apenas endpoints quando houver implementacao real:
+- `GET /mayor/chat/{conversation}/meta`
+- `POST /mayor/chat/{conversation}/title-refresh`
+- `POST /mayor/chat/{conversation}/tags-refresh`
+- `POST /mayor/chat/{conversation}/export`
+- Nao criar rotas de compartilhamento ou memoria vetorial antes da definicao final da modelagem.
+
+Implementacoes necessárias - interface
+
+MVP de interface
+
+- Sidebar do chat com:
+- titulo automatico
+- tags automaticas
+- indicador de assunto
+- indicador de ultima atividade
+- Barra de filtro por:
+- tag
+- tipo de conversa
+- origem da conversa
+- Cards dentro do chat para:
+- exportacao sugerida
+- riscos identificados
+- oportunidades detectadas
+- origem do contexto utilizado
+
+Fase 2 de interface
+
+- Busca textual no histórico
+- Reagrupamento por categoria
+- Compartilhamento seletivo de trecho
+- Voz de entrada e saida
+
+Futuro de interface
+
+- Inbox proativa do assistente
+- painel de pendencias sugeridas
+- cards de "você precisa olhar isso hoje"
+
+Arquivos que devem ser alterados na implementacao da Etapa 1
+
+Alteracoes diretas provaveis
+
+- `app/Services/AI/AssistantService.php`
+- separar responsabilidades e reduzir acoplamento
+- `app/Http/Controllers/ChatController.php`
+- enriquecer payloads e corrigir feedback
+- `resources/views/mayor/chat/index.blade.php`
+- suportar tags, titulos, filtros e cards de sugestao
+- `routes/web.php`
+- incluir novos endpoints de metadados se necessário
+- `app/Services/AI/MorningBriefingService.php`
+- alinhar statuses e criterios com o chat
+
+Novos arquivos sugeridos
+
+- `app/Services/AI/AssistantContextService.php`
+- `app/Services/AI/AssistantPromptBuilder.php`
+- `app/Services/AI/ConversationMetadataService.php`
+- `app/Services/AI/ConversationExportSuggestionService.php`
+
+Possiveis migrations da Etapa 1
+
+- adicionar `auto_tags` em `conversations`
+- adicionar `origin_module` em `conversations`
+- adicionar campos extras em `conversations.context` ou colunas dedicadas:
+- `intent`
+- `last_topic`
+- `last_summary`
+
+Ordem segura de implementacao
+
+1. Correcao e estabilizacao
+
+- corrigir feedback do chat
+- alinhar statuses de demandas no briefing
+- definir contrato unico de prioridades e riscos
+
+2. Estrutura de metadados da conversa
+
+- titulo automatico
+- tags automaticas
+- origem da conversa
+- intencao principal
+
+3. Contexto operacional integrado
+
+- introduzir `AssistantContextService`
+- incluir demandas, mandato, acoes e programas no prompt
+
+4. Interface da sidebar e filtros
+
+- mostrar metadados sem quebrar o fluxo atual
+
+5. Sugestao de exportacao
+
+- conectar chat ao módulo de `GeneratedContent`
+
+6. Preparacao para fases seguintes
+
+- deixar pontos de extensao para audio
+- deixar contrato pronto para memoria vetorial
+- deixar modelagem pronta para compartilhamento
+
+Definicao de MVP, fase 2 e futuro
+
+MVP
+
+- chat como módulo central no discurso e na arquitetura
+- contexto integrado com demandas, mandato e radar
+- titulos automaticos
+- tags automaticas
+- correcao de defeitos atuais
+- sugestao de exportacao simples
+
+Fase 2
+
+- audio de entrada
+- audio de saida
+- memoria vetorial de conversa
+- busca e filtros mais ricos
+- compartilhamento seletivo
+
+Futuro
+
+- assistente realmente proativo dentro do chat
+- inbox de oportunidades e riscos
+- automacoes entre módulos
+
+Recomendacao objetiva
+
+- Nao começar por audio, memoria vetorial ou compartilhamento.
+- Comecar por metadados da conversa + contexto integrado.
+- Essa ordem entrega ganho perceptivel imediato sem elevar muito o risco tecnico.
+
+Backlog tecnico sugerido da proxima execução
+
+- passo 1: corrigir defeitos atuais do chat e briefing
+- passo 2: criar a base de metadados da conversa
+- passo 3: criar `AssistantContextService`
+- passo 4: integrar demandas, mandato e radar ao prompt
+- passo 5: atualizar a interface do chat com titulos, tags e cards
+- passo 6: implementar sugestao de exportacao
+
+Conclusao
+
+- O projeto ja tem fundacao suficiente para reposicionar o CHAT = Meu Marqueteiro como módulo central.
+- A implementacao correta não e "trocar o chat"; e sim estruturar metadados, integrar contexto e transformar conversa em acao.
+- A Etapa 1 esta pronta para virar plano de execução tecnica sem necessidade de ruptura grande na base atual.

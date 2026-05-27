@@ -14,7 +14,9 @@ class Conversation extends Model
     protected $fillable = [
         'user_id',
         'municipality_id',
+        'origin_module',
         'title',
+        'auto_tags',
         'context',      // JSON — contexto persistente da conversa
         'ai_provider',  // openai | anthropic | gemini
         'ai_model',
@@ -27,6 +29,7 @@ class Conversation extends Model
     {
         return [
             'context'         => 'array',
+            'auto_tags'       => 'array',
             'token_count'     => 'integer',
             'is_active'       => 'boolean',
             'last_message_at' => 'datetime',
@@ -46,5 +49,10 @@ class Conversation extends Model
     public function messages(): HasMany
     {
         return $this->hasMany(Message::class)->orderBy('created_at');
+    }
+
+    public function memories(): HasMany
+    {
+        return $this->hasMany(ConversationMemory::class)->latest('created_at');
     }
 }

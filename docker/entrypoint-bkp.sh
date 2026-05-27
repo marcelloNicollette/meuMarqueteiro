@@ -8,7 +8,7 @@ echo "================================================"
 echo " Meu Marqueteiro — Inicializando..."
 echo "================================================"
 
-# ── 1. Se ainda não tem Laravel instalado, instalar ───────────
+# ── 1. Se ainda não  tem Laravel instalado, instalar ───────────
 if [ ! -f "$APP_DIR/artisan" ]; then
     echo "➤ Instalando Laravel 12 (primeira vez, ~3 min)..."
     composer create-project laravel/laravel:^12.0 /tmp/laravel-fresh \
@@ -88,7 +88,7 @@ TRIES=0
 until php artisan db:show --quiet 2>/dev/null; do
     TRIES=$((TRIES+1))
     if [ $TRIES -gt 20 ]; then
-        echo "  ✗ Banco não respondeu após 40s. Verifique o container postgres."
+        echo "  ✗ Banco não  respondeu após 40s. Verifique o container postgres."
         break
     fi
     echo "  ... tentativa $TRIES/20 (aguardando 2s)"

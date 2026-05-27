@@ -219,7 +219,7 @@
 
             try {
                 // Busca direta na API IBGE
-                let url = `https://servicodados.ibge.gov.br/api/v1/localidades/municipios?orderBy=nome`;
+                let url = `https://servicodados.ibge.gov.br/api/v1/localidades/municípios?orderBy=nome`;
                 const res = await fetch(url);
                 const data = await res.json();
 

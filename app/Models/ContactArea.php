@@ -13,6 +13,10 @@ class ContactArea extends Model
         'name',
         'contact_name',
         'email',
+        'notification_email',
+        'backup_contact_name',
+        'backup_email',
+        'backup_phone',
         'phone',
         'notes',
         'active',
@@ -34,5 +38,9 @@ class ContactArea extends Model
     {
         return $this->hasMany(Demand::class, 'contact_area_id');
     }
-}
 
+    public function users(): HasMany
+    {
+        return $this->hasMany(User::class, 'contact_area_id');
+    }
+}

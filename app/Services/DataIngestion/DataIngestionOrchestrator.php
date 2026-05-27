@@ -27,21 +27,25 @@ class DataIngestionOrchestrator
         private FNDEService            $fnde,
         private TransparenciaService   $transparencia,
         private DATASUSService         $datasus,
-        private CaptacaoService        $captacao,
+        private CaptacaoService        $captação,
         private InfraestruturaService  $infraestrutura,
     ) {}
 
     public function ingest(Municipality $municipality): array
     {
-        $report    = ['municipio' => $municipality->name, 'chunks' => [], 'erros' => []];
+        if (function_exists('set_time_limit')) {
+            @set_time_limit(0);
+        }
+
+        $report    = ['município' => $municipality->name, 'chunks' => [], 'erros' => []];
         $allChunks = [];
 
         // Mapa: chave da API → closure que retorna chunks
         // APIs que compartilham serviço usam métodos distintos (sem duplicata)
         $apis = [
             // Socioeconômico
-            'ibge_municipios' => fn() => $this->ibge->getMunicipalityData($municipality),
-            'ibge_populacao'  => fn() => [], // coberto pelo ibge_municipios
+            'ibge_municípios' => fn() => $this->ibge->getMunicipalityData($municipality),
+            'ibge_populacao'  => fn() => [], // coberto pelo ibge_municípios
             'atlas_brasil'    => fn() => [], // sem API pública REST
             'ipea_data'       => fn() => [], // sem API pública REST
 
@@ -64,7 +68,7 @@ class DataIngestionOrchestrator
             'aneel'           => fn() => [], // coberto pelo snis (InfraestruturaService)
 
             // Captação
-            'transferegov'    => fn() => $this->captacao->getMunicipalityData($municipality),
+            'transferegov'    => fn() => $this->captação->getMunicipalityData($municipality),
             'bndes'           => fn() => [], // coberto pelo transferegov (CaptacaoService)
         ];
 

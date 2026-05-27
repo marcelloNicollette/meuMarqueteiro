@@ -13,7 +13,7 @@ class SyncFederalPrograms extends Command
                                 {--force         : Re-analisa programas já existentes}
                                 {--dry-run       : Mostra o que seria sincronizado sem salvar}';
 
-    protected $description = 'Busca programas federais (Transferegov + Transparência) e avalia elegibilidade via Claude';
+    protected $description = 'Sincroniza oportunidades do Radar de Recursos via Portal da Transparência e avalia compatibilidade';
 
     public function __construct(private FederalProgramSyncService $service)
     {
@@ -43,7 +43,7 @@ class SyncFederalPrograms extends Command
             return 1;
         }
 
-        $this->info("🔍 Iniciando sync de programas federais para {$municipalities->count()} município(s)...");
+        $this->info("🔍 Iniciando sync do Radar de Recursos para {$municipalities->count()} município(s)...");
         $this->newLine();
 
         $totalSalvos = 0;
@@ -60,7 +60,10 @@ class SyncFederalPrograms extends Command
                 );
 
                 $this->line("    <fg=green>✓</> {$result['novos']} novos  |  {$result['atualizados']} atualizados  |  {$result['descartados']} sem elegibilidade");
-                $this->line("    Fontes: Transferegov={$result['transferegov']}  Transparência={$result['transparencia']}");
+                $sourceSummary = collect($result['source_runs'] ?? [])
+                    ->map(fn (array $sourceRun) => ($sourceRun['source_name'] ?? $sourceRun['source_key'] ?? 'fonte') . '=' . (int) ($sourceRun['records_fetched'] ?? 0))
+                    ->implode(' | ');
+                $this->line("    Fontes: " . ($sourceSummary !== '' ? $sourceSummary : 'nenhuma'));
                 $totalSalvos += $result['novos'] + $result['atualizados'];
             } catch (\Exception $e) {
                 $this->error("    Erro em {$municipality->name}: " . $e->getMessage());

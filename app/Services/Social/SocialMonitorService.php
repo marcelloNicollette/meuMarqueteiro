@@ -5,6 +5,7 @@ namespace App\Services\Social;
 use App\Models\MentionKeyword;
 use App\Models\Municipality;
 use App\Models\SocialMention;
+use App\Models\User;
 use App\Services\WebPushService;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
@@ -74,7 +75,7 @@ class SocialMonitorService
                         $found++;
                     }
                 } catch (\Exception $e) {
-                    // Nitter pode estar fora — não é crítico
+                    // Nitter pode estar fora — não  é crítico
                     Log::debug("SocialMonitor Nitter erro: " . $e->getMessage());
                 }
             }
@@ -289,6 +290,16 @@ class SocialMonitorService
         }
     }
 
+    public function analyzeMentionNow(SocialMention $mention, Municipality $municipality): void
+    {
+        try {
+            $this->analyzeSentiment($mention, $municipality);
+        } catch (\Exception $e) {
+            Log::warning("Sentimento falhou para mention {$mention->id}: " . $e->getMessage());
+            $mention->update(['sentiment' => 'neutral']);
+        }
+    }
+
     /**
      * Analisar sentimento de uma menção específica.
      */
@@ -297,9 +308,9 @@ class SocialMonitorService
         $text   = trim(($mention->title ?? '') . ' ' . ($mention->content ?? ''));
         $city   = $municipality->name;
 
-        $prompt = "Analise o sentimento desta menção sobre {$city}. Responda APENAS com JSON:\n\n" .
+        $prompt = "Analise o sentimento desta menção sobre {$city}. Classifique em positive, neutral, negative ou urgent. Use urgent somente quando houver potencial de crise, viralizacao, acusacao sensivel, cobranca institucional forte ou risco reputacional imediato. Responda APENAS com JSON:\n\n" .
                   "Texto: \"{$text}\"\n\n" .
-                  '{"sentiment":"positive|negative|neutral","score":-100_to_100,"reason":"motivo_breve_em_portugues"}';
+                  '{"sentiment":"positive|negative|neutral|urgent","score":-100_to_100,"reason":"motivo_breve_em_portugues"}';
 
         $response = Http::timeout(20)
             ->withHeaders([
@@ -325,7 +336,7 @@ class SocialMonitorService
         preg_match('/\{[^}]+\}/s', $content, $matches);
         $json = json_decode($matches[0] ?? '{}', true);
 
-        $sentiment = in_array($json['sentiment'] ?? '', ['positive', 'negative', 'neutral'])
+        $sentiment = in_array($json['sentiment'] ?? '', ['positive', 'negative', 'neutral', 'urgent'])
             ? $json['sentiment']
             : 'neutral';
 
@@ -335,34 +346,69 @@ class SocialMonitorService
             'sentiment_reason' => $json['reason'] ?? null,
         ]);
 
-        // Enviar push se negativo e keyword configurada para alertar
-        if ($sentiment === 'negative' && !$mention->alert_sent) {
-            $this->sendNegativeAlert($mention, $municipality);
+        // Enviar alerta para menções negativas e urgentes
+        if (in_array($sentiment, ['negative', 'urgent'], true) && !$mention->alert_sent && $this->shouldAlertMention($mention, $municipality)) {
+            $this->sendMentionAlert($mention, $municipality);
         }
     }
 
+    private function shouldAlertMention(SocialMention $mention, Municipality $municipality): bool
+    {
+        if ($mention->sentiment === 'urgent') {
+            return true;
+        }
+
+        if ($mention->sentiment !== 'negative') {
+            return false;
+        }
+
+        if (!$mention->keyword) {
+            return true;
+        }
+
+        return MentionKeyword::where('municipality_id', $municipality->id)
+            ->where('keyword', $mention->keyword)
+            ->where('alert_negative', true)
+            ->exists();
+    }
+
     /**
-     * Enviar push notification para menção negativa.
+     * Enviar push notification para menção negativa ou urgente.
      */
-    private function sendNegativeAlert(SocialMention $mention, Municipality $municipality): void
+    private function sendMentionAlert(SocialMention $mention, Municipality $municipality): void
     {
         try {
-            $mayor = $municipality->mayor;
-            if (!$mayor) return;
+            $recipients = $municipality->users()
+                ->active()
+                ->municipalOperators()
+                ->get();
 
-            $title   = $mention->title ? Str::limit($mention->title, 60) : Str::limit($mention->content ?? '', 60);
-            $source  = $mention->source_label;
+            if ($recipients->isEmpty() && $municipality->mayor) {
+                $recipients = collect([$municipality->mayor]);
+            }
 
-            $this->push->sendToUser($mayor, [
-                'title' => "⚠️ Menção negativa detectada",
-                'body'  => "{$source}: {$title}",
-                'url'   => '/mayor/mentions',
-                'icon'  => '/icon-192.png',
-            ]);
+            if ($recipients->isEmpty()) {
+                return;
+            }
+
+            $title = $mention->title ? Str::limit($mention->title, 60) : Str::limit($mention->content ?? '', 60);
+            $source = $mention->source_label;
+            $isUrgent = $mention->sentiment === 'urgent';
+            $payload = [
+                'title' => $isUrgent ? '🚨 Menção urgente detectada' : '⚠️ Menção negativa detectada',
+                'body' => "{$source}: {$title}",
+                'url' => $isUrgent ? '/mayor/content?tab=crisis&mention=' . $mention->id : '/mayor/mentions',
+                'icon' => '/icon-192.png',
+            ];
+
+            /** @var User $recipient */
+            foreach ($recipients as $recipient) {
+                $this->push->sendToUser($recipient, $payload);
+            }
 
             $mention->update(['alert_sent' => true]);
         } catch (\Exception $e) {
-            Log::warning("Push de menção negativa falhou: " . $e->getMessage());
+            Log::warning("Push de menção falhou: " . $e->getMessage());
         }
     }
 

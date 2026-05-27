@@ -22,7 +22,7 @@ class WebPushService
         $privateKey = config('webpush.vapid_private_key');
 
         if (empty($publicKey) || empty($privateKey)) {
-            Log::info('WebPush desativado: VAPID keys não configuradas');
+            Log::info('WebPush desativado: VAPID keys não  configuradas');
             return;
         }
 

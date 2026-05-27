@@ -307,6 +307,13 @@
 
 <body>
 
+    @php
+        $currentUser = auth()->user();
+        $isMayorUser = $currentUser && $currentUser->hasRole('mayor');
+        $resolveAiRoute = $isMayorUser ? route('mayor.mandato.demands.index') : route('resolve-ai.demands.index');
+        $praHojeRoute = route('pra-hoje.index');
+    @endphp
+
     {{-- ── Sidenav ──────────────────────────────────────────────── --}}
     <nav class="sidenav">
         <div class="sidenav-logo">
@@ -324,43 +331,59 @@
                 </svg>
             </a>-->
 
-            <a href="{{ route('mayor.situacao') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}" data-label="Painel">
-                <img src="/images/icone-painel.svg" alt="">
+            @if ($isMayorUser)
+                <a href="{{ route('mayor.situacao') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}"
+                    data-label="Painel">
+                    <img src="/images/icone-painel.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.chat.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}"
+                    data-label="Meu marqueteiro">
+                    <img src="/images/icone-meu-marqueteiro.svg" alt="">
+                    @if (false)
+                        {{-- lógica de mensagens não  lidas aqui --}}
+                        <span class="dot"></span>
+                    @endif
+                </a>
+                <a href="{{ route('mayor.projects.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.projects*') ? 'active' : '' }}"
+                    data-label="Projetos">
+                    <img src="/images/icone-projetos.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.project-bank.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.project-bank*') ? 'active' : '' }}"
+                    data-label="Banco de Projetos">
+                    <img src="/images/icone-projetos.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.content.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.content*') || request()->routeIs('mayor.mentions*') ? 'active' : '' }}"
+                    data-label="Comunicação">
+                    <img src="/images/icone-comunicacao.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.mandato.painel') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
+                    data-label="Mandato">
+                    <img src="/images/icone-mandato.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.mandato.federal-programs') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.mandato.federal-programs*') ? 'active' : '' }}"
+                    data-label="Recursos">
+                    <img src="/images/icone-recursos.svg" alt="">
+                </a>
+            @endif
+            <a href="{{ $praHojeRoute }}"
+                class="sidenav-item {{ request()->routeIs('pra-hoje.*') || request()->routeIs('mayor.mandato.briefings*') ? 'active' : '' }}"
+                data-label="Pra hoje!">
+                <svg viewBox="0 0 24 24" fill="#FFFFFF">
+                    <path
+                        d="M12 4a1 1 0 0 1 1 1v1.05a6 6 0 1 1-2 0V5a1 1 0 0 1 1-1Zm0 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-6a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0V20a1 1 0 0 1 1-1Zm9-8a1 1 0 0 1 0 2h-.5a1 1 0 1 1 0-2H21ZM4.5 11a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2h.5Zm13.16-5.66a1 1 0 0 1 1.41 1.41l-.35.36a1 1 0 0 1-1.42-1.42l.36-.35Zm-11.32 11.32a1 1 0 0 1 1.41 1.41l-.35.36a1 1 0 0 1-1.42-1.42l.36-.35Zm12.03 1.77a1 1 0 0 1-1.41 0l-.36-.35a1 1 0 1 1 1.42-1.42l.35.36a1 1 0 0 1 0 1.41ZM7.05 7.4a1 1 0 0 1-1.41 0l-.36-.35A1 1 0 0 1 6.7 5.64l.35.35a1 1 0 0 1 0 1.42Z" />
+                </svg>
             </a>
-            <a href="{{ route('mayor.chat.index') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}"
-                data-label="Meu marqueteiro">
-                <img src="/images/icone-meu-marqueteiro.svg" alt="">
-                @if (false)
-                    {{-- lógica de mensagens não lidas aqui --}}
-                    <span class="dot"></span>
-                @endif
-            </a>
-            <a href="{{ route('mayor.content.index') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.content*') ? 'active' : '' }}"
-                data-label="Comunicação">
-                <img src="/images/icone-comunicacao.svg" alt="">
-            </a>
-            <a href="{{ route('mayor.mandato.painel') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
-                data-label="Mandato">
-                <img src="/images/icone-mandato.svg" alt="">
-            </a>
-            <a href="{{ route('mayor.mandato.demands.index') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
-                data-label="Anota aí!">
+            <a href="{{ $resolveAiRoute }}"
+                class="sidenav-item {{ request()->routeIs('mayor.mandato.demands*') || request()->routeIs('resolve-ai.demands*') ? 'active' : '' }}"
+                data-label="Resolve ai">
                 <img src="/images/icone-anotaai.svg" alt="">
-            </a>
-            <a href="{{ route('mayor.mandato.federal-programs') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.mandato.federal-programs*') ? 'active' : '' }}"
-                data-label="Recursos">
-                <img src="/images/icone-recursos.svg" alt="">
-            </a>
-            <a href="{{ route('mayor.mentions.index') }}"
-                class="sidenav-item {{ request()->routeIs('mayor.mentions.index') ? 'active' : '' }}"
-                data-label="Menções">
-                <img width="25" src="/images/icon-mentions.svg" alt="">
             </a>
         </div>
 
@@ -388,10 +411,10 @@
                 </button>
             </form>
 
-            <a href="{{ route('mayor.mandato.briefings') }}" class="topbar-briefing">
+            <a href="{{ $praHojeRoute }}" class="topbar-briefing">
                 <svg viewBox="0 0 24 24" fill="currentColor">
                     <path
-                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H8c0-2.21 1.79-4 4-4s4 1.79 4 4c0 .88-.36 1.68-.93 2.25z" />
+                        d="M12 4a1 1 0 0 1 1 1v1.05a6 6 0 1 1-2 0V5a1 1 0 0 1 1-1Zm0 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
                 </svg>
                 Pra hoje!
             </a>
@@ -432,7 +455,7 @@
                     let subscription = await reg.pushManager.getSubscription();
 
                     if (!subscription) {
-                        // Pedir permissão apenas se ainda não foi concedida
+                        // Pedir permissão apenas se ainda não  foi concedida
                         const permission = await Notification.requestPermission();
                         if (permission !== 'granted') return;
 
@@ -464,12 +487,12 @@
                     });
 
                 } catch (e) {
-                    // Falha silenciosa — não interrompe o uso do app
+                    // Falha silenciosa — não  interrompe o uso do app
                     console.warn('[Push] Registro falhou:', e.message);
                 }
             }
 
-            // Registrar após o carregamento, com delay para não bloquear
+            // Registrar após o carregamento, com delay para não  bloquear
             if (document.readyState === 'loading') {
                 document.addEventListener('DOMContentLoaded', () => setTimeout(registerPush, 2000));
             } else {

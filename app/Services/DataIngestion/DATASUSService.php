@@ -30,7 +30,7 @@ class DATASUSService
         try {
             // SIOPS — Sistema de Informações sobre Orçamentos Públicos em Saúde
             $res = Http::timeout(15)->get(
-                "https://apidadosabertos.saude.gov.br/siops/despesas/municipio/{$code}"
+                "https://apidadosabertos.saude.gov.br/siops/despesas/município/{$code}"
             );
 
             if ($res->ok()) {
@@ -72,7 +72,7 @@ class DATASUSService
                 . "Consulta: https://datasus.saude.gov.br | https://egestorab.saude.gov.br",
             'category' => 'saude',
             'source'   => 'DATASUS — Contexto de Saúde',
-            'metadata' => ['municipio' => $municipality->name, 'tipo' => 'contexto_saude'],
+            'metadata' => ['município' => $municipality->name, 'tipo' => 'contexto_saude'],
         ];
     }
 }

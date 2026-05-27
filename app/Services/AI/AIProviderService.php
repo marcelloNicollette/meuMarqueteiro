@@ -3,6 +3,9 @@
 namespace App\Services\AI;
 
 use App\Enums\AIProviderEnum;
+use Illuminate\Http\Client\ConnectionException;
+use Illuminate\Http\Client\RequestException;
+use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
@@ -54,20 +57,43 @@ class AIProviderService
      */
     public function embed(string $text): array
     {
-        // Voyage AI — provider oficial de embeddings para Anthropic
         $voyageKey = $this->getSetting('voyage_api_key', env('VOYAGE_API_KEY', ''));
+        $openaiKey = $this->getSetting('openai_api_key', config('ai.providers.openai.api_key', ''));
+        $vectorDimensions = (int) config('ai.rag.dimensions', 1536);
+
+        // Align the embedding provider with the pgvector column dimensions.
+        if ($vectorDimensions === 1024 && !empty($voyageKey)) {
+            return $this->embedVoyage($text, $voyageKey);
+        }
+
+        if ($vectorDimensions === 1536 && !empty($openaiKey)) {
+            return $this->embedOpenAI($text);
+        }
+
+        if ($vectorDimensions === 1024 && empty($voyageKey) && !empty($openaiKey)) {
+            throw new \RuntimeException(
+                'VECTOR_DIMENSIONS=1024 requer embeddings compatíveis com Voyage. '
+                    . 'Configure a chave Voyage AI ou ajuste VECTOR_DIMENSIONS para 1536 antes de reindexar.'
+            );
+        }
+
+        if ($vectorDimensions === 1536 && empty($openaiKey) && !empty($voyageKey)) {
+            throw new \RuntimeException(
+                'VECTOR_DIMENSIONS=1536 requer embeddings compatíveis com OpenAI. '
+                    . 'Configure a chave OpenAI ou ajuste VECTOR_DIMENSIONS para 1024 antes de reindexar.'
+            );
+        }
+
+        // Fallbacks for environments that use a different vector size strategy.
         if (!empty($voyageKey)) {
             return $this->embedVoyage($text, $voyageKey);
         }
 
-        // OpenAI — fallback se chave configurada
-        $openaiKey = $this->getSetting('openai_api_key', config('ai.providers.openai.api_key', ''));
         if (!empty($openaiKey)) {
             return $this->embedOpenAI($text);
         }
 
-        // Gemini — se for o provider ativo
-        if ($this->provider === 'gemini') {
+        if ($vectorDimensions === 768 && $this->provider === 'gemini') {
             return $this->embedGemini($text);
         }
 
@@ -96,21 +122,36 @@ class AIProviderService
     {
         $apiKey = $this->getSetting('openai_api_key', config('ai.providers.openai.api_key'));
         $model  = $options['model'] ?? $this->getSetting('openai_model', config('ai.providers.openai.model', 'gpt-4o-mini'));
-        $client = \OpenAI::client($apiKey);
+        $timeout = (int) ($options['timeout'] ?? config('ai.providers.openai.timeout', 15));
+        $connectTimeout = (int) ($options['connect_timeout'] ?? config('ai.providers.openai.connect_timeout', 5));
+        $retryAttempts = max((int) ($options['retry_attempts'] ?? config('ai.providers.openai.retry_attempts', 1)), 1);
+        $this->extendExecutionWindow($timeout, $retryAttempts);
 
-        $response = $client->chat()->create([
+        $response = Http::withToken($apiKey)
+            ->withHeaders(array_filter([
+                'Content-Type' => 'application/json',
+                'OpenAI-Organization' => config('ai.providers.openai.organization'),
+            ]))
+            ->connectTimeout($connectTimeout)
+            ->timeout($timeout)
+            ->retry($retryAttempts, 1200, function (\Exception $exception) {
+                return $exception instanceof ConnectionException || $exception instanceof RequestException;
+            })
+            ->post('https://api.openai.com/v1/chat/completions', [
             'model'       => $model,
             'messages'    => $messages,
             'temperature' => $options['temperature'] ?? 0.7,
             'max_tokens'  => $options['max_tokens'] ?? 2048,
-        ]);
+        ])
+            ->throw()
+            ->json();
 
         return new AIResponse(
-            content: $response->choices[0]->message->content,
+            content: $response['choices'][0]['message']['content'] ?? '',
             provider: 'openai',
-            model: $response->model,
-            tokensUsed: $response->usage->totalTokens,
-            finishReason: $response->choices[0]->finishReason,
+            model: $response['model'] ?? $model,
+            tokensUsed: (int) ($response['usage']['total_tokens'] ?? 0),
+            finishReason: $response['choices'][0]['finish_reason'] ?? 'stop',
         );
     }
 
@@ -120,18 +161,29 @@ class AIProviderService
 
         if (empty($apiKey)) {
             throw new \RuntimeException(
-                'Chave OpenAI não configurada. O embedding requer OpenAI mesmo quando o chat usa Anthropic. '
+                'Chave OpenAI não  configurada. O embedding requer OpenAI mesmo quando o chat usa Anthropic. '
                     . 'Configure a chave em Configurações → IA.'
             );
         }
 
-        $client   = \OpenAI::client($apiKey);
-        $response = $client->embeddings()->create([
-            'model' => config('ai.providers.openai.embedding_model', 'text-embedding-3-small'),
-            'input' => $text,
-        ]);
+        $timeout = (int) config('ai.providers.openai.timeout', 15);
+        $connectTimeout = (int) config('ai.providers.openai.connect_timeout', 5);
 
-        return $response->embeddings[0]->embedding;
+        $response = Http::withToken($apiKey)
+            ->withHeaders(array_filter([
+                'Content-Type' => 'application/json',
+                'OpenAI-Organization' => config('ai.providers.openai.organization'),
+            ]))
+            ->connectTimeout($connectTimeout)
+            ->timeout($timeout)
+            ->post('https://api.openai.com/v1/embeddings', [
+                'model' => config('ai.providers.openai.embedding_model', 'text-embedding-3-small'),
+                'input' => $text,
+            ])
+            ->throw()
+            ->json();
+
+        return $response['data'][0]['embedding'] ?? [];
     }
 
     // ─── Anthropic (Claude) ─────────────────────────────────────────────────
@@ -162,11 +214,24 @@ class AIProviderService
             $payload['system'] = $systemMessage;
         }
 
+        $timeout = (int) ($options['timeout'] ?? config('ai.providers.anthropic.timeout', 15));
+        $connectTimeout = (int) ($options['connect_timeout'] ?? config('ai.providers.anthropic.connect_timeout', 5));
+        $retryAttempts = max((int) ($options['retry_attempts'] ?? config('ai.providers.anthropic.retry_attempts', 1)), 1);
+        $this->extendExecutionWindow($timeout, $retryAttempts);
+
         $response = \Http::withHeaders([
             'x-api-key'         => $apiKey,
             'anthropic-version' => '2023-06-01',
             'Content-Type'      => 'application/json',
-        ])->timeout(120)->post('https://api.anthropic.com/v1/messages', $payload)->throw()->json();
+        ])
+            ->connectTimeout($connectTimeout)
+            ->timeout($timeout)
+            ->retry($retryAttempts, 1500, function (\Exception $exception) {
+                return $exception instanceof ConnectionException || $exception instanceof RequestException;
+            })
+            ->post('https://api.anthropic.com/v1/messages', $payload)
+            ->throw()
+            ->json();
 
         return new AIResponse(
             content: $response['content'][0]['text'],
@@ -204,7 +269,19 @@ class AIProviderService
             $body['systemInstruction'] = $systemInstruction;
         }
 
-        $response = \Http::post($endpoint, $body)->throw()->json();
+        $timeout = (int) ($options['timeout'] ?? config('ai.providers.gemini.timeout', 15));
+        $connectTimeout = (int) ($options['connect_timeout'] ?? config('ai.providers.gemini.connect_timeout', 5));
+        $retryAttempts = max((int) ($options['retry_attempts'] ?? config('ai.providers.gemini.retry_attempts', 1)), 1);
+        $this->extendExecutionWindow($timeout, $retryAttempts);
+
+        $response = \Http::connectTimeout($connectTimeout)
+            ->timeout($timeout)
+            ->retry($retryAttempts, 1200, function (\Exception $exception) {
+                return $exception instanceof ConnectionException || $exception instanceof RequestException;
+            })
+            ->post($endpoint, $body)
+            ->throw()
+            ->json();
 
         $text   = $response['candidates'][0]['content']['parts'][0]['text'] ?? '';
         $tokens = ($response['usageMetadata']['promptTokenCount'] ?? 0)
@@ -224,7 +301,10 @@ class AIProviderService
         $apiKey   = config('ai.providers.gemini.api_key');
         $endpoint = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent?key={$apiKey}";
 
-        $response = \Http::post($endpoint, [
+        $timeout = (int) config('ai.providers.gemini.timeout', 15);
+        $connectTimeout = (int) config('ai.providers.gemini.connect_timeout', 5);
+
+        $response = \Http::connectTimeout($connectTimeout)->timeout($timeout)->post($endpoint, [
             'model'   => 'models/text-embedding-004',
             'content' => ['parts' => [['text' => $text]]],
         ])->throw()->json();
@@ -241,5 +321,16 @@ class AIProviderService
         } catch (\Exception $e) {
             return $default;
         }
+    }
+
+    private function extendExecutionWindow(int $timeout, int $retryAttempts = 1): void
+    {
+        $budgetSeconds = max(($timeout * max($retryAttempts, 1)) + 15, 30);
+
+        if (function_exists('set_time_limit')) {
+            @set_time_limit($budgetSeconds);
+        }
+
+        @ini_set('max_execution_time', (string) $budgetSeconds);
     }
 }

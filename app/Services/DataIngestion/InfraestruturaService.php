@@ -76,7 +76,7 @@ class InfraestruturaService
                 . "  - PGMU: Plano Geral de Metas de Universalização",
             'category' => 'infraestrutura',
             'source'   => 'Infraestrutura — Contexto',
-            'metadata' => ['municipio' => $municipality->name, 'tipo' => 'contexto_infra'],
+            'metadata' => ['município' => $municipality->name, 'tipo' => 'contexto_infra'],
         ];
     }
 }

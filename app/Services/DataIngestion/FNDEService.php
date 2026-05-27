@@ -31,7 +31,7 @@ class FNDEService
                 'content'  => $text,
                 'category' => 'educacao',
                 'source'   => 'FNDE — Programas Educacionais',
-                'metadata' => ['municipio' => $municipality->name, 'ano' => $ano],
+                'metadata' => ['município' => $municipality->name, 'ano' => $ano],
             ];
         } catch (\Exception $e) {
             Log::warning("FNDE falhou para {$municipality->name}: " . $e->getMessage());
@@ -56,7 +56,7 @@ class FNDEService
                 'content'  => $text,
                 'category' => 'educacao',
                 'source'   => 'INEP — Censo Escolar / IDEB',
-                'metadata' => ['municipio' => $municipality->name],
+                'metadata' => ['município' => $municipality->name],
             ];
         } catch (\Exception $e) {
             Log::warning("INEP falhou: " . $e->getMessage());

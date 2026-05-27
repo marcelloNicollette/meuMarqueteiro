@@ -2,11 +2,14 @@
 
 namespace App\Services\AI;
 
+use App\Enums\ResourceOpportunityStatus;
 use App\Models\Conversation;
+use App\Models\ConversationMemory;
 use App\Models\DocumentEmbedding;
 use App\Models\Message;
 use App\Models\Municipality;
 use App\Models\User;
+use App\Services\Radar\HybridRadarReadService;
 use App\Services\RAG\RAGService;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
@@ -26,12 +29,17 @@ class AssistantService
     public function __construct(
         private AIProviderService $ai,
         private RAGService        $rag,
+        private ConversationMetadataService $metadata,
+        private AssistantContextService $assistantContext,
+        private ConversationMemoryService $conversationMemory,
     ) {}
 
     public function chat(
         string       $userMessage,
         User         $mayor,
         Conversation $conversation,
+        string       $inputType = 'text',
+        ?string      $voiceTranscript = null,
     ): Message {
         $municipality = $mayor->municipality;
 
@@ -53,39 +61,52 @@ class AssistantService
         }
 
         // 2. Salvar mensagem do usuário no banco ANTES de buscar o histórico
-        Message::create([
+        $userMessageRecord = Message::create([
             'conversation_id' => $conversation->id,
             'role'            => 'user',
             'content'         => $userMessage,
-            'input_type'      => 'text',
+            'input_type'      => in_array($inputType, ['text', 'voice'], true) ? $inputType : 'text',
+            'voice_transcript' => $voiceTranscript,
         ]);
 
-        // 3. Histórico com memória persistente (agora inclui a mensagem salva acima)
-        $history = $this->buildHistoryWithMemory($conversation);
+        // 3. Memoria vetorial de conversas anteriores
+        $memoryHits = collect();
+        $memoryContext = '';
 
-        // 4. Montar mensagens para o LLM
+        try {
+            $memoryHits = $this->conversationMemory->retrieve($userMessage, $mayor, $conversation);
+            $memoryContext = $this->conversationMemory->buildContext($memoryHits);
+        } catch (\Throwable $e) {
+            Log::warning("Falha ao recuperar memoria vetorial da conversa {$conversation->id}: " . $e->getMessage());
+        }
+
+        // 4. Histórico com memória persistente (agora inclui a mensagem salva acima)
+        $summaryMemory = $this->resolveHistoricalMemorySummary($conversation);
+        $history = $this->buildHistoryWithMemory($conversation, $summaryMemory);
+
+        // 5. Montar mensagens para o LLM
         // O histórico inclui a mensagem salva. Adicionamos um lembrete explícito
         // ao final para garantir que o Claude responda O QUE FOI PERGUNTADO AGORA.
         $messages = [
             [
                 'role'    => 'system',
-                'content' => $this->buildSystemPrompt($mayor, $municipality, $ragContext),
+                'content' => $this->buildSystemPrompt($mayor, $municipality, $conversation, $ragContext, $memoryContext),
             ],
             ...$history,
             // Lembrete final — garante que a última pergunta seja respondida
             [
                 'role'    => 'user',
-                'content' => 'ATENCAO: responda ESPECIFICAMENTE isto que acabei de perguntar: [' . $userMessage . '] — nao repita respostas anteriores nem mude o assunto.',
+                'content' => 'ATENCAO: responda ESPECIFICAMENTE isto que acabei de perguntar: [' . $userMessage . '] — não repita respostas anteriores nem mude o assunto.',
             ],
         ];
 
-        // 5. Chamar o LLM
+        // 6. Chamar o LLM
         $response = $this->ai->chat($messages, [
             'temperature' => 0.7,
             'max_tokens'  => 2048,
         ]);
 
-        // 6. Salvar resposta do assistente
+        // 7. Salvar resposta do assistente
         $assistantMessage = Message::create([
             'conversation_id' => $conversation->id,
             'role'            => 'assistant',
@@ -99,10 +120,16 @@ class AssistantService
             'metadata'        => [
                 'provider' => $response->provider,
                 'model'    => $response->model,
+                'memory'   => [
+                    'hits_count' => $memoryHits->count(),
+                    'memory_ids' => $memoryHits->pluck('id')->values()->all(),
+                    'summary_used' => !empty($summaryMemory),
+                    'active_count' => $memoryHits->count() + (!empty($summaryMemory) ? 1 : 0),
+                ],
             ],
         ]);
 
-        // 7. Atualizar metadados da conversa
+        // 8. Atualizar metadados da conversa
         $conversation->update([
             'last_message_at' => now(),
             'token_count'     => $conversation->token_count + $response->tokensUsed,
@@ -110,8 +137,27 @@ class AssistantService
             'ai_model'        => $response->model,
         ]);
 
-        // 8. Comprimir memória se atingiu o limite
+        // 9. Comprimir memória se atingiu o limite
         $this->maybeCompressMemory($conversation, $mayor, $municipality);
+
+        // 10. Atualizar metadados operacionais da conversa
+        try {
+            $this->metadata->refresh($conversation->fresh());
+        } catch (\Throwable $e) {
+            Log::warning("Falha ao atualizar metadados da conversa {$conversation->id}: " . $e->getMessage());
+        }
+
+        // 11. Indexar a interacao como memoria vetorial
+        try {
+            $this->conversationMemory->rememberTurn(
+                conversation: $conversation->fresh(),
+                mayor: $mayor,
+                userMessage: $userMessageRecord,
+                assistantMessage: $assistantMessage,
+            );
+        } catch (\Throwable $e) {
+            Log::warning("Falha ao indexar memoria vetorial da conversa {$conversation->id}: " . $e->getMessage());
+        }
 
         return $assistantMessage;
     }
@@ -178,11 +224,11 @@ Analise as interacoes abaixo entre o prefeito {$mayor->name} ({$municipality->na
 {$contextualNote}
 
 Crie um sumario em topicos curtos que capture:
-1. Temas e assuntos ja discutidos (para nao repetir explicacoes)
+1. Temas e assuntos ja discutidos (para não repetir explicacoes)
 2. Decisoes ou intencoes manifestadas pelo prefeito
 3. Informacoes fornecidas pelo prefeito sobre sua gestao
-4. Preferencias de comunicacao demonstradas
-5. Contexto politico ou situacoes especificas mencionadas
+4. Preferencias de comunicação demonstradas
+5. Contexto politico ou situacoes específicas mencionadas
 6. Programas ou recursos que estao sendo investigados
 
 Regras:
@@ -225,27 +271,11 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
      * Constrói o histórico incluindo memória persistente de sessões anteriores.
      * Busca o memory_summary da conversa ATUAL ou, se vazio, da conversa anterior do usuário.
      */
-    private function buildHistoryWithMemory(Conversation $conversation): array
+    private function buildHistoryWithMemory(Conversation $conversation, ?string $memorySummary = null): array
     {
         $history = [];
 
-        // 1. Tentar pegar memória da conversa atual
-        $memorySummary = $conversation->context['memory_summary'] ?? null;
-
-        // 2. Se a conversa atual não tem memória, buscar da conversa anterior do mesmo usuário
-        if (!$memorySummary) {
-            $previousConversation = Conversation::where('user_id', $conversation->user_id)
-                ->where('id', '!=', $conversation->id)
-                ->whereNotNull('context')
-                ->orderByDesc('last_message_at')
-                ->first();
-
-            if ($previousConversation) {
-                $memorySummary = $previousConversation->context['memory_summary'] ?? null;
-            }
-        }
-
-        // 3. Injetar a memória no início do histórico
+        // 1. Injetar a memória resumida no início do histórico
         if ($memorySummary) {
             $history[] = [
                 'role'    => 'user',
@@ -260,7 +290,7 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
             ];
         }
 
-        // 4. Mensagens recentes da conversa atual
+        // 2. Mensagens recentes da conversa atual
         $recentMessages = $conversation->messages()
             ->latest()
             ->limit(self::HISTORY_RECENT_LIMIT)
@@ -275,60 +305,180 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
         return array_merge($history, $recentMessages);
     }
 
+    private function resolveHistoricalMemorySummary(Conversation $conversation): ?string
+    {
+        $memorySummary = $conversation->context['memory_summary'] ?? null;
+
+        if ($memorySummary) {
+            return $memorySummary;
+        }
+
+        $previousConversation = Conversation::where('user_id', $conversation->user_id)
+            ->where('id', '!=', $conversation->id)
+            ->whereNotNull('context')
+            ->orderByDesc('last_message_at')
+            ->first();
+
+        $previousSummary = $previousConversation?->context['memory_summary'] ?? null;
+
+        if (!empty($previousSummary)) {
+            return $previousSummary;
+        }
+
+        return $this->buildHistoricalSummaryFromStoredMemories($conversation);
+    }
+
+    private function buildHistoricalSummaryFromStoredMemories(Conversation $conversation): ?string
+    {
+        $memories = ConversationMemory::query()
+            ->where('user_id', $conversation->user_id)
+            ->where('conversation_id', '!=', $conversation->id)
+            ->orderByDesc('last_used_at')
+            ->orderByDesc('importance_score')
+            ->orderByDesc('created_at')
+            ->limit(3)
+            ->get(['content', 'metadata']);
+
+        if ($memories->isEmpty()) {
+            return null;
+        }
+
+        $lines = [];
+
+        foreach ($memories as $memory) {
+            $metadata = is_array($memory->metadata ?? null) ? $memory->metadata : [];
+            $title = trim((string) ($metadata['conversation_title'] ?? 'Conversa anterior'));
+            $excerpt = trim((string) ($metadata['assistant_excerpt'] ?? $metadata['user_excerpt'] ?? ''));
+            $content = trim(preg_replace('/\s+/', ' ', $memory->content ?? ''));
+            $summary = $excerpt !== '' ? $excerpt : $content;
+
+            if ($summary === '') {
+                continue;
+            }
+
+            $lines[] = '- ' . mb_substr($title . ': ' . $summary, 0, 220);
+        }
+
+        return empty($lines) ? null : implode("\n", $lines);
+    }
+
     // ─── System Prompt ────────────────────────────────────────────────────
 
-    private function buildSystemPrompt(User $mayor, Municipality $municipality, string $ragContext): string
+    private function buildSystemPrompt(
+        User $mayor,
+        Municipality $municipality,
+        Conversation $conversation,
+        string $ragContext,
+        string $memoryContext
+    ): string
     {
         $voiceProfile    = $this->buildVoiceProfile($municipality);
         $mandateContext  = $this->buildMandateContext($municipality);
+        $operationalContext = $this->assistantContext->buildOperationalContext($municipality, $mayor);
         $municipalityData = $this->buildMunicipalityData($municipality);
-        $politicalMap    = $this->buildPoliticalMap($municipality);
+        $políticalMap    = $this->buildPoliticalMap($municipality);
         $federalAlerts   = $this->buildFederalAlerts($municipality);
+        $shouldAskPreferredName = $this->shouldAskPreferredName($mayor, $conversation);
 
         return <<<PROMPT
-        Voce e o Assessor Digital do prefeito {$mayor->name}, do municipio de {$municipality->name} ({$municipality->state}).
+        Voce e o Meu Marqueteiro, assistente pessoal do prefeito {$mayor->name}, do município de {$municipality->name} ({$municipality->state}).
 
         ## Sua identidade
-        Voce e um assessor politico e de gestao publica de altissimo nivel, com profundo conhecimento em:
-        - Marketing politico e comunicacao de mandato
-        - Gestao municipal e politicas publicas
-        - Captacao de recursos federais
-        - Legislacao municipal (LRF, Lei de Licitacoes, FUNDEB, etc.)
-        - Benchmarks de municipios de porte similar
+        Voce combina tres perfis:
+        - consultor politico experiente
+        - assessor de confianca
+        - analista que traz dados e contexto antes de opinar
+        Voce conhece este prefeito, este município e este mandato. Nao trate o usuario como um desconhecido.
 
         ## Regras ABSOLUTAS de comportamento
         - RESPONDA O QUE FOI PERGUNTADO AGORA. Se o prefeito mudou de assunto, mude junto. Nao fique preso no topico anterior.
-        - Se o prefeito perguntar sobre vereador, fale do vereador. Se perguntar sobre programas federais, fale de programas federais.
+        - Fale de forma direta, como entre conhecidos. Sem linguagem tecnica desnecessária, sem introducoes longas e sem conclusoes genericas.
+        - Pode usar humor leve quando o momento permitir, sem perder o respeito.
+        - Se a pergunta for rápida e operacional, responda curto e direto.
+        - Se envolver decisão estrategica ou risco alto, responda com contexto, cenarios e recomendacao clara.
         - Voce pode mencionar brevemente assuntos anteriores relevantes, mas responda PRIMEIRO o que foi pedido agora.
-        - NUNCA use termos tecnicos sem explicar em linguagem simples
+        - NUNCA use termos tecnicos sem explicar em linguagem simples.
         - NUNCA use palavras ou expressoes em ingles
         - SEMPRE responda em portugues do Brasil, linguagem direta e acessivel
         - Seja objetivo — o prefeito tem pouco tempo
-        - Quando for fazer analise politica, seja honesto mas construtivo
+        - Quando for fazer analise política, seja honesto, construtivo e leve em conta o mapa politico local.
         - Cite as fontes dos dados quando os usar (SICONFI, IBGE, Portal da Transparencia, etc.)
-        - Quando lembrar de algo discutido anteriormente, mencione naturalmente: "Como voce mencionou antes..." ou "Na nossa ultima conversa sobre X..."
+        - Quando lembrar de algo discutido anteriormente, mencione naturalmente: "Como você mencionou antes..." ou "Na nossa ultima conversa sobre X..."
+        - Oriente, questione, aponte riscos e sugira caminhos, mas NAO tome decisoes pelo prefeito.
+        - Em risco juridico, financeiro, politico ou de imagem, fale diretamente e sem suavizar o problema.
+        - Em tema eleitoral, separe gestao de estrategia politico-eleitoral e lembre dos limites legais quando necessário.
+        - Se faltar informacao, diga o que sabe, sinalize a lacuna e ofereca o melhor proximo passo.
+        - Seja proativo apenas quando houver base real para alertar sobre risco, prazo ou oportunidade.
 
-        ## Dados do municipio
+        ## Limites fixos
+        - Nao emita parecer juridico formal.
+        - Nao faca promessas sobre captação de recursos, aprovacao de projetos ou resultado eleitoral.
+        - Nao compartilhe informacoes de um cliente com outro.
+        - Nao esconda risco para agradar o prefeito.
+        - Nao substitua consultoria humana especializada quando ela for necessária.
+
+        ## Dados do município
         {$municipalityData}
+
+        ## Contexto proprietario do mandato
+        {$operationalContext['strategic_profile']}
 
         ## Perfil de voz do prefeito
         {$voiceProfile}
 
         ## Mapa politico
-        {$politicalMap}
+        {$políticalMap}
 
         ## Contexto do mandato (compromissos ativos)
         {$mandateContext}
 
+        ## Demandas operacionais do município
+        {$operationalContext['demands']}
+
+        ## Execução do mandato (eixos, promessas e acoes)
+        {$operationalContext['mandate_execution']}
+
         ## Alertas do Radar de Programas Federais
         {$federalAlerts}
+
+        ## Conteudos recentes gerados na plataforma
+        {$operationalContext['recent_contents']}
+
+        ## Memorias relevantes recuperadas da relacao com este prefeito
+        {$memoryContext}
 
         ## Dados e informacoes recuperadas (use esses dados para fundamentar suas respostas):
         {$ragContext}
 
+        ## Tratamento na conversa
+        - {$shouldAskPreferredName}
+
         ---
         Data de hoje: {$this->today()}
         PROMPT;
+    }
+
+    private function shouldAskPreferredName(User $mayor, Conversation $conversation): string
+    {
+        $preferredName = is_array($mayor->preferences ?? null)
+            ? ($mayor->preferences['preferred_name'] ?? null)
+            : null;
+
+        if (!empty($preferredName)) {
+            return "Use o tratamento preferido ja configurado: {$preferredName}.";
+        }
+
+        $hasPreviousMessages = Conversation::query()
+            ->where('user_id', $mayor->id)
+            ->whereHas('messages')
+            ->where('id', '!=', $conversation->id)
+            ->exists();
+
+        if (!$hasPreviousMessages && $conversation->messages()->where('role', 'user')->count() <= 1) {
+            return 'Se esta for a primeira interacao real com o prefeito, comece perguntando rápidamente como ele prefere ser chamado antes de seguir.';
+        }
+
+        return 'Se o tratamento preferido ainda não estiver claro, use o primeiro nome do prefeito com naturalidade e, quando houver abertura, confirme como ele prefere ser chamado.';
     }
 
     private function buildMunicipalityData(Municipality $municipality): string
@@ -356,7 +506,7 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
     private function buildPoliticalMap(Municipality $municipality): string
     {
         $map = $municipality->political_map ?? [];
-        if (empty($map)) return 'Mapa politico ainda nao configurado.';
+        if (empty($map)) return 'Mapa politico ainda não configurado.';
 
         $lines = [];
         if (!empty($map['allies']))     $lines[] = "- Aliados: {$map['allies']}";
@@ -370,7 +520,7 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
     private function buildVoiceProfile(Municipality $municipality): string
     {
         $profile = $municipality->voice_profile ?? [];
-        if (empty($profile)) return 'Perfil de voz ainda nao configurado. Use tom profissional e direto.';
+        if (empty($profile)) return 'Perfil de voz ainda não configurado. Use tom profissional e direto.';
 
         return implode("\n", [
             "- Tom preferido: " . ($profile['tone'] ?? 'profissional'),
@@ -387,7 +537,7 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
             ->limit(8)
             ->get(['title', 'status', 'area', 'progress_percent', 'deadline']);
 
-        if ($commitments->isEmpty()) return 'Compromissos de mandato ainda nao configurados.';
+        if ($commitments->isEmpty()) return 'Compromissos de mandato ainda não configurados.';
 
         $totalEntregues = $municipality->governmentCommitments()->where('status', 'entregue')->count();
         $totalGeral     = $municipality->governmentCommitments()->count();
@@ -406,14 +556,16 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
 
     private function buildFederalAlerts(Municipality $municipality): string
     {
-        $alerts = $municipality->federalPrograms()
-            ->where('match_score', '>=', 0.75)
-            ->whereIn('status', ['open', 'monitoring'])
-            ->orderByDesc('match_score')
-            ->limit(4)
-            ->get(['program_name', 'area', 'match_score', 'max_value']);
+        $alerts = app(HybridRadarReadService::class)
+            ->topMunicipalityPrograms(
+                municipality: $municipality,
+                limit: 4,
+                minMatchScore: 0.75,
+                statuses: ResourceOpportunityStatus::activeForRadar(),
+                visibleOnly: false,
+            );
 
-        if ($alerts->isEmpty()) return 'Nenhum alerta de programa federal com alta relevancia no momento.';
+        if ($alerts->isEmpty()) return 'Nenhum alerta relevante do radar de recursos no momento.';
 
         return $alerts->map(fn($a) => sprintf(
             "- %s (%s) — relevancia: %.0f%%%s",

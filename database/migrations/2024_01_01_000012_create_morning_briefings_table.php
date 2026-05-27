@@ -26,7 +26,7 @@ return new class extends Migration
 
             // Seções estruturadas (para renderização modular)
             $table->json('sections')->nullable()
-                ->comment('{agenda, comunicacao, alertas, contexto_politico, pergunta_estrategica}');
+                ->comment('{agenda, comunicação, alertas, contexto_politico, pergunta_estrategica}');
 
             // Entrega
             $table->timestamp('delivered_at')->nullable();

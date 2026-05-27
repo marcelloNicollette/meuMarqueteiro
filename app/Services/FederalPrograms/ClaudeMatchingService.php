@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
  * Usa o Claude para avaliar elegibilidade de programas federais
  * em relação ao perfil de um município.
  *
- * Processa em lotes de 10 para não ultrapassar o context window.
+ * Processa em lotes de 10 para não  ultrapassar o context window.
  */
 class ClaudeMatchingService
 {
@@ -53,6 +53,9 @@ class ClaudeMatchingService
             array_map(fn($p) => [
                 'program_code' => $p['program_code'],
                 'program_name' => $p['program_name'],
+                'source_key' => $p['source_key'] ?? null,
+                'source_platform' => $p['source_platform'] ?? null,
+                'capture_method' => $p['capture_method'] ?? null,
                 'ministry'     => $p['ministry'] ?? null,
                 'description'  => mb_substr($p['description'] ?? '', 0, 300),
                 'area'         => $p['area'] ?? null,
@@ -64,39 +67,44 @@ class ClaudeMatchingService
         );
 
         $prompt = <<<PROMPT
-Você é um especialista em captação de recursos federais para municípios brasileiros.
+Voce e um especialista em captação de recursos para municípios brasileiros.
 
 CONTEXTO IMPORTANTE:
-Os registros abaixo são transferências e convênios HISTÓRICOS já recebidos pelo município
-(fontes: Transferegov — Transferências Especiais, e Portal da Transparência — Convênios/Emendas).
-Eles representam o que o município já recebeu nos últimos anos, servindo como base para
-identificar programas recorrentes que o município pode pleitear novamente.
+Os registros abaixo podem vir de dois grupos operacionais do Radar:
+- Grupo A: APIs oficiais e histórico de transferencias ou convenios ja recebidos pelo município
+- Grupo B: scraping estruturado de paginas publicas com programas, editais, chamadas, portarias e linhas de financiamento
+- Grupo C: monitoramento de diarios oficiais e publicacoes normativas com potencial de oportunidade, acompanhamento ou preparacao institucional
+
+Alguns registros representam histórico de captação; outros representam oportunidades ou itens de monitoramento identificados em fontes publicas.
+Ao avaliar, considere:
+- aderência ao perfil atual do município
+- potencial de aproveitamento, pleito, acompanhamento ou preparacao institucional
+- se faz sentido publicar no radar agora, manter em monitoramento ou descartar
 
 PERFIL DO MUNICÍPIO:
 {$profile}
 
-REGISTROS HISTÓRICOS A ANALISAR:
+REGISTROS DO RADAR A ANALISAR:
 {$programsJson}
 
 Para cada registro, avalie:
-1. A probabilidade de este tipo de recurso ser recorrente/disponível novamente
-2. O grau de relevância para o perfil atual do município (match_score de 0.00 a 1.00)
-3. Uma recomendação objetiva em 1-2 frases (match_reason) indicando se vale monitorar/pleitear novamente
-4. Status inferido: "open" (provável que abra chamada), "monitoring" (acompanhar), "low_priority" (baixa prioridade)
+1. O grau de relevancia e acionabilidade para o perfil atual do município (match_score de 0.00 a 1.00)
+2. Uma recomendacao objetiva em 1-2 frases (match_reason) indicando se vale publicar, monitorar ou preparar pleito
+3. Status inferido: "published" (oportunidade apta para aparecer no radar), "monitoring" (acompanhar), "rejected" (baixa prioridade)
 
 Retorne APENAS um array JSON com os seguintes campos por registro:
 - program_code (igual ao recebido)
-- match_score (float 0.00-1.00, onde 1.00 = altíssima relevância e recorrência esperada)
-- match_reason (string, em português, 1-2 frases objetivas com recomendação prática)
-- status (string: open | monitoring | low_priority)
-- area (string: confirme ou corrija a área temática)
+- match_score (float 0.00-1.00, onde 1.00 = altissima relevancia e alta acao recomendada)
+- match_reason (string, em portugues, 1-2 frases objetivas com recomendacao pratica)
+- status (string: published | monitoring | rejected)
+- area (string: confirme ou corrija a area tematica)
 
 Critérios de match_score:
-- 0.90-1.00: programa altamente recorrente, município claramente elegível, vale priorizar
-- 0.70-0.89: provável recorrência, município elegível, vale monitorar editais
-- 0.50-0.69: recorrência possível, impacto moderado para o município
-- 0.30-0.49: recorrência incerta ou baixa compatibilidade atual
-- 0.00-0.29: programa pontual ou não relevante para o perfil atual
+- 0.90-1.00: usar status "published"
+- 0.70-0.89: usar status "published"
+- 0.50-0.69: usar status "monitoring"
+- 0.30-0.49: usar status "monitoring" apenas se houver justificativa objetiva e utilidade real para o município
+- 0.00-0.29: usar status "rejected"
 
 Retorne SOMENTE o JSON, sem explicações, sem markdown.
 PROMPT;
@@ -155,7 +163,7 @@ PROMPT;
         $parts = [
             "Nome: {$municipality->name}",
             "Estado: {$municipality->state_code}",
-            "Região: " . ($municipality->region ?? 'não informada'),
+            "Região: " . ($municipality->region ?? 'não  informada'),
             "IBGE: {$municipality->ibge_code}",
         ];
 

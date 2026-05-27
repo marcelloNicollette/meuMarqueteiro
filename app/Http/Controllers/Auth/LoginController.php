@@ -22,9 +22,15 @@ class LoginController extends Controller
 
         $user = auth()->user();
 
-        return $user->hasRole('admin')
-            ? redirect()->route('admin.dashboard')
-            : redirect()->route('mayor.chat.index');
+        if ($user->hasRole('admin')) {
+            return redirect()->route('admin.dashboard');
+        }
+
+        if ($user->hasRole('mayor')) {
+            return redirect()->route('mayor.chat.index');
+        }
+
+        return redirect()->route('resolve-ai.demands.index');
     }
 
     public function logout(Request $request): RedirectResponse

@@ -9,8 +9,8 @@ use Illuminate\Support\Facades\Log;
 /**
  * SICONFI — Relatórios fiscais do município (STN/Tesouro Nacional).
  *
- * A API usa co_municipio_ibge para identificar o ente.
- * Fallback: gera contexto informativo quando a API não retorna dados.
+ * A API usa co_município_ibge para identificar o ente.
+ * Fallback: gera contexto informativo quando a API não  retorna dados.
  */
 class SICONFIService
 {
@@ -38,7 +38,7 @@ class SICONFIService
                     'in_periodicidade'      => 'Q',
                     'nr_periodo'            => 3,
                     'co_tipo_demonstrativo' => 'RGF',
-                    'co_municipio_ibge'     => $code,
+                    'co_município_ibge'     => $code,
                 ]);
 
                 if (!$res->ok()) continue;
@@ -76,7 +76,7 @@ class SICONFIService
                     'in_periodicidade'      => 'B',
                     'nr_periodo'            => 6,
                     'co_tipo_demonstrativo' => 'RREO',
-                    'co_municipio_ibge'     => $code,
+                    'co_município_ibge'     => $code,
                 ]);
 
                 if (!$res->ok()) continue;
@@ -119,7 +119,7 @@ class SICONFIService
                 . "Consultar dados específicos: https://siconfi.tesouro.gov.br",
             'category' => 'fiscal',
             'source'   => 'SICONFI — Contexto Fiscal',
-            'metadata' => ['municipio' => $municipality->name, 'tipo' => 'contexto'],
+            'metadata' => ['município' => $municipality->name, 'tipo' => 'contexto'],
         ];
     }
 }

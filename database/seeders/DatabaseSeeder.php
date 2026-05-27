@@ -13,6 +13,8 @@ class DatabaseSeeder extends Seeder
 {
     public function run(): void
     {
+        $this->call(ResourceSourcesSeeder::class);
+
         // ── Criar roles no Spatie ─────────────────────────────────────────
         $adminRole = Role::firstOrCreate(['name' => 'admin', 'guard_name' => 'web']);
         $mayorRole = Role::firstOrCreate(['name' => 'mayor', 'guard_name' => 'web']);

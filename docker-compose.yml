@@ -1,35 +1,4 @@
 services:
-  # ── Aplicação Laravel ────────────────────────────────────────────────
-  app:
-    build:
-      context: .
-      dockerfile: docker/Dockerfile
-    container_name: marqueteiro_app
-    restart: unless-stopped
-    dns:
-      - 8.8.8.8
-      - 8.8.4.4
-    ports:
-      - "8000:8000"
-    # SEM volume local — o Dockerfile instala o Laravel dentro do container
-    env_file:
-      - .env.docker # chaves secretas — NÃO vai para o GitHub
-    environment:
-      - APP_ENV=local
-      - DB_HOST=postgres
-      - DB_DATABASE=meu_marqueteiro
-      - DB_USERNAME=postgres
-      - DB_PASSWORD=secret
-      - REDIS_HOST=redis
-      - CACHE_DRIVER=redis
-      - SESSION_DRIVER=file
-      - QUEUE_CONNECTION=redis
-    depends_on:
-      - postgres
-      - redis
-    networks:
-      - marqueteiro
-
   # ── PostgreSQL + pgvector ────────────────────────────────────────────
   postgres:
     image: pgvector/pgvector:pg16
@@ -43,53 +12,16 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    networks:
-      - marqueteiro
-
-  # ── Redis (cache, filas, sessões) ────────────────────────────────────
-  redis:
-    image: redis:7-alpine
-    container_name: marqueteiro_redis
-    restart: unless-stopped
-    ports:
-      - "6379:6379"
-    volumes:
-      - redis_data:/data
-    networks:
-      - marqueteiro
-
-  # ── MinIO (S3-compatible local storage) ──────────────────────────────
-  minio:
-    image: minio/minio
-    container_name: marqueteiro_minio
-    restart: unless-stopped
-    command: server /data --console-address ":9001"
-    environment:
-      MINIO_ROOT_USER: meumarqueteiro
-      MINIO_ROOT_PASSWORD: secret1234
-    ports:
-      - "9000:9000"
-      - "9001:9001"
-    volumes:
-      - minio_data:/data
-    networks:
-      - marqueteiro
-
-  # ── Mailpit (e-mail local para dev) ──────────────────────────────────
-  mailpit:
-    image: axllent/mailpit
-    container_name: marqueteiro_mailpit
-    restart: unless-stopped
-    ports:
-      - "1025:1025"
-      - "8025:8025"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d meu_marqueteiro"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
     networks:
       - marqueteiro
 
 volumes:
   postgres_data:
-  redis_data:
-  minio_data:
 
 networks:
   marqueteiro:

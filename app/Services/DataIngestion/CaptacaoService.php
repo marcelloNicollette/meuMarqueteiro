@@ -8,7 +8,11 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Captação de recursos federais — Transferegov, BNDES, convênios.
+ * Captação de recursos federais.
+ *
+ * A integração histórica "transferegov" passou a consumir dados do Portal da
+ * Transparência para manter compatibilidade com a configuração existente no
+ * admin sem depender do endpoint antigo.
  */
 class CaptacaoService
 {
@@ -30,8 +34,11 @@ class CaptacaoService
         $apiKey = SystemSetting::get(
             'integration_transparencia_chave',
             SystemSetting::get(
-                'transparencia_api_key',
-                env('TRANSPARENCIA_API_KEY', '')
+                'integration_transferegov_chave',
+                SystemSetting::get(
+                    'transparencia_api_key',
+                    env('TRANSPARENCIA_API_KEY', '')
+                )
             )
         );
 
@@ -45,7 +52,7 @@ class CaptacaoService
         try {
             $res = Http::timeout(20)
                 ->withHeaders(['chave-api-dados' => $apiKey])
-                ->get('https://api.portaldatransparencia.gov.br/api-de-dados/transferencias/municipios', [
+                ->get('https://api.portaldatransparencia.gov.br/api-de-dados/transferencias/municípios', [
                     'codigoIbge' => $code,
                     'ano'        => $ano,
                     'pagina'     => 1,
@@ -62,13 +69,13 @@ class CaptacaoService
                         "Detalhamento:",
                     ];
                     foreach (array_slice($items, 0, 10) as $t) {
-                        $prog  = $t['descricaoPrograma'] ?? $t['nomeFavorecido'] ?? '—';
+                        $prog  = $t['descriçãoPrograma'] ?? $t['nomeFavorecido'] ?? '—';
                         $val   = 'R$ ' . number_format($t['valor'] ?? 0, 2, ',', '.');
                         $lines[] = "  - {$prog}: {$val}";
                     }
                     $chunks[] = [
                         'content'  => implode("\n", $lines),
-                        'category' => 'captacao',
+                        'category' => 'captação',
                         'source'   => 'Portal da Transparência — Transferências',
                         'metadata' => ['ibge_code' => $code, 'ano' => $ano],
                     ];
@@ -100,7 +107,7 @@ class CaptacaoService
                     }
                     $chunks[] = [
                         'content'  => implode("\n", $lines),
-                        'category' => 'captacao',
+                        'category' => 'captação',
                         'source'   => 'Portal da Transparência — Convênios',
                         'metadata' => ['ibge_code' => $code, 'tipo' => 'convenios'],
                     ];
@@ -120,10 +127,10 @@ class CaptacaoService
         return [
             'content'  => "Captação de Recursos Federais — {$municipality->name}\n"
                 . "Principais fontes de captação disponíveis para municípios:\n\n"
-                . "TRANSFEREGOV (antigo Siconv):\n"
-                . "  - Proposta de plano de trabalho para convênios com União\n"
-                . "  - Programas prioritários: infraestrutura, saúde, educação, esporte\n"
-                . "  - Emendas parlamentares individuais e de bancada\n\n"
+                . "PORTAL DA TRANSPARENCIA FEDERAL:\n"
+                . "  - Convênios, instrumentos e histórico de repasses por município\n"
+                . "  - Emendas parlamentares e oportunidades correlatas de captação\n"
+                . "  - Base pública para mapear áreas recorrentes de investimento federal\n\n"
                 . "BNDES:\n"
                 . "  - BNDES Finem: projetos de infraestrutura acima de R$ 10 milhões\n"
                 . "  - BNDES Automático: via agentes financeiros, até R$ 150 milhões\n"
@@ -132,10 +139,10 @@ class CaptacaoService
                 . "FNDE:\n"
                 . "  - PAR (Plano de Ações Articuladas): obras e equipamentos escolares\n"
                 . "  - PROINFÂNCIA: construção de creches\n\n"
-                . "Acesso: https://transferegov.sistema.gov.br | https://www.bndes.gov.br",
-            'category' => 'captacao',
+                . "Acesso: https://api.portaldatransparencia.gov.br/swagger-ui/index.html | https://www.bndes.gov.br",
+            'category' => 'captação',
             'source'   => 'Captação — Guia de Fontes',
-            'metadata' => ['municipio' => $municipality->name, 'tier' => $tier],
+            'metadata' => ['município' => $municipality->name, 'tier' => $tier],
         ];
     }
 }

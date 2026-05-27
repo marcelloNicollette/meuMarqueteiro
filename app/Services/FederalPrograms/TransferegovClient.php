@@ -106,14 +106,14 @@ class TransferegovClient
     private function normalizeEspecial(array $item, int $ano): ?array
     {
         // Campos conforme documentação da API de Transferências Especiais
-        $objeto = $item['descricaoObjeto']
+        $objeto = $item['descriçãoObjeto']
             ?? $item['objeto']
             ?? $item['finalidade']
             ?? null;
 
         $nomePrograma = $item['nomePrograma']
-            ?? $item['descricaoAcao']
-            ?? $item['descricaoFuncional']
+            ?? $item['descriçãoAcao']
+            ?? $item['descriçãoFuncional']
             ?? 'Transferência Especial';
 
         $name = $objeto
@@ -149,15 +149,18 @@ class TransferegovClient
 
         return [
             'source'          => 'transferegov',
+            'source_key'      => 'transferegov',
             'program_name'    => $name,
             'program_code'    => $codigo,
             'ministry'        => $ministerio ? mb_substr(trim($ministerio), 0, 255) : null,
             'description'     => $objeto ?? $nomePrograma,
             'max_value'       => $valor,
             'funding_type'    => 'emenda',
-            'deadline'        => null, // transferências especiais não têm prazo de inscrição
+            'deadline'        => null, // transferências especiais não  têm prazo de inscrição
             'source_url'      => 'https://www.transferegov.sistema.gov.br/voluntarias/principal/principal.do',
             'source_platform' => 'transferegov',
+            'capture_method'  => 'api_official',
+            'resource_scope'  => 'federal',
             'status'          => 'historical', // dado histórico — base para o Claude inferir recorrência
             'area'            => FederalProgramSyncService::inferArea(
                 $name . ' ' . ($ministerio ?? '') . ' ' . ($objeto ?? '')

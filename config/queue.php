@@ -15,6 +15,10 @@ return [
 
     'default' => env('QUEUE_CONNECTION', 'database'),
 
+    'radar_sync_queue' => env('RADAR_SYNC_QUEUE', 'radar-sync'),
+
+    'radar_sync_worker_queues' => env('RADAR_SYNC_WORKER_QUEUES', 'default,radar-sync'),
+
     /*
     |--------------------------------------------------------------------------
     | Queue Connections

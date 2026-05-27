@@ -4,17 +4,34 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Municipality;
+use App\Models\ProjectThesis;
 use App\Models\User;
+use App\Services\Communication\CommunicationSettingsService;
+use App\Services\Projects\ProjectBankLibraryService;
+use App\Services\ResolveAi\ResolveAiSettingsService;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
 class MunicipalityController extends Controller
 {
+    public function __construct(
+        private readonly CommunicationSettingsService $communicationSettings,
+        private readonly ResolveAiSettingsService $resolveAiSettings,
+        private readonly ProjectBankLibraryService $projectBankLibrary,
+    ) {}
+
     public function index()
     {
         $municipalities = Municipality::with('mayor')
             ->orderByDesc('created_at')
             ->paginate(20);
+
+        $municipalities->getCollection()->transform(function (Municipality $municipality) {
+            $municipality->setAttribute('project_bank_summary', $this->projectBankSummary($municipality));
+
+            return $municipality;
+        });
 
         return view('admin.municipalities.index', compact('municipalities'));
     }
@@ -74,8 +91,23 @@ class MunicipalityController extends Controller
             'commitments_at_risk'  => $municipality->governmentCommitments()->where('status', 'em_risco')->count(),
             'conversations_total'  => $municipality->conversations()->count(),
             'contents_generated'   => $municipality->generatedContents()->count(),
+            'contact_areas_total'  => $municipality->contactAreas()->count(),
+            'contact_areas_ready'  => $municipality->contactAreas()->where('active', true)->where(function ($query) {
+                $query->whereNotNull('notification_email')->orWhereNotNull('email');
+            })->count(),
+            'localities_total'     => $municipality->localities()->count(),
         ];
-        return view('admin.municipalities.show', compact('municipality', 'stats'));
+        $communicationSettings = $this->communicationSettings->forMunicipality($municipality);
+        $resolveAiSettings = $this->resolveAiSettings->forMunicipality($municipality);
+        $projectBankSummary = $this->projectBankSummary($municipality);
+
+        return view('admin.municipalities.show', compact(
+            'municipality',
+            'stats',
+            'communicationSettings',
+            'resolveAiSettings',
+            'projectBankSummary'
+        ));
     }
 
     public function edit(Municipality $municipality)
@@ -101,10 +133,10 @@ class MunicipalityController extends Controller
             'voice_style'         => 'nullable|string|max:255',
             'voice_vocabulary'    => 'nullable|string|max:255',
             'voice_avoid'         => 'nullable|string|max:255',
-            'political_allies'    => 'nullable|string',
-            'political_neutral'   => 'nullable|string',
-            'political_opposition' => 'nullable|string',
-            'political_notes'     => 'nullable|string',
+            'polítical_allies'    => 'nullable|string',
+            'polítical_neutral'   => 'nullable|string',
+            'polítical_opposition' => 'nullable|string',
+            'polítical_notes'     => 'nullable|string',
         ]);
 
         // Montar voice_profile
@@ -116,11 +148,11 @@ class MunicipalityController extends Controller
         ]);
 
         // Montar political_map
-        $politicalMap = array_filter([
-            'allies'     => $data['political_allies'] ?? null,
-            'neutral'    => $data['political_neutral'] ?? null,
-            'opposition' => $data['political_opposition'] ?? null,
-            'notes'      => $data['political_notes'] ?? null,
+        $políticalMap = array_filter([
+            'allies'     => $data['polítical_allies'] ?? null,
+            'neutral'    => $data['polítical_neutral'] ?? null,
+            'opposition' => $data['polítical_opposition'] ?? null,
+            'notes'      => $data['polítical_notes'] ?? null,
         ]);
 
         $municipality->update([
@@ -136,7 +168,7 @@ class MunicipalityController extends Controller
             'subscription_tier'   => $data['subscription_tier'],
             'subscription_active' => $request->boolean('subscription_active'),
             'voice_profile'       => !empty($voiceProfile) ? $voiceProfile : $municipality->voice_profile,
-            'political_map'       => !empty($politicalMap) ? $politicalMap : $municipality->political_map,
+            'political_map'       => !empty($políticalMap) ? $políticalMap : $municipality->political_map,
         ]);
 
         return redirect()->route('admin.municipalities.show', $municipality)
@@ -150,10 +182,65 @@ class MunicipalityController extends Controller
         return back()->with('success', "Município {$municipality->name} {$status} com sucesso.");
     }
 
+    public function refreshProjectBank(Municipality $municipality): RedirectResponse
+    {
+        if (!$municipality->subscription_active || $municipality->onboarding_status !== 'completed') {
+            return back()->with('error', "O Banco de Projetos só pode ser recurado manualmente depois que {$municipality->name} estiver ativo e com onboarding concluído.");
+        }
+
+        try {
+            $theses = $this->projectBankLibrary->ensureLibraryForMunicipality(
+                $municipality,
+                force: true,
+                reason: 'admin_manual_refresh'
+            );
+
+            return back()->with('success', "Curadoria do Banco de Projetos reexecutada para {$municipality->name} ({$theses->count()} tese(s)).");
+        } catch (\Throwable $e) {
+            report($e);
+            $this->projectBankLibrary->markRefreshRecommended($municipality->refresh(), 'admin_manual_refresh_failed');
+
+            return back()->with('error', "Não foi possível reexecutar a curadoria do Banco para {$municipality->name} agora.");
+        }
+    }
+
     public function destroy(Municipality $municipality)
     {
         $municipality->delete();
         return redirect()->route('admin.municipalities.index')
             ->with('success', 'Município removido com sucesso.');
+    }
+
+    private function projectBankSummary(Municipality $municipality): array
+    {
+        $settings = (array) ($municipality->settings ?? []);
+        $projectBank = (array) ($settings['project_bank'] ?? []);
+        $librarySize = (int) data_get(
+            $projectBank,
+            'library_size',
+            ProjectThesis::query()->where('municipality_id', $municipality->id)->count()
+        );
+        $needsRefresh = (bool) data_get($projectBank, 'needs_refresh', false);
+        $bootstrappedAt = data_get($projectBank, 'bootstrapped_at');
+        $lastCuratedAt = data_get($projectBank, 'last_curated_at');
+
+        return [
+            'library_size' => $librarySize,
+            'bootstrapped_at' => $bootstrappedAt,
+            'last_curated_at' => $lastCuratedAt,
+            'needs_refresh' => $needsRefresh,
+            'refresh_reason' => (string) data_get($projectBank, 'refresh_recommended_reason', ''),
+            'status_label' => match (true) {
+                $needsRefresh => 'Refresh recomendado',
+                !empty($lastCuratedAt) => 'Curadoria em dia',
+                !empty($bootstrappedAt) => 'Bootstrap inicial pronto',
+                default => 'Pendente',
+            },
+            'status_tone' => match (true) {
+                $needsRefresh => 'warning',
+                !empty($lastCuratedAt) || !empty($bootstrappedAt) => 'success',
+                default => 'neutral',
+            },
+        ];
     }
 }

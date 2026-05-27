@@ -41,7 +41,7 @@ return new class extends Migration
             $table->string('mime_type', 100)->nullable();
             $table->unsignedBigInteger('size_bytes')->nullable();
 
-            // Conteúdo inline (para textos curtos que não precisam de arquivo)
+            // Conteúdo inline (para textos curtos que não  precisam de arquivo)
             $table->longText('content_raw')->nullable();
 
             // Status de indexação RAG

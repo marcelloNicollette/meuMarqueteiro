@@ -236,6 +236,65 @@
             color: var(--gold);
         }
 
+        .pra-hoje-settings {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 1.25rem 1.35rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .pra-hoje-settings p {
+            font-size: .84rem;
+            color: var(--ink-muted);
+            line-height: 1.65;
+            margin-bottom: 1rem;
+        }
+
+        .pra-hoje-settings-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: .85rem;
+            margin-bottom: 1rem;
+        }
+
+        .pra-hoje-settings label {
+            display: block;
+            font-size: .76rem;
+            font-weight: 700;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+            color: var(--ink-muted);
+            margin-bottom: .4rem;
+        }
+
+        .pra-hoje-settings input[type="time"] {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: .7rem .8rem;
+            font-size: .9rem;
+            color: var(--ink);
+            background: var(--white);
+        }
+
+        .pra-hoje-toggle {
+            display: flex;
+            align-items: center;
+            gap: .55rem;
+            font-size: .86rem;
+            color: var(--ink-soft);
+            text-transform: none !important;
+            letter-spacing: normal !important;
+            font-weight: 500 !important;
+            margin-bottom: 0 !important;
+        }
+
+        .pra-hoje-toggle input {
+            width: 16px;
+            height: 16px;
+        }
+
         /* Spinner */
         @keyframes spin {
             to {
@@ -319,23 +378,26 @@
                 </div>
                 <div class="today-card-body">
                     <div class="today-preview">
-                        {{ Str::limit(strip_tags($todayBriefing->content), 280) }}
+                        {{ Str::limit($todayBriefing->opening_text ?: strip_tags($todayBriefing->content), 280) }}
                     </div>
                     <div class="today-actions">
-                        <a href="{{ route('mayor.mandato.briefings.show', $todayBriefing) }}" class="btn-gerar">
+                        <a href="{{ route('pra-hoje.show', $todayBriefing) }}" class="btn-gerar">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path
                                     d="M12 4.5C7 4.5 2.73 7.61 1 12c1.73 4.39 6 7.5 11 7.5s9.27-3.11 11-7.5c-1.73-4.39-6-7.5-11-7.5zM12 17c-2.76 0-5-2.24-5-5s2.24-5 5-5 5 2.24 5 5-2.24 5-5 5zm0-8c-1.66 0-3 1.34-3 3s1.34 3 3 3 3-1.34 3-3-1.34-3-3-3z" />
                             </svg>
                             Ler briefing completo
                         </a>
-                        <a href="{{ route('mayor.chat.index') }}" class="btn-secondary">
+                        <a href="{{ route('chat.index') }}" class="btn-secondary">
                             <svg viewBox="0 0 24 24" fill="currentColor">
                                 <path
                                     d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zm-2 12H6v-2h12v2zm0-3H6V9h12v2zm0-3H6V6h12v2z" />
                             </svg>
                             Perguntar ao assistente
                         </a>
+                        <button type="button" class="btn-secondary" onclick="gerarAgora(true)">
+                            Atualizar briefing
+                        </button>
                     </div>
                 </div>
             </div>
@@ -357,48 +419,40 @@
             </div>
         @endif
 
-        {{-- Histórico --}}
-        <div class="history-section">
-            <h2>
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M13 3c-4.97 0-9 4.03-9 9H1l3.89 3.89.07.14L9 12H6c0-3.87 3.13-7 7-7s7 3.13 7 7-3.13 7-7 7c-1.93 0-3.68-.79-4.94-2.06l-1.42 1.42C8.27 19.99 10.51 21 13 21c4.97 0 9-4.03 9-9s-4.03-9-9-9zm-1 5v5l4.28 2.54.72-1.21-3.5-2.08V8H12z" />
-                </svg>
-                Histórico(s)
-            </h2>
-
-            @if ($briefings->isEmpty())
-                <p style="text-align:center;color:var(--ink-muted);font-size:.88rem;padding:2rem 0">
-                    Nenhum briefing disponível ainda.
-                </p>
-            @else
-                <div class="history-list">
-                    @foreach ($briefings as $b)
-                        @if ($todayBriefing && $b->id === $todayBriefing->id)
-                            @continue
-                        @endif
-                        <a href="{{ route('mayor.mandato.briefings.show', $b) }}" class="history-item">
-                            <div class="history-dot {{ $b->read_at ? 'read' : 'unread' }}"></div>
-                            <div class="history-item-date">
-                                {{ $b->date->locale('pt_BR')->isoFormat('dddd, D [de] MMMM') }}
-                            </div>
-                            <div class="history-item-preview">
-                                {{ Str::limit(strip_tags($b->content), 90) }}
-                            </div>
-                            <div class="history-item-status {{ $b->read_at ? '' : 'new' }}">
-                                {{ $b->read_at ? $b->read_at->diffForHumans() : 'NÃO LIDO' }}
-                            </div>
-                        </a>
-                    @endforeach
-                </div>
-
-                {{-- Paginação --}}
-                @if ($briefings->hasPages())
-                    <div style="margin-top:1.5rem;display:flex;justify-content:center">
-                        {{ $briefings->links() }}
+        <div class="pra-hoje-settings">
+            <h2>Configurações do Pra hoje</h2>
+            <p>As preferências são individuais. A notificação na plataforma continua ativa; o e-mail é opcional e usa a
+                mesma abertura do dia com um link direto para abrir o módulo.</p>
+            <form method="POST" action="{{ route('pra-hoje.preferences') }}">
+                @csrf
+                <div class="pra-hoje-settings-grid">
+                    <div>
+                        <label for="delivery_time">Horário de entrega</label>
+                        <input id="delivery_time" type="time" name="delivery_time"
+                            value="{{ $praHojePreferences['delivery_time'] ?? '07:30' }}" required>
                     </div>
-                @endif
-            @endif
+                    <div style="display:flex;flex-direction:column;justify-content:flex-end;gap:.75rem">
+                        <label class="pra-hoje-toggle">
+                            <input type="hidden" name="enabled" value="0">
+                            <input type="checkbox" name="enabled" value="1" @checked(($praHojePreferences['enabled'] ?? true) === true)>
+                            Ativar o Pra hoje para este usuário
+                        </label>
+                        <label class="pra-hoje-toggle">
+                            <input type="hidden" name="email_enabled" value="0">
+                            <input type="checkbox" name="email_enabled" value="1" @checked(($praHojePreferences['email_enabled'] ?? false) === true)>
+                            Receber a abertura também por e-mail
+                        </label>
+                    </div>
+                </div>
+                <button type="submit" class="btn-secondary">Salvar preferências</button>
+            </form>
+        </div>
+
+        <div class="history-section">
+            <h2>Pra Hoje</h2>
+            <p style="text-align:center;color:var(--ink-muted);font-size:.88rem;padding:1.1rem 0 0">
+                O briefing do dia substitui o anterior. Esta tela mostra apenas a versão atual do seu resumo priorizado.
+            </p>
         </div>
 
     </div>
@@ -408,19 +462,22 @@
     <script>
         const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 
-        async function gerarAgora() {
+        async function gerarAgora(refresh = false) {
             const btn = document.getElementById('btnGerar');
-            btn.disabled = true;
-            btn.innerHTML = '<div class="spinner"></div> Gerando seu briefing...';
+            if (btn) {
+                btn.disabled = true;
+                btn.innerHTML = '<div class="spinner"></div> Gerando seu briefing...';
+            }
 
             try {
-                const res = await fetch('{{ route('mayor.mandato.briefings.generate') }}', {
-                    method: 'POST',
-                    headers: {
-                        'X-CSRF-TOKEN': CSRF,
-                        'Accept': 'application/json'
-                    }
-                });
+                const res = await fetch(
+                    `{{ route('pra-hoje.generate') }}${refresh ? '?refresh=1' : ''}`, {
+                        method: 'POST',
+                        headers: {
+                            'X-CSRF-TOKEN': CSRF,
+                            'Accept': 'application/json'
+                        }
+                    });
                 const data = await res.json();
 
                 if (data.ok) {
@@ -431,9 +488,11 @@
                 }
             } catch (e) {
                 showToast('Não foi possível gerar o briefing: ' + e.message, 'err');
-                btn.disabled = false;
-                btn.innerHTML =
-                    '<svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Tentar novamente';
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerHTML =
+                        '<svg viewBox="0 0 24 24" fill="currentColor" style="width:16px;height:16px"><path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/></svg> Tentar novamente';
+                }
             }
         }
 

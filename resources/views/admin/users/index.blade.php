@@ -1,12 +1,12 @@
 @extends('layouts.admin')
-@section('title', 'Prefeitos')
+@section('title', 'Usuários Municipais')
 @section('content')
     <div style="padding:2rem">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1.5rem">
-            <h1 style="font-size:1.4rem;font-weight:700">Prefeitos</h1>
+            <h1 style="font-size:1.4rem;font-weight:700">Usuários Municipais</h1>
             <a href="{{ route('admin.users.create') }}"
                 style="padding:.6rem 1.2rem;background:var(--gold);color:#fff;border-radius:8px;font-weight:600;text-decoration:none;font-size:.9rem">+
-                Novo Prefeito</a>
+                Novo Usuário</a>
         </div>
         @if (session('success'))
             <div
@@ -17,10 +17,15 @@
             <table style="width:100%;border-collapse:collapse">
                 <thead>
                     <tr style="background:#f9fafb;border-bottom:1px solid #e5e7eb">
-                        <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">PREFEITO
+                        <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">USUÁRIO
                         </th>
                         <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">
                             MUNICÍPIO</th>
+                        <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">PERFIL
+                        </th>
+                        <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">
+                            SECRETARIA
+                        </th>
                         <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">STATUS
                         </th>
                         <th style="padding:.9rem 1rem;text-align:left;font-size:.8rem;color:#6b7280;font-weight:600">ÚLTIMO
@@ -37,6 +42,17 @@
                                 <div style="font-size:.78rem;color:#9ca3af">{{ $user->email }}</div>
                             </td>
                             <td style="padding:.9rem 1rem;font-size:.88rem">{{ $user->municipality?->name ?? '—' }}</td>
+                            <td style="padding:.9rem 1rem;font-size:.85rem;color:#374151">
+                                {{ $user->role?->label() ?? ucfirst((string) $user->role?->value) }}
+                            </td>
+                            <td style="padding:.9rem 1rem;font-size:.85rem;color:#374151">
+                                {{ $user->contactArea?->name ?? '—' }}
+                                @if ($user->isAdvisor())
+                                    <div style="font-size:.72rem;color:#9ca3af">
+                                        {{ $user->can_register_demands ? 'Pode registrar demandas' : 'Somente acompanhamento' }}
+                                    </div>
+                                @endif
+                            </td>
                             <td style="padding:.9rem 1rem">
                                 <form method="POST" action="{{ route('admin.users.toggle', $user) }}">
                                     @csrf @method('PATCH')
@@ -68,7 +84,7 @@
                                     <a href="{{ route('admin.users.edit', $user) }}"
                                         style="padding:.3rem .7rem;border:1px solid #e5e7eb;border-radius:6px;font-size:.78rem;color:#374151;text-decoration:none">Editar</a>
                                     <form method="POST" action="{{ route('admin.users.destroy', $user) }}"
-                                        onsubmit="return confirm('Excluir {{ addslashes($user->name) }}? Esta ação não pode ser desfeita.')">
+                                        onsubmit="return confirm('Excluir {{ addslashes($user->name) }}? Esta ação não  pode ser desfeita.')">
                                         @csrf @method('DELETE')
                                         <button type="submit"
                                             style="padding:.3rem .7rem;border:1px solid #fca5a5;border-radius:6px;font-size:.78rem;color:#dc2626;background:#fff;cursor:pointer">Excluir</button>
@@ -78,7 +94,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" style="padding:2rem;text-align:center;color:#9ca3af">Nenhum prefeito
+                            <td colspan="7" style="padding:2rem;text-align:center;color:#9ca3af">Nenhum usuário municipal
                                 cadastrado.</td>
                         </tr>
                     @endforelse

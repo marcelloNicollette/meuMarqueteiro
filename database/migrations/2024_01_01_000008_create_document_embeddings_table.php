@@ -18,6 +18,8 @@ return new class extends Migration
 {
     public function up(): void
     {
+        $driver = DB::getDriverName();
+
         Schema::create('document_embeddings', function (Blueprint $table) {
             $table->id();
 
@@ -27,7 +29,7 @@ return new class extends Migration
                 ->constrained()
                 ->nullOnDelete();
 
-            // Documento de origem (nullable: dados de APIs não têm documento)
+            // Documento de origem (nullable: dados de APIs não  têm documento)
             $table->foreignId('document_id')
                 ->nullable()
                 ->constrained('municipality_documents')
@@ -37,7 +39,7 @@ return new class extends Migration
             $table->string('layer', 30)
                 ->comment('public_data | knowledge_base | client_data');
             $table->string('category', 50)
-                ->comment('fiscal | education | health | political | communication | federal_programs | legislation | benchmark');
+                ->comment('fiscal | education | health | polítical | communication | federal_programs | legislation | benchmark');
             $table->string('source', 200)
                 ->comment('SICONFI, FNDE, IBGE, programa_governo, etc.');
 
@@ -54,6 +56,11 @@ return new class extends Migration
             // Expiração (para dados que ficam obsoletos)
             $table->timestamp('expires_at')->nullable();
 
+            // Fallback para bancos sem suporte vetorial nativo.
+            if (DB::getDriverName() !== 'pgsql') {
+                $table->longText('embedding')->nullable();
+            }
+
             $table->timestamps();
 
             // Índices relacionais
@@ -63,9 +70,13 @@ return new class extends Migration
             $table->index('expires_at');
         });
 
+        if ($driver !== 'pgsql') {
+            return;
+        }
+
         // ── Coluna vector (pgvector) ──────────────────────────────
         // Adicionada separadamente pois o Blueprint do Laravel
-        // não tem suporte nativo a tipos pgvector.
+        // não  tem suporte nativo a tipos pgvector.
         // Dimensões: 1536 (OpenAI text-embedding-3-small / text-embedding-ada-002)
         //            768  (Google text-embedding-004)
         // Ajuste VECTOR_DIMENSIONS no .env conforme o provider escolhido.

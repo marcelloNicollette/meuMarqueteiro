@@ -169,25 +169,25 @@
                 <div style="display:grid;gap:.75rem">
                     <div>
                         <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Aliados</label>
-                        <textarea name="political_allies" rows="2" placeholder="Nomes e partidos dos aliados"
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('political_allies', $municipality->political_map['allies'] ?? '') }}</textarea>
+                        <textarea name="polítical_allies" rows="2" placeholder="Nomes e partidos dos aliados"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('polítical_allies', $municipality->political_map['allies'] ?? '') }}</textarea>
                     </div>
                     <div>
                         <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Neutros /
                             indecisos</label>
-                        <textarea name="political_neutral" rows="2"
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('political_neutral', $municipality->political_map['neutral'] ?? '') }}</textarea>
+                        <textarea name="polítical_neutral" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('polítical_neutral', $municipality->political_map['neutral'] ?? '') }}</textarea>
                     </div>
                     <div>
                         <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Oposição</label>
-                        <textarea name="political_opposition" rows="2"
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('political_opposition', $municipality->political_map['opposition'] ?? '') }}</textarea>
+                        <textarea name="polítical_opposition" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('polítical_opposition', $municipality->political_map['opposition'] ?? '') }}</textarea>
                     </div>
                     <div>
                         <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Observações
                             políticas</label>
-                        <textarea name="political_notes" rows="3" placeholder="Contexto político local, alianças, tensões..."
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('political_notes', $municipality->political_map['notes'] ?? '') }}</textarea>
+                        <textarea name="polítical_notes" rows="3" placeholder="Contexto político local, alianças, tensões..."
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ old('polítical_notes', $municipality->political_map['notes'] ?? '') }}</textarea>
                     </div>
                 </div>
             </div>

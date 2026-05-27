@@ -2,51 +2,60 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Municipality;
+use App\Models\User;
 use App\Services\AI\MorningBriefingService;
 use Illuminate\Console\Command;
 
 class GenerateMorningBriefings extends Command
 {
-    protected $signature   = 'briefings:generate {--municipality= : ID específico de município}';
-    protected $description = 'Gera o briefing matinal para todos os municípios ativos';
+    protected $signature = 'briefings:generate
+        {--municipality= : ID especifico de município}
+        {--user= : ID especifico de usuario}
+        {--force : Regenera mesmo se o briefing de hoje ja existir}';
+    protected $description = 'Gera o briefing Pra Hoje para usuarios elegiveis';
 
     public function handle(MorningBriefingService $service): int
     {
-        $query = Municipality::where('subscription_active', true)
-            ->where('onboarding_status', 'completed')
-            ->with('mayor');
+        $query = User::query()
+            ->municipalOperators()
+            ->whereHas('municipality', function ($builder) {
+                $builder
+                    ->where('subscription_active', true)
+                    ->where('onboarding_status', 'completed');
+            })
+            ->with('municipality');
 
         if ($id = $this->option('municipality')) {
-            $query->where('id', $id);
+            $query->where('municipality_id', $id);
         }
 
-        $municipalities = $query->get();
+        if ($userId = $this->option('user')) {
+            $query->where('id', $userId);
+        }
 
-        $this->info("Gerando briefings para {$municipalities->count()} município(s)...");
-        $bar = $this->output->createProgressBar($municipalities->count());
+        $users = $query->get();
+
+        $this->info("Avaliando {$users->count()} usuario(s) para o Pra Hoje...");
+        $bar = $this->output->createProgressBar($users->count());
 
         $errors = [];
+        $force = (bool) $this->option('force');
 
-        foreach ($municipalities as $municipality) {
+        foreach ($users as $user) {
             try {
-                // Verificar se já foi gerado hoje
-                $existing = $municipality->morningBriefings()
-                    ->whereDate('date', today())
-                    ->exists();
-
-                if ($existing) {
-                    $this->line(" ↩ {$municipality->name} — briefing já gerado hoje.");
+                if (!$force && !$service->shouldGenerateForUser($user, now('America/Sao_Paulo'))) {
+                    $this->line(" ↩ {$user->name} — fora da janela ou ja gerado hoje.");
                     $bar->advance();
                     continue;
                 }
 
-                $briefing = $service->generate($municipality);
+                $briefing = $service->generateForUser($user, force: $force);
+                $cardCount = is_array($briefing->cards) ? count($briefing->cards) : 0;
 
-                $this->line(" ✓ {$municipality->name} — {$briefing->tokens_used} tokens");
+                $this->line(" ✓ {$user->name} — {$cardCount} card(s)");
             } catch (\Throwable $e) {
-                $errors[] = "{$municipality->name}: {$e->getMessage()}";
-                $this->error(" ✗ {$municipality->name} — {$e->getMessage()}");
+                $errors[] = "{$user->name}: {$e->getMessage()}";
+                $this->error(" ✗ {$user->name} — {$e->getMessage()}");
             }
 
             $bar->advance();
@@ -58,7 +67,7 @@ class GenerateMorningBriefings extends Command
         if (!empty($errors)) {
             $this->warn(count($errors) . " erro(s) durante a geração.");
         } else {
-            $this->info('Todos os briefings foram gerados com sucesso!');
+            $this->info('Ciclo do Pra Hoje concluido com sucesso.');
         }
 
         return self::SUCCESS;

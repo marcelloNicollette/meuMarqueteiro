@@ -291,7 +291,7 @@
         <div class="tips-box">
             <strong>💡 Sugestões para {{ $municipality->name }}:</strong><br>
             Adicione o nome da cidade, nome do prefeito, e temas relevantes do mandato.
-            Clique para adicionar rapidamente:
+            Clique para adicionar rápidamente:
             <div style="display:flex;gap:.4rem;flex-wrap:wrap;margin-top:.6rem">
                 @foreach ([[$municipality->name, 'city'], ['"Prefeitura de ' . $municipality->name . '"', 'city'], ['gestão municipal', 'topic'], ['obras públicas', 'topic']] as $sugg)
                     <button type="button" class="auto-kw-btn"
@@ -434,7 +434,7 @@
             • Nome da cidade + estado melhora a precisão: <code>Serrinha BA</code><br>
             • Hashtags com #: <code>#Serrinha</code> ou <code>#PrefeituraSerrinha</code><br>
             • Para o prefeito, use o nome completo e variações<br>
-            • O monitoramento roda automaticamente a cada 4 horas
+            • O monitoramento roda automaticamente a cada 2 horas
         </div>
 
     </div>
