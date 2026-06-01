@@ -1,7 +1,7 @@
 @extends('layouts.admin')
 @section('title', 'Onboarding — ' . $municipality->name)
 @section('content')
-    <div style="padding:2rem;max-width:750px">
+    <div style="padding:2rem;">
         <div style="margin-bottom:1.5rem">
             <a href="{{ route('admin.municipalities.index') }}" style="font-size:.85rem;color:#6b7280;text-decoration:none">←
                 Municípios</a>
@@ -16,33 +16,70 @@
                 {{ session('success') }}</div>
         @endif
 
+        @if (session('error'))
+            <div
+                style="background:#fee2e2;border:1px solid #fca5a5;padding:1rem;border-radius:8px;margin-bottom:1rem;color:#991b1b">
+                {{ session('error') }}</div>
+        @endif
+
+        @if ($errors->any())
+            <div
+                style="background:#fff7ed;border:1px solid #fdba74;padding:1rem;border-radius:8px;margin-bottom:1rem;color:#9a3412">
+                {{ $errors->first() }}
+            </div>
+        @endif
+
         {{-- Progresso --}}
         @php
+            $municipalityCoreOk =
+                !empty($municipalityProfile['mayor_full_name']) &&
+                !empty($municipalityProfile['party']) &&
+                !empty($municipalityProfile['term_start_date']) &&
+                !empty($municipalityProfile['term_end_date']);
             $voiceOk = !empty($municipality->voice_profile);
             $mapOk = !empty($municipality->political_map);
+            $communicationContextOk =
+                collect($communicationContext['channels'] ?? [])->contains(
+                    fn($channel) => !empty($channel['active']),
+                ) && !empty($communicationContext['monitoring_terms']);
+            $notificationsOk = !empty($notificationSettings['pra_hoje']['delivery_time'] ?? null);
             $resolveAiOpsOk =
                 ($resolveAiOperationalSummary['areas_ready'] ?? 0) > 0 &&
                 ($resolveAiOperationalSummary['localities_active'] ?? 0) > 0;
             $resolveAiOk = !empty($resolveAiSettings) && $resolveAiOpsOk;
         @endphp
-        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:1rem;margin-bottom:2rem">
+        <div style="display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:1rem;margin-bottom:2rem">
+            <div
+                style="flex:1;padding:.75rem 1rem;border-radius:8px;background:{{ $municipalityCoreOk ? '#dbeafe' : '#f3f4f6' }};border:1px solid {{ $municipalityCoreOk ? '#93c5fd' : '#e5e7eb' }}">
+                <div style="font-size:.75rem;font-weight:600;color:{{ $municipalityCoreOk ? '#1d4ed8' : '#9ca3af' }}">BASE
+                </div>
+                <div style="font-size:.82rem;margin-top:.2rem;color:{{ $municipalityCoreOk ? '#1d4ed8' : '#6b7280' }}">
+                    {{ $municipalityCoreOk ? '✓ Preenchida' : 'Pendente' }}</div>
+            </div>
             <div
                 style="flex:1;padding:.75rem 1rem;border-radius:8px;background:{{ $voiceOk ? '#d1fae5' : '#f3f4f6' }};border:1px solid {{ $voiceOk ? '#6ee7b7' : '#e5e7eb' }}">
-                <div style="font-size:.75rem;font-weight:600;color:{{ $voiceOk ? '#065f46' : '#9ca3af' }}">① PERFIL DE VOZ
+                <div style="font-size:.75rem;font-weight:600;color:{{ $voiceOk ? '#065f46' : '#9ca3af' }}">PERFIL
                 </div>
                 <div style="font-size:.82rem;margin-top:.2rem;color:{{ $voiceOk ? '#065f46' : '#6b7280' }}">
                     {{ $voiceOk ? '✓ Concluído' : 'Pendente' }}</div>
             </div>
             <div
                 style="flex:1;padding:.75rem 1rem;border-radius:8px;background:{{ $mapOk ? '#d1fae5' : '#f3f4f6' }};border:1px solid {{ $mapOk ? '#6ee7b7' : '#e5e7eb' }}">
-                <div style="font-size:.75rem;font-weight:600;color:{{ $mapOk ? '#065f46' : '#9ca3af' }}">② MAPA POLÍTICO
+                <div style="font-size:.75rem;font-weight:600;color:{{ $mapOk ? '#065f46' : '#9ca3af' }}">POLÍTICA
                 </div>
                 <div style="font-size:.82rem;margin-top:.2rem;color:{{ $mapOk ? '#065f46' : '#6b7280' }}">
                     {{ $mapOk ? '✓ Concluído' : 'Pendente' }}</div>
             </div>
             <div
+                style="flex:1;padding:.75rem 1rem;border-radius:8px;background:{{ $communicationContextOk ? '#ede9fe' : '#f3f4f6' }};border:1px solid {{ $communicationContextOk ? '#c4b5fd' : '#e5e7eb' }}">
+                <div style="font-size:.75rem;font-weight:600;color:{{ $communicationContextOk ? '#6d28d9' : '#9ca3af' }}">
+                    COMUNICAÇÃO</div>
+                <div style="font-size:.82rem;margin-top:.2rem;color:{{ $communicationContextOk ? '#6d28d9' : '#6b7280' }}">
+                    {{ $communicationContextOk ? '✓ Configurada' : 'Pendente' }}</div>
+            </div>
+            <div
                 style="flex:1;padding:.75rem 1rem;border-radius:8px;background:{{ $resolveAiOk ? '#dbeafe' : '#f3f4f6' }};border:1px solid {{ $resolveAiOk ? '#93c5fd' : '#e5e7eb' }}">
-                <div style="font-size:.75rem;font-weight:600;color:{{ $resolveAiOk ? '#1d4ed8' : '#9ca3af' }}">③ RESOLVE AI
+                <div style="font-size:.75rem;font-weight:600;color:{{ $resolveAiOk ? '#1d4ed8' : '#9ca3af' }}">RESOLVE AI
                 </div>
                 <div style="font-size:.82rem;margin-top:.2rem;color:{{ $resolveAiOk ? '#1d4ed8' : '#6b7280' }}">
                     {{ $resolveAiOk ? '✓ Configurado' : 'Pendente' }}</div>
@@ -51,23 +88,163 @@
                 style="flex:1;padding:.75rem 1rem;border-radius:8px;background:{{ $municipality->onboarding_status === 'completed' ? '#d1fae5' : '#f3f4f6' }};border:1px solid {{ $municipality->onboarding_status === 'completed' ? '#6ee7b7' : '#e5e7eb' }}">
                 <div
                     style="font-size:.75rem;font-weight:600;color:{{ $municipality->onboarding_status === 'completed' ? '#065f46' : '#9ca3af' }}">
-                    ④ ATIVAÇÃO</div>
+                    ATIVAÇÃO</div>
                 <div
                     style="font-size:.82rem;margin-top:.2rem;color:{{ $municipality->onboarding_status === 'completed' ? '#065f46' : '#6b7280' }}">
                     {{ $municipality->onboarding_status === 'completed' ? '✓ Ativo' : 'Pendente' }}</div>
             </div>
         </div>
 
+        <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1rem">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">Base institucional do município</h3>
+            <p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Consolida dados da prefeitura, do mandato e do
+                contexto local que alimentam todos os módulos.</p>
+            <form method="POST"
+                action="{{ route('admin.municipalities.onboarding.municipality-profile', $municipality) }}">
+                @csrf
+                <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Bioma
+                            predominante</label>
+                        <input name="biome" value="{{ $municipalityProfile['biome'] ?? '' }}" placeholder="Ex: Cerrado"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Nome completo do
+                            prefeito</label>
+                        <input name="mayor_full_name" value="{{ $municipalityProfile['mayor_full_name'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Nome de tratamento
+                            preferido</label>
+                        <input name="mayor_preferred_name" value="{{ $municipalityProfile['mayor_preferred_name'] ?? '' }}"
+                            placeholder="Ex: Prefeito João"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Partido</label>
+                        <input name="party" value="{{ $municipalityProfile['party'] ?? '' }}" placeholder="Ex: PSD"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Início do
+                            mandato</label>
+                        <input type="date" name="term_start_date"
+                            value="{{ $municipalityProfile['term_start_date'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Fim do
+                            mandato</label>
+                        <input type="date" name="term_end_date"
+                            value="{{ $municipalityProfile['term_end_date'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Economia
+                            principal</label>
+                        <input name="economy_primary" value="{{ $municipalityProfile['economy_primary'] ?? '' }}"
+                            placeholder="Ex: agronegócio, turismo"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Principais
+                            desafios locais</label>
+                        <input name="local_challenges" value="{{ $municipalityProfile['local_challenges'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Potenciais do
+                            município</label>
+                        <input name="local_potentials" value="{{ $municipalityProfile['local_potentials'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                </div>
+                <div style="display:grid;gap:.75rem;margin-bottom:1rem">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Resumo do programa
+                            de governo</label>
+                        <textarea name="government_summary" rows="3"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipalityProfile['government_summary'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Projetos
+                            prioritários em andamento</label>
+                        <textarea name="priority_projects" rows="3"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipalityProfile['priority_projects'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Metas
+                            quantitativas principais</label>
+                        <textarea name="quantitative_goals" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipalityProfile['quantitative_goals'] ?? '' }}</textarea>
+                    </div>
+                </div>
+                <button type="submit"
+                    style="padding:.6rem 1.2rem;background:#111827;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Salvar
+                    base institucional</button>
+            </form>
+        </div>
+
+        <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1rem">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem">
+                <div>
+                    <h3 style="font-size:1rem;font-weight:600;margin-bottom:.35rem">Perfis de usuário e permissões</h3>
+                    <p style="font-size:.85rem;color:#6b7280">A gestão detalhada dos acessos já existe no módulo de
+                        usuários. Aqui fica o atalho operacional para fechar o onboarding.</p>
+                </div>
+                <a href="{{ route('admin.users.index') }}"
+                    style="padding:.55rem .9rem;border:1px solid #d1d5db;border-radius:8px;font-size:.82rem;text-decoration:none;color:#374151">Gerir
+                    usuários</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1rem">
+                <div style="padding:.85rem 1rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                    <div
+                        style="font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.08em">
+                        Usuários ativos</div>
+                    <div style="font-size:1.25rem;font-weight:700;color:#111827;margin-top:.35rem">
+                        {{ $municipalUsers->count() }}</div>
+                </div>
+                <div style="padding:.85rem 1rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                    <div
+                        style="font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.08em">
+                        Prefeito vinculado</div>
+                    <div style="font-size:.95rem;font-weight:700;color:#111827;margin-top:.35rem">
+                        {{ $mayor?->name ?? 'Pendente' }}</div>
+                </div>
+                <div style="padding:.85rem 1rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                    <div
+                        style="font-size:.72rem;font-weight:700;color:#6b7280;text-transform:uppercase;letter-spacing:.08em">
+                        Resumo</div>
+                    <div style="font-size:.82rem;color:#374151;margin-top:.35rem">Prefeitos, secretários e assessores são
+                        geridos em `Admin > Usuários`.</div>
+                </div>
+            </div>
+            @if ($municipalUsers->isNotEmpty())
+                <div style="display:flex;flex-direction:column;gap:.45rem;font-size:.82rem;color:#374151">
+                    @foreach ($municipalUsers->take(5) as $user)
+                        <div style="display:flex;justify-content:space-between;gap:1rem;flex-wrap:wrap">
+                            <span>{{ $user->name }}</span>
+                            <span style="color:#6b7280">{{ strtoupper($user->role->value ?? $user->role) }} ·
+                                {{ $user->email }}</span>
+                        </div>
+                    @endforeach
+                </div>
+            @endif
+        </div>
+
         {{-- Perfil de Voz --}}
         <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1rem">
-            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">① Perfil de Voz do Prefeito</h3>
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">Perfil estratégico e voz do prefeito</h3>
             <p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Define como o assistente vai se comunicar em nome
                 do prefeito — tom, estilo e vocabulário.</p>
             <form method="POST" action="{{ route('admin.municipalities.onboarding.voice-profile', $municipality) }}">
                 @csrf
                 <div style="display:grid;gap:.75rem;margin-bottom:1rem">
                     <div>
-                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Tom de voz</label>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Tom de
+                            voz</label>
                         <input name="tone" value="{{ $municipality->voice_profile['tone'] ?? '' }}"
                             placeholder="ex: próximo e acessível"
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
@@ -99,6 +276,52 @@
                             placeholder="ex: jargões políticos, termos técnicos"
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
                     </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Posicionamento
+                            político predominante</label>
+                        <input name="political_positioning"
+                            value="{{ $municipality->voice_profile['political_positioning'] ?? '' }}"
+                            placeholder="ex: centro, tecnico-gestor, conservador"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Principais
+                            bandeiras</label>
+                        <input name="key_flags" value="{{ $municipality->voice_profile['key_flags'] ?? '' }}"
+                            placeholder="ex: saude, educacao, zeladoria, emprego"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Temas que prefere
+                            evitar publicamente</label>
+                        <input name="avoid_public_topics"
+                            value="{{ $municipality->voice_profile['avoid_public_topics'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Histórico
+                            político relevante</label>
+                        <textarea name="historical_context" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->voice_profile['historical_context'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Adversários
+                            políticos locais</label>
+                        <textarea name="political_adversaries" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->voice_profile['political_adversaries'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Aliados políticos
+                            locais</label>
+                        <textarea name="political_allies" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->voice_profile['political_allies'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Referências de
+                            comunicação</label>
+                        <textarea name="communication_references" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->voice_profile['communication_references'] ?? '' }}</textarea>
+                    </div>
                 </div>
                 <button type="submit"
                     style="padding:.6rem 1.2rem;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Salvar
@@ -108,7 +331,7 @@
 
         {{-- Mapa Político --}}
         <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1rem">
-            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">② Mapa Político da Câmara</h3>
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">Mapa político local</h3>
             <form method="POST" action="{{ route('admin.municipalities.onboarding.political-map', $municipality) }}">
                 @csrf
                 <div style="display:grid;gap:.75rem;margin-bottom:1rem">
@@ -135,10 +358,241 @@
                         <textarea name="notes" rows="3" placeholder="Contexto político local, alianças, tensões..."
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->political_map['notes'] ?? '' }}</textarea>
                     </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Parlamentares
+                            estaduais aliados</label>
+                        <textarea name="state_allies" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->political_map['state_allies'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Parlamentares
+                            federais aliados</label>
+                        <textarea name="federal_allies" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->political_map['federal_allies'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Imprensa
+                            local</label>
+                        <textarea name="local_press" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->political_map['local_press'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Lideranças
+                            comunitárias relevantes</label>
+                        <textarea name="community_leaders" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->political_map['community_leaders'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Sensibilidades
+                            políticas locais</label>
+                        <textarea name="local_sensitivities" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $municipality->political_map['local_sensitivities'] ?? '' }}</textarea>
+                    </div>
                 </div>
                 <button type="submit"
                     style="padding:.6rem 1.2rem;background:var(--gold);color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Salvar
                     Mapa Político</button>
+            </form>
+        </div>
+
+        <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1rem">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">Configuração transversal de comunicação</h3>
+            <p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Define canais ativos, monitoramento, identidade
+                visual, fornecedores e sensibilidades locais para o módulo `Comunicação`.</p>
+            <form method="POST"
+                action="{{ route('admin.municipalities.onboarding.communication-context', $municipality) }}">
+                @csrf
+                <div style="margin-bottom:1rem">
+                    <div style="font-size:.82rem;font-weight:600;margin-bottom:.45rem">Canais ativos</div>
+                    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:.75rem">
+                        @foreach (['instagram' => 'Instagram', 'facebook' => 'Facebook', 'whatsapp' => 'WhatsApp', 'youtube' => 'YouTube', 'tiktok' => 'TikTok'] as $channelKey => $channelLabel)
+                            <div style="padding:.85rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                                <label
+                                    style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;font-weight:600;color:#111827;margin-bottom:.6rem">
+                                    <input type="checkbox" name="communication_channel_{{ $channelKey }}_active"
+                                        value="1" @checked($communicationContext['channels'][$channelKey]['active'] ?? false)>
+                                    {{ $channelLabel }}
+                                </label>
+                                <input name="communication_channel_{{ $channelKey }}_url"
+                                    value="{{ $communicationContext['channels'][$channelKey]['url'] ?? '' }}"
+                                    placeholder="URL ou identificador"
+                                    style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.8rem;box-sizing:border-box">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+                <div style="display:grid;gap:.75rem;margin-bottom:1rem">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Portais locais a
+                            monitorar</label>
+                        <textarea name="communication_monitoring_portals" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['monitoring_portals'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Termos de
+                            monitoramento</label>
+                        <textarea name="communication_monitoring_terms" rows="2"
+                            placeholder="Ex: nome do prefeito, nome do municipio, obras, projetos prioritarios"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['monitoring_terms'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Responsável de
+                            comunicação</label>
+                        <select name="communication_responsible_user_id"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;background:#fff">
+                            <option value="">Selecione</option>
+                            @foreach ($municipalUsers as $user)
+                                <option value="{{ $user->id }}" @selected(($communicationContext['responsible_user_id'] ?? null) == $user->id)>
+                                    {{ $user->name }} · {{ strtoupper($user->role->value ?? $user->role) }}
+                                </option>
+                            @endforeach
+                        </select>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1rem">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Paleta de
+                            cores</label>
+                        <input name="communication_visual_palette"
+                            value="{{ $communicationContext['visual_palette'] ?? '' }}"
+                            placeholder="Ex: #1A3A5C, #D4AF37, #F3F4F6"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label
+                            style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Tipografia</label>
+                        <input name="communication_visual_typography"
+                            value="{{ $communicationContext['visual_typography'] ?? '' }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Brasão ou
+                            logotipo</label>
+                        <input name="communication_visual_logo" value="{{ $communicationContext['visual_logo'] ?? '' }}"
+                            placeholder="URL ou caminho de referência"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Estilo visual
+                            predominante</label>
+                        <input name="communication_visual_style"
+                            value="{{ $communicationContext['visual_style'] ?? '' }}"
+                            placeholder="Ex: institucional, moderno, comunitario"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                </div>
+                <div style="display:grid;gap:.75rem;margin-bottom:1rem">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Referências
+                            visuais</label>
+                        <textarea name="communication_visual_references" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['visual_references'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Fornecedores e
+                            recursos da equipe</label>
+                        <textarea name="communication_suppliers_notes" rows="3"
+                            placeholder="Cadastre os principais fornecedores, contatos e observacoes operacionais."
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['suppliers_notes'] ?? '' }}</textarea>
+                    </div>
+                </div>
+                <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:.75rem;margin-bottom:1rem">
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Temas
+                            historicamente polêmicos</label>
+                        <textarea name="communication_sensitivity_historical_topics" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['sensitivity_historical_topics'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Grupos ou
+                            lideranças em tensão</label>
+                        <textarea name="communication_sensitivity_tense_groups" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['sensitivity_tense_groups'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Obras ou projetos
+                            polêmicos</label>
+                        <textarea name="communication_sensitivity_controversial_projects" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['sensitivity_controversial_projects'] ?? '' }}</textarea>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Temas eleitorais
+                            sensíveis</label>
+                        <textarea name="communication_sensitivity_electoral_topics" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['sensitivity_electoral_topics'] ?? '' }}</textarea>
+                    </div>
+                    <div style="grid-column:1 / -1">
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Histórico de
+                            crises anteriores</label>
+                        <textarea name="communication_sensitivity_crisis_history" rows="2"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box;resize:vertical">{{ $communicationContext['sensitivity_crisis_history'] ?? '' }}</textarea>
+                    </div>
+                </div>
+                <button type="submit"
+                    style="padding:.6rem 1.2rem;background:#111827;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Salvar
+                    contexto de comunicação</button>
+            </form>
+        </div>
+
+        <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1rem">
+            <h3 style="font-size:1rem;font-weight:600;margin-bottom:1rem">Canais de notificação e Pra hoje</h3>
+            <p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Define os canais transversais do município e a
+                configuração inicial do briefing diário do prefeito.</p>
+            <form method="POST"
+                action="{{ route('admin.municipalities.onboarding.notification-settings', $municipality) }}">
+                @csrf
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;margin-bottom:1rem">
+                    <div style="padding:1rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                        <div style="font-size:.82rem;font-weight:600;margin-bottom:.5rem">Canais disponíveis</div>
+                        <label
+                            style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#374151;margin-bottom:.45rem">
+                            <input type="checkbox" name="notifications_channel_platform" value="1"
+                                @checked($notificationSettings['channels']['platform'] ?? true)>
+                            Notificação interna na plataforma
+                        </label>
+                        <label
+                            style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#374151;margin-bottom:.45rem">
+                            <input type="checkbox" name="notifications_channel_email" value="1"
+                                @checked($notificationSettings['channels']['email'] ?? false)>
+                            E-mail
+                        </label>
+                        <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#374151">
+                            <input type="checkbox" name="notifications_channel_whatsapp" value="1"
+                                @checked($notificationSettings['channels']['whatsapp'] ?? false)>
+                            WhatsApp
+                        </label>
+                    </div>
+                    <div style="padding:1rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                        <div style="font-size:.82rem;font-weight:600;margin-bottom:.5rem">Pra hoje</div>
+                        <label
+                            style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#374151;margin-bottom:.55rem">
+                            <input type="checkbox" name="pra_hoje_enabled" value="1" @checked($notificationSettings['pra_hoje']['enabled'] ?? true)>
+                            Briefing ativo para o prefeito
+                        </label>
+                        <div style="margin-bottom:.55rem">
+                            <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Horário de
+                                entrega</label>
+                            <input type="time" name="pra_hoje_delivery_time"
+                                value="{{ $notificationSettings['pra_hoje']['delivery_time'] ?? '07:30' }}"
+                                style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.82rem;box-sizing:border-box">
+                        </div>
+                        <label style="display:flex;align-items:center;gap:.4rem;font-size:.85rem;color:#374151">
+                            <input type="checkbox" name="pra_hoje_email_enabled" value="1"
+                                @checked($notificationSettings['pra_hoje']['email_enabled'] ?? false)>
+                            Entregar também por e-mail
+                        </label>
+                    </div>
+                </div>
+                @if (!$mayor)
+                    <div
+                        style="padding:.85rem 1rem;border-radius:10px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;font-size:.82rem;line-height:1.55;margin-bottom:1rem">
+                        Ainda não há um usuário com perfil de prefeito vinculado a este município. O horário do `Pra hoje`
+                        será salvo plenamente quando esse usuário existir.
+                    </div>
+                @endif
+                <button type="submit"
+                    style="padding:.6rem 1.2rem;background:#111827;color:#fff;border:none;border-radius:8px;font-size:.88rem;font-weight:600;cursor:pointer">Salvar
+                    notificações</button>
             </form>
         </div>
 
@@ -722,7 +1176,13 @@
         </div>
 
         {{-- Ativar --}}
-        @if ($voiceOk && $mapOk && $municipality->onboarding_status !== 'completed')
+        @if (
+            $municipalityCoreOk &&
+                $voiceOk &&
+                $mapOk &&
+                $communicationContextOk &&
+                $notificationsOk &&
+                $municipality->onboarding_status !== 'completed')
             <div style="background:#fff;padding:1.5rem;border-radius:12px;border:2px solid #d4af37">
                 <h3 style="font-size:1rem;font-weight:600;margin-bottom:.5rem">④ Ativar acesso do prefeito</h3>
                 <p style="font-size:.85rem;color:#6b7280;margin-bottom:1rem">Tudo configurado! Ao ativar, o prefeito já
@@ -738,6 +1198,12 @@
             <div style="background:#d1fae5;padding:1.5rem;border-radius:12px;border:1px solid #6ee7b7;text-align:center">
                 <div style="font-size:1.5rem;margin-bottom:.5rem">✅</div>
                 <div style="font-weight:600;color:#065f46">Município ativo — prefeito com acesso liberado</div>
+            </div>
+        @elseif($municipality->onboarding_status !== 'completed')
+            <div
+                style="background:#fff;padding:1.25rem 1.5rem;border-radius:12px;border:1px dashed #d1d5db;color:#6b7280;font-size:.84rem;line-height:1.6">
+                Para liberar o município, conclua pelo menos os blocos de base institucional, perfil estratégico, mapa
+                político, contexto de comunicação e notificações.
             </div>
         @endif
     </div>

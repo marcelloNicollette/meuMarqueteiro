@@ -32,6 +32,9 @@ class AssistantContextService
     {
         $settings = is_array($municipality->settings) ? $municipality->settings : [];
         $preferences = is_array($mayor->preferences) ? $mayor->preferences : [];
+        $municipalityProfile = (array) data_get($settings, 'municipality_profile', []);
+        $mandateProfile = (array) data_get($municipalityProfile, 'mandate', []);
+        $communicationSensitivities = (array) data_get($settings, 'communication.sensitivities', []);
 
         $lines = [];
 
@@ -39,26 +42,39 @@ class AssistantContextService
             $lines[] = "- O prefeito prefere ser chamado de: {$preferences['preferred_name']}";
         }
 
-        if (!empty($settings['partido'])) {
-            $lines[] = "- Partido: {$settings['partido']}";
+        if (!empty($mandateProfile['party']) || !empty($settings['partido'])) {
+            $lines[] = '- Partido: ' . ($mandateProfile['party'] ?? $settings['partido']);
         }
 
-        if (!empty($settings['início_mandato']) || !empty($settings['fim_mandato'])) {
-            $início = $settings['início_mandato'] ?? '?';
-            $fim = $settings['fim_mandato'] ?? '?';
-            $lines[] = "- Mandato: {$início} a {$fim}";
+        if (!empty($mandateProfile['term_start_date']) || !empty($mandateProfile['term_end_date'])) {
+            $start = $mandateProfile['term_start_date'] ?? '?';
+            $end = $mandateProfile['term_end_date'] ?? '?';
+            $lines[] = "- Mandato: {$start} a {$end}";
         }
 
-        if (!empty($settings['resumo_programa'])) {
-            $lines[] = "- Resumo do programa de governo: {$settings['resumo_programa']}";
+        if (!empty($mandateProfile['government_summary']) || !empty($settings['resumo_programa'])) {
+            $lines[] = '- Resumo do programa de governo: ' . ($mandateProfile['government_summary'] ?? $settings['resumo_programa']);
         }
 
-        if (!empty($settings['lista_projetos'])) {
-            $lines[] = "- Projetos prioritarios em andamento: {$settings['lista_projetos']}";
+        if (!empty($mandateProfile['priority_projects']) || !empty($settings['lista_projetos'])) {
+            $lines[] = '- Projetos prioritarios em andamento: ' . ($mandateProfile['priority_projects'] ?? $settings['lista_projetos']);
         }
 
-        if (!empty($settings['sensibilidades'])) {
-            $lines[] = "- Sensibilidades locais e políticas: {$settings['sensibilidades']}";
+        if (!empty($mandateProfile['quantitative_goals'])) {
+            $lines[] = "- Metas quantitativas principais: {$mandateProfile['quantitative_goals']}";
+        }
+
+        $sensitivitySummary = collect([
+            data_get($communicationSensitivities, 'historical_topics'),
+            data_get($communicationSensitivities, 'tense_groups'),
+            data_get($communicationSensitivities, 'controversial_projects'),
+            data_get($communicationSensitivities, 'electoral_topics'),
+            data_get($communicationSensitivities, 'crisis_history'),
+            $settings['sensibilidades'] ?? null,
+        ])->filter()->implode(' | ');
+
+        if ($sensitivitySummary !== '') {
+            $lines[] = "- Sensibilidades locais e politicas: {$sensitivitySummary}";
         }
 
         if (!empty($settings['histórico_comunicação'])) {

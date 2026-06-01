@@ -99,6 +99,7 @@
                             style="font-size:.9rem;color:{{ $c['icon'] }};font-weight:700">{{ $icons[$m['status']] }}</span>
                         <div style="flex:1">
                             <span style="font-weight:600;font-size:.88rem">{{ $m['nome'] }}</span>
+                            <span style="font-size:.78rem;color:#6b7280;margin-left:.5rem">— prontidão {{ $m['score'] }}%</span>
                             @if (count($m['issues']) > 0)
                                 <span style="font-size:.78rem;color:#9ca3af;margin-left:.5rem">—
                                     {{ implode(', ', $m['issues']) }}</span>
@@ -106,6 +107,10 @@
                                 <span style="font-size:.78rem;color:#16a34a;margin-left:.5rem">— totalmente
                                     configurado</span>
                             @endif
+                            <div style="font-size:.75rem;color:#6b7280;margin-top:.25rem">
+                                Canais: {{ !empty($m['channels']) ? implode(', ', array_map(fn ($item) => ucfirst($item), $m['channels'])) : 'nenhum ativo' }}
+                                · Pra hoje: {{ $m['pra_hoje_time'] ?: 'pendente' }}
+                            </div>
                         </div>
                     </div>
                 @empty

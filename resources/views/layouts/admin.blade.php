@@ -543,6 +543,14 @@
                 </svg>
                 Diagnóstico
             </a>
+            <a href="{{ route('admin.coverage-alerts.index') }}"
+                class="nav-item {{ request()->routeIs('admin.coverage-alerts*') ? 'active' : '' }}">
+                <svg viewBox="0 0 24 24" fill="currentColor">
+                    <path
+                        d="M12 2 1 21h22L12 2zm0 5.8 6.53 11.2H5.47L12 7.8zm-1 3.2v4h2v-4h-2zm0 6v2h2v-2h-2z" />
+                </svg>
+                Alertas de Cobertura
+            </a>
         </div>
 
         <div class="sidebar-spacer"></div>

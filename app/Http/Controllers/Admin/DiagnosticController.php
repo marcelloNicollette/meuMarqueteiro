@@ -7,6 +7,7 @@ use App\Models\DocumentEmbedding;
 use App\Models\Municipality;
 use App\Models\SystemSetting;
 use App\Services\AI\ChatAudioService;
+use App\Services\Support\MunicipalityConfigurationStatusService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -14,6 +15,7 @@ class DiagnosticController extends Controller
 {
     public function __construct(
         private ChatAudioService $chatAudio,
+        private MunicipalityConfigurationStatusService $configurationStatus,
     ) {}
 
     public function index()
@@ -128,18 +130,24 @@ class DiagnosticController extends Controller
 
         // ── 8. Fluxo do chat ─────────────────────────────────────────────
         $municipalities = Municipality::where('subscription_active', true)
+            ->with(['mayor'])
             ->withCount('documents')
             ->get(['id','name','onboarding_status','voice_profile','political_map']);
 
         $munChecks = $municipalities->map(function ($m) {
-            $issues = [];
-            if (!$m->voice_profile)  $issues[] = 'sem perfil de voz';
-            if (!$m->political_map)  $issues[] = 'sem mapa político';
-            if ($m->documents_count === 0) $issues[] = 'sem documentos';
+            $summary = $this->configurationStatus->summarize($m);
+            $issues = $summary['issues'];
+            if ($m->documents_count === 0) {
+                $issues[] = 'sem documentos';
+            }
+
             return [
                 'nome'   => $m->name,
-                'status' => count($issues) === 0 ? 'ok' : (count($issues) >= 2 ? 'warning' : 'info'),
+                'status' => count($issues) === 0 ? 'ok' : ($summary['status'] === 'critical' ? 'error' : 'warning'),
                 'issues' => $issues,
+                'score' => $summary['score'],
+                'channels' => $summary['active_channels'],
+                'pra_hoje_time' => $summary['pra_hoje_time'],
             ];
         });
 

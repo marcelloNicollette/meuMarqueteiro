@@ -18,6 +18,88 @@
             </div>
         @endif
 
+        <div style="background:#fff;padding:1.5rem;border-radius:16px;border:1px solid #e5e7eb;margin-bottom:1.25rem">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem">
+                <div>
+                    <h2 style="font-size:1rem;font-weight:700;margin-bottom:.25rem">Visão executiva de prontidão</h2>
+                    <p style="font-size:.84rem;color:#6b7280">Leitura consolidada da segunda camada do módulo `Configurações`
+                        por município ativo.</p>
+                </div>
+                <a href="{{ route('admin.diagnostic.index') }}"
+                    style="padding:.55rem .9rem;border:1px solid #d1d5db;border-radius:8px;text-decoration:none;font-size:.82rem;color:#374151">Abrir
+                    diagnóstico</a>
+            </div>
+            <div style="display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:.75rem;margin-bottom:1rem">
+                <div style="padding:1rem;border-radius:12px;background:#f8fafc;border:1px solid #e5e7eb">
+                    <div style="font-size:.72rem;color:#6b7280;text-transform:uppercase;font-weight:700">Média</div>
+                    <div style="font-size:1.5rem;font-weight:700;margin-top:.2rem">
+                        {{ $configExecutiveSummary['average_score'] ?? 0 }}%</div>
+                    <div style="font-size:.76rem;color:#6b7280;margin-top:.2rem">Prontidão média</div>
+                </div>
+                <div style="padding:1rem;border-radius:12px;background:#ecfdf5;border:1px solid #bbf7d0">
+                    <div style="font-size:.72rem;color:#6b7280;text-transform:uppercase;font-weight:700">Prontos</div>
+                    <div style="font-size:1.5rem;font-weight:700;margin-top:.2rem;color:#166534">
+                        {{ $configExecutiveSummary['ready_total'] ?? 0 }}</div>
+                    <div style="font-size:.76rem;color:#6b7280;margin-top:.2rem">Operação saudável</div>
+                </div>
+                <div style="padding:1rem;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa">
+                    <div style="font-size:.72rem;color:#6b7280;text-transform:uppercase;font-weight:700">Atenção</div>
+                    <div style="font-size:1.5rem;font-weight:700;margin-top:.2rem;color:#b45309">
+                        {{ $configExecutiveSummary['warning_total'] ?? 0 }}</div>
+                    <div style="font-size:.76rem;color:#6b7280;margin-top:.2rem">Ajustes pendentes</div>
+                </div>
+                <div style="padding:1rem;border-radius:12px;background:#fef2f2;border:1px solid #fecaca">
+                    <div style="font-size:.72rem;color:#6b7280;text-transform:uppercase;font-weight:700">Críticos</div>
+                    <div style="font-size:1.5rem;font-weight:700;margin-top:.2rem;color:#b91c1c">
+                        {{ $configExecutiveSummary['critical_total'] ?? 0 }}</div>
+                    <div style="font-size:.76rem;color:#6b7280;margin-top:.2rem">Fluxo incompleto</div>
+                </div>
+                <div style="padding:1rem;border-radius:12px;background:#eff6ff;border:1px solid #bfdbfe">
+                    <div style="font-size:.72rem;color:#6b7280;text-transform:uppercase;font-weight:700">Menções + Pra hoje
+                    </div>
+                    <div style="font-size:1.2rem;font-weight:700;margin-top:.2rem;color:#1d4ed8">
+                        {{ $configExecutiveSummary['mentions_ready_total'] ?? 0 }}/{{ $configExecutiveSummary['pra_hoje_ready_total'] ?? 0 }}
+                    </div>
+                    <div style="font-size:.76rem;color:#6b7280;margin-top:.2rem">Monitoramento / briefing</div>
+                </div>
+            </div>
+            <div style="display:grid;gap:.75rem">
+                @foreach ($configAttentionMunicipalities as $entry)
+                    <div style="padding:1rem;border:1px solid #e5e7eb;border-radius:12px;background:#fafafa">
+                        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem">
+                            <div>
+                                <div style="font-size:.9rem;font-weight:700;color:#111827">{{ $entry['municipality_name'] }}
+                                </div>
+                                <div style="font-size:.78rem;color:#6b7280;margin-top:.15rem">{{ $entry['summary_label'] }}
+                                </div>
+                            </div>
+                            <div
+                                style="font-size:1rem;font-weight:700;color:{{ $entry['status'] === 'critical' ? '#b91c1c' : ($entry['status'] === 'warning' ? '#b45309' : '#166534') }}">
+                                {{ $entry['score'] }}%
+                            </div>
+                        </div>
+                        <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-top:.65rem">
+                            @foreach (array_slice($entry['active_channels'] ?? [], 0, 5) as $channel)
+                                <span
+                                    style="padding:.25rem .55rem;border-radius:999px;background:#fff;border:1px solid #e5e7eb;font-size:.74rem;color:#374151">{{ ucfirst($channel) }}</span>
+                            @endforeach
+                            <span
+                                style="padding:.25rem .55rem;border-radius:999px;background:#fff;border:1px solid #e5e7eb;font-size:.74rem;color:#374151">
+                                termos: {{ count($entry['monitoring_terms'] ?? []) }}
+                            </span>
+                            <span
+                                style="padding:.25rem .55rem;border-radius:999px;background:#fff;border:1px solid #e5e7eb;font-size:.74rem;color:#374151">
+                                Pra hoje: {{ $entry['pra_hoje_time'] ?? 'pendente' }}
+                            </span>
+                        </div>
+                        <div style="font-size:.78rem;color:#6b7280;margin-top:.6rem;line-height:1.55">
+                            {{ implode(', ', array_slice($entry['issues'] ?? [], 0, 3)) ?: 'Sem pendências críticas.' }}
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+
         <form method="POST" action="{{ route('admin.settings.ai') }}">
             @csrf
 
@@ -166,7 +248,8 @@
                             <div>
                                 <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">TTL do
                                     cache de audio (minutos)</label>
-                                <input type="number" min="5" max="1440" name="openai_audio_cache_ttl_minutes"
+                                <input type="number" min="5" max="1440"
+                                    name="openai_audio_cache_ttl_minutes"
                                     value="{{ $ai['openai_audio_cache_ttl_minutes'] }}"
                                     style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
                                 <div style="font-size:.75rem;color:#6b7280;margin-top:.3rem">
@@ -461,10 +544,253 @@
                     style="display:none;margin-top:.75rem;padding:.75rem;border-radius:8px;font-size:.82rem"></div>
             </div>
 
+            <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1.5rem">
+                <div
+                    style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #f3f4f6">
+                    <div>
+                        <h3 style="font-size:.95rem;font-weight:600">Mailing executivo da cobertura</h3>
+                        <p style="font-size:.8rem;color:#6b7280;margin-top:.2rem">
+                            Define o envio periódico do ranking executivo com PDF gerencial em anexo.
+                        </p>
+                    </div>
+                </div>
+
+                <label
+                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;font-size:.85rem;color:#111827">
+                    <input type="checkbox" name="coverage_executive_mail_enabled" value="1"
+                        {{ $coverageOps['coverage_executive_mail_enabled'] ? 'checked' : '' }}>
+                    Ativar mailing executivo da cobertura
+                </label>
+                <label
+                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#374151">
+                    <input type="checkbox" name="coverage_executive_mail_requires_approval" value="1"
+                        {{ $coverageOps['coverage_executive_mail_requires_approval'] ? 'checked' : '' }}>
+                    Exigir aprovação manual antes do disparo agendado
+                </label>
+                <label
+                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:.45rem;font-size:.82rem;color:#374151">
+                    <input type="checkbox" name="coverage_executive_mail_two_level_approval" value="1"
+                        {{ $coverageOps['coverage_executive_mail_two_level_approval'] ? 'checked' : '' }}>
+                    Exigir aprovação em dois níveis no mailing executivo
+                </label>
+                <label
+                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#374151">
+                    <input type="checkbox" name="coverage_executive_mail_distinct_approvers" value="1"
+                        {{ $coverageOps['coverage_executive_mail_distinct_approvers'] ? 'checked' : '' }}>
+                    Exigir aprovadores distintos entre os dois níveis
+                </label>
+
+                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem">
+                    <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:#111827">
+                        <input type="checkbox" name="coverage_executive_mail_daily_enabled" value="1"
+                            {{ $coverageOps['coverage_executive_mail_daily_enabled'] ? 'checked' : '' }}>
+                        Envio diário
+                    </label>
+                    <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:#111827">
+                        <input type="checkbox" name="coverage_executive_mail_weekly_enabled" value="1"
+                            {{ $coverageOps['coverage_executive_mail_weekly_enabled'] ? 'checked' : '' }}>
+                        Envio semanal
+                    </label>
+                    <div style="grid-column:1/-1">
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Destinatários
+                            executivos</label>
+                        <textarea name="coverage_executive_mail_recipients" rows="3"
+                            placeholder="gestao@empresa.com, diretoria@empresa.com"
+                            style="width:100%;padding:.7rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">{{ $coverageOps['coverage_executive_mail_recipients'] }}</textarea>
+                        <div style="font-size:.74rem;color:#6b7280;margin-top:.3rem">
+                            Separe múltiplos e-mails com vírgula.
+                        </div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Horário
+                            diário</label>
+                        <input type="time" name="coverage_executive_mail_daily_time"
+                            value="{{ $coverageOps['coverage_executive_mail_daily_time'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Horário
+                            semanal</label>
+                        <input type="time" name="coverage_executive_mail_weekly_time"
+                            value="{{ $coverageOps['coverage_executive_mail_weekly_time'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Dia
+                            semanal</label>
+                        <select name="coverage_executive_mail_weekly_day"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
+                            @foreach ([0 => 'Domingo', 1 => 'Segunda-feira', 2 => 'Terça-feira', 3 => 'Quarta-feira', 4 => 'Quinta-feira', 5 => 'Sexta-feira', 6 => 'Sábado'] as $value => $label)
+                                <option value="{{ $value }}"
+                                    {{ (int) $coverageOps['coverage_executive_mail_weekly_day'] === (int) $value ? 'selected' : '' }}>
+                                    {{ $label }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Limite do
+                            ranking</label>
+                        <input type="number" name="coverage_executive_mail_ranking_limit" min="5" max="50"
+                            value="{{ $coverageOps['coverage_executive_mail_ranking_limit'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Rótulo do
+                            nível 1</label>
+                        <input type="text" name="coverage_executive_mail_level_one_label"
+                            value="{{ $coverageOps['coverage_executive_mail_level_one_label'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Rótulo do
+                            nível 2</label>
+                        <input type="text" name="coverage_executive_mail_level_two_label"
+                            value="{{ $coverageOps['coverage_executive_mail_level_two_label'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Nome
+                            institucional</label>
+                        <input type="text" name="coverage_executive_mail_identity_name"
+                            value="{{ $coverageOps['coverage_executive_mail_identity_name'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Departamento</label>
+                        <input type="text" name="coverage_executive_mail_identity_department"
+                            value="{{ $coverageOps['coverage_executive_mail_identity_department'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Tagline
+                            institucional</label>
+                        <input type="text" name="coverage_executive_mail_identity_tagline"
+                            value="{{ $coverageOps['coverage_executive_mail_identity_tagline'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div style="grid-column:1/-1">
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Logo
+                            institucional</label>
+                        <input type="text" name="coverage_executive_mail_identity_logo"
+                            value="{{ $coverageOps['coverage_executive_mail_identity_logo'] }}"
+                            placeholder="/images/logo-borda-black.png"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                        <div style="font-size:.74rem;color:#6b7280;margin-top:.3rem">Use um caminho público da aplicação para o cabeçalho do PDF.</div>
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Cor
+                            principal</label>
+                        <input type="text" name="coverage_executive_mail_identity_accent_color"
+                            value="{{ $coverageOps['coverage_executive_mail_identity_accent_color'] }}"
+                            placeholder="#111827"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Cor
+                            secundária</label>
+                        <input type="text" name="coverage_executive_mail_identity_secondary_color"
+                            value="{{ $coverageOps['coverage_executive_mail_identity_secondary_color'] }}"
+                            placeholder="#1D4ED8"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Assinatura
+                            principal</label>
+                        <input type="text" name="coverage_executive_mail_signature_primary_name"
+                            value="{{ $coverageOps['coverage_executive_mail_signature_primary_name'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Cargo da
+                            assinatura principal</label>
+                        <input type="text" name="coverage_executive_mail_signature_primary_role"
+                            value="{{ $coverageOps['coverage_executive_mail_signature_primary_role'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Assinatura
+                            secundária</label>
+                        <input type="text" name="coverage_executive_mail_signature_secondary_name"
+                            value="{{ $coverageOps['coverage_executive_mail_signature_secondary_name'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                    <div>
+                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Cargo da
+                            assinatura secundária</label>
+                        <input type="text" name="coverage_executive_mail_signature_secondary_role"
+                            value="{{ $coverageOps['coverage_executive_mail_signature_secondary_role'] }}"
+                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
+                    </div>
+                </div>
+
+                <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f3f4f6">
+                    <div style="font-size:.9rem;font-weight:700;color:#111827;margin-bottom:.3rem">SLA do owner por perfil</div>
+                    <div style="font-size:.78rem;color:#6b7280;margin-bottom:.85rem">
+                        Define a meta padrão por severidade e o aviso prévio das notificações de vencimento iminente.
+                    </div>
+                    <label style="display:flex;align-items:center;gap:.5rem;margin-bottom:.85rem;font-size:.82rem;color:#374151">
+                        <input type="checkbox" name="coverage_alert_owner_notifications_enabled" value="1"
+                            {{ $coverageOps['coverage_alert_owner_notifications_enabled'] ? 'checked' : '' }}>
+                        Ativar notificações automáticas de vencimento iminente do owner
+                    </label>
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem">
+                        <div>
+                            <label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:.3rem">Aviso prévio</label>
+                            <input type="number" name="coverage_alert_owner_warning_minutes" min="15" max="720"
+                                value="{{ $coverageOps['coverage_alert_owner_warning_minutes'] }}"
+                                style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
+                        </div>
+                        @foreach ([['key' => 'coverage_alert_owner_sla_high_hours', 'label' => 'Base alta'], ['key' => 'coverage_alert_owner_sla_medium_hours', 'label' => 'Base média'], ['key' => 'coverage_alert_owner_sla_default_hours', 'label' => 'Base baixa'], ['key' => 'coverage_alert_owner_sla_admin_high_hours', 'label' => 'Admin alta'], ['key' => 'coverage_alert_owner_sla_admin_medium_hours', 'label' => 'Admin média'], ['key' => 'coverage_alert_owner_sla_admin_default_hours', 'label' => 'Admin baixa'], ['key' => 'coverage_alert_owner_sla_mayor_high_hours', 'label' => 'Prefeito alta'], ['key' => 'coverage_alert_owner_sla_mayor_medium_hours', 'label' => 'Prefeito média'], ['key' => 'coverage_alert_owner_sla_mayor_default_hours', 'label' => 'Prefeito baixa'], ['key' => 'coverage_alert_owner_sla_secretary_high_hours', 'label' => 'Secretário alta'], ['key' => 'coverage_alert_owner_sla_secretary_medium_hours', 'label' => 'Secretário média'], ['key' => 'coverage_alert_owner_sla_secretary_default_hours', 'label' => 'Secretário baixa'], ['key' => 'coverage_alert_owner_sla_advisor_high_hours', 'label' => 'Assessor alta'], ['key' => 'coverage_alert_owner_sla_advisor_medium_hours', 'label' => 'Assessor média'], ['key' => 'coverage_alert_owner_sla_advisor_default_hours', 'label' => 'Assessor baixa']] as $field)
+                            <div>
+                                <label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:.3rem">{{ $field['label'] }}</label>
+                                <input type="number" name="{{ $field['key'] }}" min="1" max="240"
+                                    value="{{ $coverageOps[$field['key']] }}"
+                                    style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+
+                <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f3f4f6">
+                    <div style="font-size:.9rem;font-weight:700;color:#111827;margin-bottom:.3rem">Override por owner</div>
+                    <div style="font-size:.78rem;color:#6b7280;margin-bottom:.85rem">
+                        Valores em horas. Deixe `0` para usar o SLA do perfil correspondente.
+                    </div>
+                    <div style="display:grid;gap:.7rem">
+                        @foreach ($coverageOwnerSlaUsers as $ownerUser)
+                            <div style="display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,140px));gap:.7rem;align-items:end;padding:.85rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                                <div>
+                                    <div style="font-size:.83rem;font-weight:700;color:#111827">{{ $ownerUser['name'] }}</div>
+                                    <div style="font-size:.75rem;color:#6b7280">{{ $ownerUser['role'] }}</div>
+                                </div>
+                                <div>
+                                    <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Alta</label>
+                                    <input type="number" name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][high]" min="0" max="240"
+                                        value="{{ $ownerUser['sla']['high'] }}"
+                                        style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.84rem">
+                                </div>
+                                <div>
+                                    <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Média</label>
+                                    <input type="number" name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][medium]" min="0" max="240"
+                                        value="{{ $ownerUser['sla']['medium'] }}"
+                                        style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.84rem">
+                                </div>
+                                <div>
+                                    <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Baixa</label>
+                                    <input type="number" name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][default]" min="0" max="240"
+                                        value="{{ $ownerUser['sla']['default'] }}"
+                                        style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.84rem">
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+                </div>
+            </div>
+
             <div style="display:flex;justify-content:flex-end;margin-top:.5rem">
                 <button type="submit"
                     style="padding:.7rem 2rem;background:#0f1117;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer">
-                    Salvar SMTP e Radar
+                    Salvar SMTP, Radar e Cobertura
                 </button>
             </div>
         </form>

@@ -5,7 +5,9 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Mail\RadarSyncSnapshotMail;
 use App\Models\SystemSetting;
+use App\Models\User;
 use App\Services\Radar\RadarSyncSnapshotService;
+use App\Services\Support\MunicipalityConfigurationStatusService;
 use App\Services\Support\RadarOperationalSettingsService;
 use App\Services\Support\RuntimeMailConfigService;
 use Illuminate\Http\Request;
@@ -18,6 +20,7 @@ class SettingsController extends Controller
         private readonly RuntimeMailConfigService $runtimeMail,
         private readonly RadarSyncSnapshotService $radarSyncSnapshot,
         private readonly RadarOperationalSettingsService $radarOperationalSettings,
+        private readonly MunicipalityConfigurationStatusService $configurationStatus,
     ) {}
 
     public function index()
@@ -62,14 +65,101 @@ class SettingsController extends Controller
             'radar_sync_snapshot_weekly_day' => (int) SystemSetting::get('radar_sync_snapshot_weekly_day', $defaults['radar_sync_snapshot_weekly_day']),
             'radar_sync_snapshot_weekly_time' => SystemSetting::get('radar_sync_snapshot_weekly_time', $defaults['radar_sync_snapshot_weekly_time']),
         ];
+        $coverageOps = [
+            'coverage_executive_mail_enabled' => (bool) SystemSetting::get('coverage_executive_mail_enabled', $defaults['coverage_executive_mail_enabled']),
+            'coverage_executive_mail_daily_enabled' => (bool) SystemSetting::get('coverage_executive_mail_daily_enabled', $defaults['coverage_executive_mail_daily_enabled']),
+            'coverage_executive_mail_weekly_enabled' => (bool) SystemSetting::get('coverage_executive_mail_weekly_enabled', $defaults['coverage_executive_mail_weekly_enabled']),
+            'coverage_executive_mail_recipients' => implode(', ', SystemSetting::get('coverage_executive_mail_recipients', $defaults['coverage_executive_mail_recipients'])),
+            'coverage_executive_mail_daily_time' => SystemSetting::get('coverage_executive_mail_daily_time', $defaults['coverage_executive_mail_daily_time']),
+            'coverage_executive_mail_weekly_day' => (int) SystemSetting::get('coverage_executive_mail_weekly_day', $defaults['coverage_executive_mail_weekly_day']),
+            'coverage_executive_mail_weekly_time' => SystemSetting::get('coverage_executive_mail_weekly_time', $defaults['coverage_executive_mail_weekly_time']),
+            'coverage_executive_mail_ranking_limit' => (int) SystemSetting::get('coverage_executive_mail_ranking_limit', $defaults['coverage_executive_mail_ranking_limit']),
+            'coverage_executive_mail_requires_approval' => (bool) SystemSetting::get('coverage_executive_mail_requires_approval', $defaults['coverage_executive_mail_requires_approval']),
+            'coverage_executive_mail_two_level_approval' => (bool) SystemSetting::get('coverage_executive_mail_two_level_approval', $defaults['coverage_executive_mail_two_level_approval']),
+            'coverage_executive_mail_distinct_approvers' => (bool) SystemSetting::get('coverage_executive_mail_distinct_approvers', $defaults['coverage_executive_mail_distinct_approvers']),
+            'coverage_executive_mail_level_one_label' => SystemSetting::get('coverage_executive_mail_level_one_label', $defaults['coverage_executive_mail_level_one_label']),
+            'coverage_executive_mail_level_two_label' => SystemSetting::get('coverage_executive_mail_level_two_label', $defaults['coverage_executive_mail_level_two_label']),
+            'coverage_executive_mail_identity_name' => SystemSetting::get('coverage_executive_mail_identity_name', $defaults['coverage_executive_mail_identity_name']),
+            'coverage_executive_mail_identity_department' => SystemSetting::get('coverage_executive_mail_identity_department', $defaults['coverage_executive_mail_identity_department']),
+            'coverage_executive_mail_identity_tagline' => SystemSetting::get('coverage_executive_mail_identity_tagline', $defaults['coverage_executive_mail_identity_tagline']),
+            'coverage_executive_mail_identity_logo' => SystemSetting::get('coverage_executive_mail_identity_logo', $defaults['coverage_executive_mail_identity_logo']),
+            'coverage_executive_mail_identity_accent_color' => SystemSetting::get('coverage_executive_mail_identity_accent_color', $defaults['coverage_executive_mail_identity_accent_color']),
+            'coverage_executive_mail_identity_secondary_color' => SystemSetting::get('coverage_executive_mail_identity_secondary_color', $defaults['coverage_executive_mail_identity_secondary_color']),
+            'coverage_executive_mail_signature_primary_name' => SystemSetting::get('coverage_executive_mail_signature_primary_name', $defaults['coverage_executive_mail_signature_primary_name']),
+            'coverage_executive_mail_signature_primary_role' => SystemSetting::get('coverage_executive_mail_signature_primary_role', $defaults['coverage_executive_mail_signature_primary_role']),
+            'coverage_executive_mail_signature_secondary_name' => SystemSetting::get('coverage_executive_mail_signature_secondary_name', $defaults['coverage_executive_mail_signature_secondary_name']),
+            'coverage_executive_mail_signature_secondary_role' => SystemSetting::get('coverage_executive_mail_signature_secondary_role', $defaults['coverage_executive_mail_signature_secondary_role']),
+            'coverage_alert_owner_warning_minutes' => (int) SystemSetting::get('coverage_alert_owner_warning_minutes', $defaults['coverage_alert_owner_warning_minutes']),
+            'coverage_alert_owner_notifications_enabled' => (bool) SystemSetting::get('coverage_alert_owner_notifications_enabled', $defaults['coverage_alert_owner_notifications_enabled']),
+            'coverage_alert_owner_sla_high_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_high_hours', $defaults['coverage_alert_owner_sla_high_hours']),
+            'coverage_alert_owner_sla_medium_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_medium_hours', $defaults['coverage_alert_owner_sla_medium_hours']),
+            'coverage_alert_owner_sla_default_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_default_hours', $defaults['coverage_alert_owner_sla_default_hours']),
+            'coverage_alert_owner_sla_admin_high_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_admin_high_hours', $defaults['coverage_alert_owner_sla_admin_high_hours']),
+            'coverage_alert_owner_sla_admin_medium_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_admin_medium_hours', $defaults['coverage_alert_owner_sla_admin_medium_hours']),
+            'coverage_alert_owner_sla_admin_default_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_admin_default_hours', $defaults['coverage_alert_owner_sla_admin_default_hours']),
+            'coverage_alert_owner_sla_mayor_high_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_mayor_high_hours', $defaults['coverage_alert_owner_sla_mayor_high_hours']),
+            'coverage_alert_owner_sla_mayor_medium_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_mayor_medium_hours', $defaults['coverage_alert_owner_sla_mayor_medium_hours']),
+            'coverage_alert_owner_sla_mayor_default_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_mayor_default_hours', $defaults['coverage_alert_owner_sla_mayor_default_hours']),
+            'coverage_alert_owner_sla_secretary_high_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_secretary_high_hours', $defaults['coverage_alert_owner_sla_secretary_high_hours']),
+            'coverage_alert_owner_sla_secretary_medium_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_secretary_medium_hours', $defaults['coverage_alert_owner_sla_secretary_medium_hours']),
+            'coverage_alert_owner_sla_secretary_default_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_secretary_default_hours', $defaults['coverage_alert_owner_sla_secretary_default_hours']),
+            'coverage_alert_owner_sla_advisor_high_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_advisor_high_hours', $defaults['coverage_alert_owner_sla_advisor_high_hours']),
+            'coverage_alert_owner_sla_advisor_medium_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_advisor_medium_hours', $defaults['coverage_alert_owner_sla_advisor_medium_hours']),
+            'coverage_alert_owner_sla_advisor_default_hours' => (int) SystemSetting::get('coverage_alert_owner_sla_advisor_default_hours', $defaults['coverage_alert_owner_sla_advisor_default_hours']),
+        ];
+        $coverageOwnerSlaUsers = User::query()
+            ->admins()
+            ->active()
+            ->orderBy('name')
+            ->get(['id', 'name', 'role', 'preferences'])
+            ->map(function (User $user) {
+                $prefs = is_array($user->preferences) ? $user->preferences : [];
+
+                return [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'role' => $user->role?->label() ?? 'Admin',
+                    'sla' => [
+                        'high' => (int) data_get($prefs, 'coverage_alerts.owner_sla_hours.high', 0),
+                        'medium' => (int) data_get($prefs, 'coverage_alerts.owner_sla_hours.medium', 0),
+                        'default' => (int) data_get($prefs, 'coverage_alerts.owner_sla_hours.default', 0),
+                    ],
+                ];
+            })
+            ->values();
 
         $mailRuntimeStatus = [
             'active_mailer' => $this->runtimeMail->activeMailerName(),
             'runtime_enabled' => $this->runtimeMail->shouldUseRuntimeSmtp(),
         ];
         $radarOperationalHistory = $this->radarOperationalSettings->history();
+        $municipalityConfigSummaries = $this->configurationStatus->summarizeCollection(
+            \App\Models\Municipality::query()
+                ->where('subscription_active', true)
+                ->with('mayor')
+                ->orderBy('name')
+                ->get()
+        );
+        $configExecutiveSummary = $this->configurationStatus->aggregate($municipalityConfigSummaries);
+        $configAttentionMunicipalities = $municipalityConfigSummaries
+            ->sortBy([
+                ['score', 'asc'],
+                ['municipality_name', 'asc'],
+            ])
+            ->take(6)
+            ->values();
 
-        return view('admin.settings.index', compact('ai', 'mail', 'radarOps', 'mailRuntimeStatus', 'radarOperationalHistory'));
+        return view('admin.settings.index', compact(
+            'ai',
+            'mail',
+            'radarOps',
+            'coverageOps',
+            'coverageOwnerSlaUsers',
+            'mailRuntimeStatus',
+            'radarOperationalHistory',
+            'configExecutiveSummary',
+            'configAttentionMunicipalities'
+        ));
     }
 
     public function saveAI(Request $request)
@@ -137,9 +227,58 @@ class SettingsController extends Controller
             'radar_sync_snapshot_daily_time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
             'radar_sync_snapshot_weekly_day' => 'required|integer|min:0|max:6',
             'radar_sync_snapshot_weekly_time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
+            'coverage_executive_mail_enabled' => 'nullable|boolean',
+            'coverage_executive_mail_daily_enabled' => 'nullable|boolean',
+            'coverage_executive_mail_weekly_enabled' => 'nullable|boolean',
+            'coverage_executive_mail_recipients' => 'nullable|string',
+            'coverage_executive_mail_daily_time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
+            'coverage_executive_mail_weekly_day' => 'required|integer|min:0|max:6',
+            'coverage_executive_mail_weekly_time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
+            'coverage_executive_mail_ranking_limit' => 'required|integer|min:5|max:50',
+            'coverage_executive_mail_requires_approval' => 'nullable|boolean',
+            'coverage_executive_mail_two_level_approval' => 'nullable|boolean',
+            'coverage_executive_mail_distinct_approvers' => 'nullable|boolean',
+            'coverage_executive_mail_level_one_label' => 'required|string|max:80',
+            'coverage_executive_mail_level_two_label' => 'required|string|max:80',
+            'coverage_executive_mail_identity_name' => 'required|string|max:255',
+            'coverage_executive_mail_identity_department' => 'nullable|string|max:255',
+            'coverage_executive_mail_identity_tagline' => 'nullable|string|max:255',
+            'coverage_executive_mail_identity_logo' => 'nullable|string|max:255',
+            'coverage_executive_mail_identity_accent_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'coverage_executive_mail_identity_secondary_color' => ['required', 'regex:/^#[0-9A-Fa-f]{6}$/'],
+            'coverage_executive_mail_signature_primary_name' => 'required|string|max:255',
+            'coverage_executive_mail_signature_primary_role' => 'required|string|max:255',
+            'coverage_executive_mail_signature_secondary_name' => 'nullable|string|max:255',
+            'coverage_executive_mail_signature_secondary_role' => 'nullable|string|max:255',
+            'coverage_alert_owner_warning_minutes' => 'required|integer|min:15|max:720',
+            'coverage_alert_owner_notifications_enabled' => 'nullable|boolean',
+            'coverage_alert_owner_sla_high_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_medium_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_default_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_admin_high_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_admin_medium_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_admin_default_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_mayor_high_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_mayor_medium_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_mayor_default_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_secretary_high_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_secretary_medium_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_secretary_default_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_advisor_high_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_advisor_medium_hours' => 'required|integer|min:1|max:240',
+            'coverage_alert_owner_sla_advisor_default_hours' => 'required|integer|min:1|max:240',
+            'coverage_owner_sla_overrides' => 'nullable|array',
+            'coverage_owner_sla_overrides.*.high' => 'nullable|integer|min:0|max:240',
+            'coverage_owner_sla_overrides.*.medium' => 'nullable|integer|min:0|max:240',
+            'coverage_owner_sla_overrides.*.default' => 'nullable|integer|min:0|max:240',
         ]);
 
         $recipientList = collect(explode(',', (string) ($validated['radar_sync_snapshot_recipients'] ?? '')))
+            ->map(fn (string $email) => trim($email))
+            ->filter()
+            ->values()
+            ->all();
+        $coverageRecipientList = collect(explode(',', (string) ($validated['coverage_executive_mail_recipients'] ?? '')))
             ->map(fn (string $email) => trim($email))
             ->filter()
             ->values()
@@ -148,6 +287,11 @@ class SettingsController extends Controller
         foreach ($recipientList as $email) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return back()->withErrors(["Destinatário inválido no Radar: {$email}"])->withInput();
+            }
+        }
+        foreach ($coverageRecipientList as $email) {
+            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+                return back()->withErrors(["Destinatário inválido no mailing executivo: {$email}"])->withInput();
             }
         }
 
@@ -163,8 +307,73 @@ class SettingsController extends Controller
 
         $this->radarOperationalSettings->applySnapshot($after);
         $this->radarOperationalSettings->recordUpdate($request->user(), $before, $after);
+        SystemSetting::set('coverage_executive_mail_enabled', $request->boolean('coverage_executive_mail_enabled'), 'boolean', 'coverage_operations', 'Mailing executivo ativo');
+        SystemSetting::set('coverage_executive_mail_daily_enabled', $request->boolean('coverage_executive_mail_daily_enabled'), 'boolean', 'coverage_operations', 'Mailing executivo diario ativo');
+        SystemSetting::set('coverage_executive_mail_weekly_enabled', $request->boolean('coverage_executive_mail_weekly_enabled'), 'boolean', 'coverage_operations', 'Mailing executivo semanal ativo');
+        SystemSetting::set('coverage_executive_mail_recipients', $coverageRecipientList, 'json', 'coverage_operations', 'Destinatarios do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_daily_time', (string) $validated['coverage_executive_mail_daily_time'], 'string', 'coverage_operations', 'Horario diario do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_weekly_day', (int) $validated['coverage_executive_mail_weekly_day'], 'string', 'coverage_operations', 'Dia semanal do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_weekly_time', (string) $validated['coverage_executive_mail_weekly_time'], 'string', 'coverage_operations', 'Horario semanal do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_ranking_limit', (int) $validated['coverage_executive_mail_ranking_limit'], 'string', 'coverage_operations', 'Limite do ranking executivo no mailing');
+        SystemSetting::set('coverage_executive_mail_requires_approval', $request->boolean('coverage_executive_mail_requires_approval'), 'boolean', 'coverage_operations', 'Aprovação manual do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_two_level_approval', $request->boolean('coverage_executive_mail_two_level_approval'), 'boolean', 'coverage_operations', 'Aprovação em dois níveis do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_distinct_approvers', $request->boolean('coverage_executive_mail_distinct_approvers'), 'boolean', 'coverage_operations', 'Aprovadores distintos no mailing executivo');
+        SystemSetting::set('coverage_executive_mail_level_one_label', (string) $validated['coverage_executive_mail_level_one_label'], 'string', 'coverage_operations', 'Rótulo do nível 1 do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_level_two_label', (string) $validated['coverage_executive_mail_level_two_label'], 'string', 'coverage_operations', 'Rótulo do nível 2 do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_identity_name', (string) $validated['coverage_executive_mail_identity_name'], 'string', 'coverage_operations', 'Nome institucional do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_identity_department', (string) ($validated['coverage_executive_mail_identity_department'] ?? ''), 'string', 'coverage_operations', 'Departamento institucional do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_identity_tagline', (string) ($validated['coverage_executive_mail_identity_tagline'] ?? ''), 'string', 'coverage_operations', 'Tagline institucional do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_identity_logo', (string) ($validated['coverage_executive_mail_identity_logo'] ?? ''), 'string', 'coverage_operations', 'Logo institucional do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_identity_accent_color', strtoupper((string) $validated['coverage_executive_mail_identity_accent_color']), 'string', 'coverage_operations', 'Cor principal do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_identity_secondary_color', strtoupper((string) $validated['coverage_executive_mail_identity_secondary_color']), 'string', 'coverage_operations', 'Cor secundária do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_signature_primary_name', (string) $validated['coverage_executive_mail_signature_primary_name'], 'string', 'coverage_operations', 'Assinatura principal do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_signature_primary_role', (string) $validated['coverage_executive_mail_signature_primary_role'], 'string', 'coverage_operations', 'Cargo da assinatura principal do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_signature_secondary_name', (string) ($validated['coverage_executive_mail_signature_secondary_name'] ?? ''), 'string', 'coverage_operations', 'Assinatura secundária do mailing executivo');
+        SystemSetting::set('coverage_executive_mail_signature_secondary_role', (string) ($validated['coverage_executive_mail_signature_secondary_role'] ?? ''), 'string', 'coverage_operations', 'Cargo da assinatura secundária do mailing executivo');
+        SystemSetting::set('coverage_alert_owner_notifications_enabled', $request->boolean('coverage_alert_owner_notifications_enabled'), 'boolean', 'coverage_operations', 'Notificações de SLA do owner');
+        SystemSetting::set('coverage_alert_owner_warning_minutes', (int) $validated['coverage_alert_owner_warning_minutes'], 'string', 'coverage_operations', 'Minutos de antecedência da notificação do owner');
+        foreach ([
+            'coverage_alert_owner_sla_high_hours',
+            'coverage_alert_owner_sla_medium_hours',
+            'coverage_alert_owner_sla_default_hours',
+            'coverage_alert_owner_sla_admin_high_hours',
+            'coverage_alert_owner_sla_admin_medium_hours',
+            'coverage_alert_owner_sla_admin_default_hours',
+            'coverage_alert_owner_sla_mayor_high_hours',
+            'coverage_alert_owner_sla_mayor_medium_hours',
+            'coverage_alert_owner_sla_mayor_default_hours',
+            'coverage_alert_owner_sla_secretary_high_hours',
+            'coverage_alert_owner_sla_secretary_medium_hours',
+            'coverage_alert_owner_sla_secretary_default_hours',
+            'coverage_alert_owner_sla_advisor_high_hours',
+            'coverage_alert_owner_sla_advisor_medium_hours',
+            'coverage_alert_owner_sla_advisor_default_hours',
+        ] as $slaKey) {
+            SystemSetting::set($slaKey, (int) $validated[$slaKey], 'string', 'coverage_operations', 'SLA do owner');
+        }
 
-        return back()->with('success', 'Configurações operacionais do Radar e SMTP salvas com sucesso.');
+        $userOverrides = (array) ($validated['coverage_owner_sla_overrides'] ?? []);
+        $users = User::query()->admins()->active()->get();
+        foreach ($users as $user) {
+            $preferences = is_array($user->preferences) ? $user->preferences : [];
+            $override = (array) ($userOverrides[$user->id] ?? []);
+            $clean = [
+                'high' => (int) ($override['high'] ?? 0),
+                'medium' => (int) ($override['medium'] ?? 0),
+                'default' => (int) ($override['default'] ?? 0),
+            ];
+            $nonZero = array_filter($clean, fn (int $value) => $value > 0);
+
+            if ($nonZero === []) {
+                data_forget($preferences, 'coverage_alerts.owner_sla_hours');
+            } else {
+                data_set($preferences, 'coverage_alerts.owner_sla_hours', $clean);
+            }
+
+            $user->update(['preferences' => $preferences]);
+        }
+
+        return back()->with('success', 'Configurações operacionais de SMTP, Radar e cobertura executiva salvas com sucesso.');
     }
 
     public function rollbackOperational(Activity $activity, Request $request)

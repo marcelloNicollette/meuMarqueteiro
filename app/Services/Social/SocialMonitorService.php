@@ -92,6 +92,15 @@ class SocialMonitorService
     public function getScanTargets(Municipality $municipality, $keywords): array
     {
         $targetsByKeywordId = [];
+        $settings = is_array($municipality->settings) ? $municipality->settings : [];
+        $configuredPortals = collect(preg_split('/[\n,;]+/', (string) data_get($settings, 'communication.monitoring.portals', '')))
+            ->map(fn ($value) => trim((string) $value))
+            ->filter()
+            ->values();
+        $activeChannels = collect((array) data_get($settings, 'communication.channels', []))
+            ->filter(fn ($channel) => !empty($channel['active']))
+            ->keys()
+            ->values();
 
         foreach ($keywords as $kw) {
             $targets = [];
@@ -111,6 +120,24 @@ class SocialMonitorService
                     $targets[] = [
                         'source' => 'Twitter/X (Nitter RSS)',
                         'url'    => "{$instance}/search/rss?q={$q}&f=tweets",
+                    ];
+                }
+            }
+
+            foreach ($configuredPortals as $portal) {
+                $portalHost = parse_url(str_starts_with($portal, 'http') ? $portal : 'https://' . $portal, PHP_URL_HOST) ?: $portal;
+                $targets[] = [
+                    'source' => 'Portal local configurado',
+                    'url' => 'https://' . ltrim((string) $portalHost, '/'),
+                ];
+            }
+
+            foreach ($activeChannels as $channel) {
+                $channelUrl = (string) data_get($settings, "communication.channels.{$channel}.url", '');
+                if ($channelUrl !== '') {
+                    $targets[] = [
+                        'source' => 'Canal oficial configurado',
+                        'url' => $channelUrl,
                     ];
                 }
             }

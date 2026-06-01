@@ -11,7 +11,7 @@
         /* ── Stat cards ─── */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr);
+            grid-template-columns: repeat(5, 1fr);
             gap: 1rem;
             margin-bottom: 1.75rem;
         }
@@ -292,6 +292,12 @@
             <div class="stat-value">{{ $stats['active_subscriptions'] }}</div>
             <div class="stat-delta neutral">gerados às 6h30</div>
         </div>
+        <div class="stat-card">
+            <div class="stat-card-accent" style="background: #7c3aed"></div>
+            <div class="stat-eyebrow">Prontidão de configuração</div>
+            <div class="stat-value">{{ $configStats['average_score'] ?? 0 }}%</div>
+            <div class="stat-delta neutral">{{ $configStats['ready_total'] ?? 0 }} município(s) prontos para operar</div>
+        </div>
     </div>
 
     {{-- ── Grid principal ───────────────────────────────────────── --}}
@@ -387,6 +393,66 @@
                         <p style="font-size:.84rem;color:var(--ink-muted);padding:.5rem 0">
                             Nenhum onboarding pendente.
                         </p>
+                    @endforelse
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-header">
+                    <h3>Prontidão de Configurações</h3>
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap">
+                        <a href="{{ route('admin.coverage-alerts.index') }}" class="btn btn-outline">Central de alertas</a>
+                        <a href="{{ route('admin.settings.index') }}" class="btn btn-outline">Abrir módulo</a>
+                    </div>
+                </div>
+                <div class="card-body" style="display:grid;gap:.85rem">
+                    <div style="display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:.6rem">
+                        <div
+                            style="padding:.8rem .85rem;border:1px solid var(--border);border-radius:10px;background:#f8fafc">
+                            <div
+                                style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)">
+                                Prontos</div>
+                            <div style="font-size:1.2rem;font-weight:700;color:#166534;margin-top:.2rem">
+                                {{ $configStats['ready_total'] ?? 0 }}</div>
+                        </div>
+                        <div
+                            style="padding:.8rem .85rem;border:1px solid var(--border);border-radius:10px;background:#fff7ed">
+                            <div
+                                style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)">
+                                Atenção</div>
+                            <div style="font-size:1.2rem;font-weight:700;color:#b45309;margin-top:.2rem">
+                                {{ $configStats['warning_total'] ?? 0 }}</div>
+                        </div>
+                        <div
+                            style="padding:.8rem .85rem;border:1px solid var(--border);border-radius:10px;background:#fef2f2">
+                            <div
+                                style="font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-muted)">
+                                Críticos</div>
+                            <div style="font-size:1.2rem;font-weight:700;color:#b91c1c;margin-top:.2rem">
+                                {{ $configStats['critical_total'] ?? 0 }}</div>
+                        </div>
+                    </div>
+                    @forelse ($configAlerts as $entry)
+                        <div
+                            style="padding:.85rem .95rem;border:1px solid var(--border-lt);border-radius:12px;background:#fff">
+                            <div style="display:flex;justify-content:space-between;gap:.75rem;align-items:flex-start">
+                                <div>
+                                    <div style="font-size:.85rem;font-weight:700;color:var(--ink)">
+                                        {{ $entry['municipality_name'] }}</div>
+                                    <div style="font-size:.76rem;color:var(--ink-muted);margin-top:.15rem">
+                                        {{ $entry['summary_label'] }}</div>
+                                </div>
+                                <div
+                                    style="font-size:.9rem;font-weight:700;color:{{ $entry['status'] === 'critical' ? '#b91c1c' : '#b45309' }}">
+                                    {{ $entry['score'] }}%</div>
+                            </div>
+                            <div style="font-size:.76rem;color:var(--ink-soft);margin-top:.45rem;line-height:1.55">
+                                {{ implode(', ', array_slice($entry['issues'] ?? [], 0, 2)) ?: 'Sem pendências críticas.' }}
+                            </div>
+                        </div>
+                    @empty
+                        <p style="font-size:.84rem;color:var(--ink-muted)">Todos os municípios ativos estão com configuração
+                            em faixa saudável.</p>
                     @endforelse
                 </div>
             </div>

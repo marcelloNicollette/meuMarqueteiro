@@ -142,6 +142,11 @@ class Municipality extends Model
         return $this->hasMany(MunicipalityLocality::class)->orderBy('name');
     }
 
+    public function coverageAlerts(): HasMany
+    {
+        return $this->hasMany(MunicipalityCoverageAlert::class)->latest('last_detected_at');
+    }
+
     // ─── Helpers ─────────────────────────────────────────
 
     public function isOnboarded(): bool

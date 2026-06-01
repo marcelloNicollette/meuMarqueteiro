@@ -36,6 +36,7 @@ class ContentGenerationService
 
         $channelInstructions = $this->getChannelInstructions($channel);
         $voiceInstructions   = $this->buildVoiceInstructions($voiceProfile);
+        $municipalityInstructions = $this->buildMunicipalityCommunicationInstructions($municipality);
         $templateInstructions = $this->buildTemplateInstructions($template);
         $playbookInstructions = $this->buildPlaybookInstructions($playbook);
         $historicalGuard = $this->buildHistoricalGuardrail($municipality, $theme);
@@ -57,6 +58,7 @@ class ContentGenerationService
 
         {$channelInstructions}
         {$voiceInstructions}
+        {$municipalityInstructions}
         {$templateInstructions}
         {$playbookInstructions}
         {$historicalGuard['prompt']}
@@ -245,6 +247,7 @@ class ContentGenerationService
         array        $playbook = [],
     ): string {
         $playbookInstructions = $this->buildPlaybookInstructions($playbook);
+        $municipalityInstructions = $this->buildMunicipalityCommunicationInstructions($municipality);
         $prompt = <<<PROMPT
         Você é um preparador de crise e entrevistas para o prefeito {$mayor->name}, de {$municipality->name}.
 
@@ -252,6 +255,7 @@ class ContentGenerationService
         {$context}
 
         {$playbookInstructions}
+        {$municipalityInstructions}
 
         Gere:
         1. As 5 perguntas mais difíceis que podem ser feitas
@@ -282,6 +286,7 @@ class ContentGenerationService
     ): array {
         $playbookInstructions = $this->buildPlaybookInstructions($playbook);
         $voiceInstructions = $this->buildVoiceInstructions($municipality->voice_profile ?? []);
+        $municipalityInstructions = $this->buildMunicipalityCommunicationInstructions($municipality);
         $historicalGuard = $this->buildHistoricalGuardrail($municipality, $crisisDescription);
         $prompt = <<<PROMPT
         SITUAÇÃO DE CRISE — URGENTE
@@ -293,6 +298,7 @@ class ContentGenerationService
 
         {$playbookInstructions}
         {$voiceInstructions}
+        {$municipalityInstructions}
         {$historicalGuard['prompt']}
 
         Monte um roteiro de crise prático, objetivo e pronto para evoluir ao longo do dia.
@@ -371,6 +377,7 @@ class ContentGenerationService
 
         $voiceInstructions = $this->buildVoiceInstructions($municipality->voice_profile ?? []);
         $playbookInstructions = $this->buildPlaybookInstructions($playbook);
+        $municipalityInstructions = $this->buildMunicipalityCommunicationInstructions($municipality);
         $historicalGuard = $this->buildHistoricalGuardrail($municipality, $updateContext . "\n" . $content->content, $content);
 
         $sectionContext = collect($existingPlan['sections'])
@@ -401,6 +408,7 @@ class ContentGenerationService
 
         {$voiceInstructions}
         {$playbookInstructions}
+        {$municipalityInstructions}
         {$historicalGuard['prompt']}
 
         Regras:
@@ -493,6 +501,7 @@ class ContentGenerationService
         $tone = $targetTone ?: ($content->tone ?: 'informativo');
         $voiceInstructions = $this->buildVoiceInstructions($municipality->voice_profile ?? []);
         $channelInstructions = $this->getChannelInstructions($channel);
+        $municipalityInstructions = $this->buildMunicipalityCommunicationInstructions($municipality);
         $historicalGuard = $this->buildHistoricalGuardrail($municipality, $baseText, $content);
 
         $prompt = <<<PROMPT
@@ -520,6 +529,7 @@ class ContentGenerationService
 
         {$channelInstructions}
         {$voiceInstructions}
+        {$municipalityInstructions}
         {$historicalGuard['prompt']}
 
         Responda APENAS em JSON com este formato:
@@ -559,6 +569,7 @@ class ContentGenerationService
         $channel = $targetChannel ?: ($content->channel ?: 'instagram');
         $voiceInstructions = $this->buildVoiceInstructions($municipality->voice_profile ?? []);
         $channelInstructions = $this->getChannelInstructions($channel);
+        $municipalityInstructions = $this->buildMunicipalityCommunicationInstructions($municipality);
         $tones = array_values(array_unique(array_filter($tones))) ?: ['celebratorio', 'tecnico', 'empatico'];
         $tonesStr = implode(', ', $tones);
         $historicalGuard = $this->buildHistoricalGuardrail($municipality, $seedText, $content);
@@ -586,6 +597,7 @@ class ContentGenerationService
 
         {$channelInstructions}
         {$voiceInstructions}
+        {$municipalityInstructions}
         {$historicalGuard['prompt']}
 
         Responda APENAS em JSON com este formato:
@@ -657,7 +669,63 @@ class ContentGenerationService
             $parts[] = 'Evite especialmente: ' . trim((string) $profile['avoid']) . '.';
         }
 
+        if (!empty($profile['political_positioning'])) {
+            $parts[] = 'Posicionamento politico predominante: ' . trim((string) $profile['political_positioning']) . '.';
+        }
+
+        if (!empty($profile['key_flags'])) {
+            $parts[] = 'Bandeiras principais do prefeito: ' . trim((string) $profile['key_flags']) . '.';
+        }
+
+        if (!empty($profile['avoid_public_topics'])) {
+            $parts[] = 'Temas que prefere evitar publicamente: ' . trim((string) $profile['avoid_public_topics']) . '.';
+        }
+
         return implode(' ', $parts);
+    }
+
+    private function buildMunicipalityCommunicationInstructions(Municipality $municipality): string
+    {
+        $settings = is_array($municipality->settings) ? $municipality->settings : [];
+        $communication = (array) data_get($settings, 'communication', []);
+        $channels = collect((array) ($communication['channels'] ?? []))
+            ->filter(fn ($channel) => !empty($channel['active']))
+            ->keys()
+            ->map(fn ($key) => ucfirst((string) $key))
+            ->values()
+            ->all();
+
+        $parts = [];
+
+        if (!empty($channels)) {
+            $parts[] = 'Canais oficiais ativos: ' . implode(', ', $channels) . '.';
+        }
+
+        if ($palette = trim((string) data_get($communication, 'visual_identity.palette', ''))) {
+            $parts[] = 'Paleta visual de referencia: ' . $palette . '.';
+        }
+
+        if ($style = trim((string) data_get($communication, 'visual_identity.style', ''))) {
+            $parts[] = 'Estilo visual predominante: ' . $style . '.';
+        }
+
+        if ($references = trim((string) data_get($communication, 'visual_identity.references', ''))) {
+            $parts[] = 'Referencias visuais do municipio: ' . $references . '.';
+        }
+
+        $sensitivities = collect([
+            data_get($communication, 'sensitivities.historical_topics'),
+            data_get($communication, 'sensitivities.tense_groups'),
+            data_get($communication, 'sensitivities.controversial_projects'),
+            data_get($communication, 'sensitivities.electoral_topics'),
+            data_get($communication, 'sensitivities.crisis_history'),
+        ])->filter()->implode(' | ');
+
+        if ($sensitivities !== '') {
+            $parts[] = 'Temas sensiveis que exigem cautela: ' . $sensitivities . '.';
+        }
+
+        return implode("\n", $parts);
     }
 
     private function crisisSectionDefinitions(): array

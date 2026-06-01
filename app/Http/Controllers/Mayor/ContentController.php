@@ -13,6 +13,7 @@ use App\Models\User;
 use App\Services\WebPushService;
 use App\Services\Communication\CommunicationSettingsService;
 use App\Services\Communication\ContentGenerationService;
+use App\Services\Support\MunicipalityConfigurationStatusService;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Collection;
@@ -24,6 +25,7 @@ class ContentController extends Controller
         private ContentGenerationService $service,
         private CommunicationSettingsService $communicationSettings,
         private WebPushService $webPush,
+        private MunicipalityConfigurationStatusService $configurationStatus,
     ) {}
 
     public function index(Request $request)
@@ -253,6 +255,7 @@ class ContentController extends Controller
         $keywords = MentionKeyword::where('municipality_id', $municipality->id)
             ->orderBy('type')
             ->get();
+        $configSummary = $this->configurationStatus->summarize($municipality);
 
         $segments = collect([
             ['key' => 'positive', 'label' => 'Positivas', 'count' => $stats['positive'], 'color' => '#1e7e48'],
@@ -276,6 +279,17 @@ class ContentController extends Controller
             'source_options' => $sourceOptions,
             'reputation_segments' => $segments,
             'mentions' => $mentions,
+            'configuration' => [
+                'score' => $configSummary['score'],
+                'status' => $configSummary['status'],
+                'summary_label' => $configSummary['summary_label'],
+                'active_channels' => $configSummary['active_channels'],
+                'monitoring_terms' => $configSummary['monitoring_terms'],
+                'monitoring_portals' => $configSummary['monitoring_portals'],
+                'keywords_total' => $configSummary['monitoring_keywords_total'],
+                'pra_hoje_time' => $configSummary['pra_hoje_time'],
+                'issues' => $configSummary['issues'],
+            ],
         ];
     }
 

@@ -5,10 +5,15 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Municipality;
 use App\Models\User;
+use App\Services\Support\MunicipalityConfigurationStatusService;
 use Illuminate\View\View;
 
 class DashboardController extends Controller
 {
+    public function __construct(
+        private readonly MunicipalityConfigurationStatusService $configurationStatus,
+    ) {}
+
     public function index(): View
     {
         $stats = [
@@ -30,12 +35,26 @@ class DashboardController extends Controller
             ->get();
 
         $pendingOnboarding = Municipality::where('onboarding_status', 'pending')->count();
+        $activeMunicipalities = Municipality::query()
+            ->where('subscription_active', true)
+            ->with('mayor')
+            ->orderBy('name')
+            ->get();
+        $configReadiness = $this->configurationStatus->summarizeCollection($activeMunicipalities);
+        $configStats = $this->configurationStatus->aggregate($configReadiness);
+        $configAlerts = $configReadiness
+            ->whereIn('status', ['warning', 'critical'])
+            ->sortBy('score')
+            ->take(5)
+            ->values();
 
         return view('admin.dashboard', compact(
             'stats',
             'recentMunicipalities',
             'onboardingInProgress',
-            'pendingOnboarding'
+            'pendingOnboarding',
+            'configStats',
+            'configAlerts'
         ));
     }
 }

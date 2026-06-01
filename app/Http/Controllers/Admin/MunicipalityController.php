@@ -9,6 +9,9 @@ use App\Models\User;
 use App\Services\Communication\CommunicationSettingsService;
 use App\Services\Projects\ProjectBankLibraryService;
 use App\Services\ResolveAi\ResolveAiSettingsService;
+use App\Services\Support\MunicipalityConfigurationStatusService;
+use App\Services\Support\MunicipalityCoverageAlertService;
+use App\Services\Support\MunicipalityCoverageExecutiveService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -19,6 +22,9 @@ class MunicipalityController extends Controller
         private readonly CommunicationSettingsService $communicationSettings,
         private readonly ResolveAiSettingsService $resolveAiSettings,
         private readonly ProjectBankLibraryService $projectBankLibrary,
+        private readonly MunicipalityConfigurationStatusService $configurationStatus,
+        private readonly MunicipalityCoverageAlertService $coverageAlerts,
+        private readonly MunicipalityCoverageExecutiveService $coverageExecutive,
     ) {}
 
     public function index()
@@ -100,13 +106,21 @@ class MunicipalityController extends Controller
         $communicationSettings = $this->communicationSettings->forMunicipality($municipality);
         $resolveAiSettings = $this->resolveAiSettings->forMunicipality($municipality);
         $projectBankSummary = $this->projectBankSummary($municipality);
+        $configurationSummary = $this->configurationStatus->summarize($municipality);
+        $activeCoverageAlerts = $this->coverageAlerts->activeForMunicipality($municipality);
+        $recentCoverageAlerts = $this->coverageAlerts->recentForMunicipality($municipality);
+        $coverageGovernance = $this->coverageGovernanceSettings($municipality);
 
         return view('admin.municipalities.show', compact(
             'municipality',
             'stats',
             'communicationSettings',
             'resolveAiSettings',
-            'projectBankSummary'
+            'projectBankSummary',
+            'configurationSummary',
+            'activeCoverageAlerts',
+            'recentCoverageAlerts',
+            'coverageGovernance'
         ));
     }
 
@@ -211,6 +225,40 @@ class MunicipalityController extends Controller
             ->with('success', 'Município removido com sucesso.');
     }
 
+    public function saveCoverageGovernance(Request $request, Municipality $municipality): RedirectResponse
+    {
+        $data = $request->validate([
+            'enabled' => 'nullable|boolean',
+            'minimum_configuration_score' => 'required|integer|min:0|max:100',
+            'minimum_executive_score' => 'required|integer|min:0|max:100',
+            'maximum_negative_score_delta' => 'required|integer|min:0|max:100',
+            'maximum_position_loss' => 'required|integer|min:0|max:50',
+            'maximum_active_alerts' => 'required|integer|min:0|max:100',
+            'maximum_sla_breaches' => 'required|integer|min:0|max:100',
+        ]);
+
+        $settings = is_array($municipality->settings) ? $municipality->settings : [];
+        data_set($settings, 'coverage_governance.thresholds', [
+            'enabled' => $request->boolean('enabled', true),
+            'minimum_configuration_score' => (int) $data['minimum_configuration_score'],
+            'minimum_executive_score' => (int) $data['minimum_executive_score'],
+            'maximum_negative_score_delta' => (int) $data['maximum_negative_score_delta'],
+            'maximum_position_loss' => (int) $data['maximum_position_loss'],
+            'maximum_active_alerts' => (int) $data['maximum_active_alerts'],
+            'maximum_sla_breaches' => (int) $data['maximum_sla_breaches'],
+        ]);
+
+        $municipality->update(['settings' => $settings]);
+
+        if ($municipality->relationLoaded('mayor')) {
+            $municipality->unsetRelation('mayor');
+        }
+
+        $this->coverageAlerts->syncForMunicipality($municipality->fresh()->load('mayor'));
+
+        return back()->with('success', 'Governança executiva e thresholds automáticos salvos para o município.');
+    }
+
     private function projectBankSummary(Municipality $municipality): array
     {
         $settings = (array) ($municipality->settings ?? []);
@@ -241,6 +289,22 @@ class MunicipalityController extends Controller
                 !empty($lastCuratedAt) || !empty($bootstrappedAt) => 'success',
                 default => 'neutral',
             },
+        ];
+    }
+
+    private function coverageGovernanceSettings(Municipality $municipality): array
+    {
+        $defaults = $this->coverageExecutive->governanceThresholdDefaults();
+        $settings = is_array($municipality->settings) ? $municipality->settings : [];
+
+        return [
+            'enabled' => (bool) data_get($settings, 'coverage_governance.thresholds.enabled', $defaults['enabled'] ?? true),
+            'minimum_configuration_score' => (int) data_get($settings, 'coverage_governance.thresholds.minimum_configuration_score', $defaults['minimum_configuration_score'] ?? 70),
+            'minimum_executive_score' => (int) data_get($settings, 'coverage_governance.thresholds.minimum_executive_score', $defaults['minimum_executive_score'] ?? 65),
+            'maximum_negative_score_delta' => (int) data_get($settings, 'coverage_governance.thresholds.maximum_negative_score_delta', $defaults['maximum_negative_score_delta'] ?? 8),
+            'maximum_position_loss' => (int) data_get($settings, 'coverage_governance.thresholds.maximum_position_loss', $defaults['maximum_position_loss'] ?? 3),
+            'maximum_active_alerts' => (int) data_get($settings, 'coverage_governance.thresholds.maximum_active_alerts', $defaults['maximum_active_alerts'] ?? 3),
+            'maximum_sla_breaches' => (int) data_get($settings, 'coverage_governance.thresholds.maximum_sla_breaches', $defaults['maximum_sla_breaches'] ?? 1),
         ];
     }
 }

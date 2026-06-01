@@ -17,6 +17,7 @@ use App\Services\Mandato\MandateProjectionService;
 use App\Services\Projects\ProjectBankLibraryService;
 use App\Services\Projects\ProjectFundingMatchService;
 use App\Services\Radar\HybridRadarReadService;
+use App\Services\Support\MunicipalityConfigurationStatusService;
 use App\Services\WebPushService;
 use Carbon\Carbon;
 use Illuminate\Support\Collection;
@@ -32,6 +33,7 @@ class MorningBriefingService
         private readonly MandateProjectionService $mandateProjection,
         private readonly HybridRadarReadService $radarRead,
         private readonly ProjectFundingMatchService $projectFundingMatch,
+        private readonly MunicipalityConfigurationStatusService $configurationStatus,
         private readonly WebPushService $webPush,
     ) {}
 
@@ -641,12 +643,30 @@ class MorningBriefingService
         }
 
         try {
+            $configSummary = $this->configurationStatus->summarize($user->municipality);
             $query = SocialMention::query()
                 ->where('municipality_id', $user->municipality_id)
                 ->where('published_at', '>=', now()->subHours(12))
                 ->orderByDesc('published_at');
 
             $cards = collect();
+            if (empty($configSummary['monitoring_terms']) || ($configSummary['monitoring_keywords_total'] ?? 0) === 0) {
+                $cards->push([
+                    'stable_key' => 'mentions:config-gap:' . $user->municipality_id,
+                    'module_key' => 'mencoes',
+                    'module_label' => 'Menções',
+                    'title' => 'Monitoramento ainda sem cobertura suficiente',
+                    'situation' => 'Termos de monitoramento: ' . count($configSummary['monitoring_terms'] ?? []) . ' · palavras-chave ativas: ' . ($configSummary['monitoring_keywords_total'] ?? 0),
+                    'suggestion' => 'Revisar Configurações do município para ampliar termos e palavras-chave que alimentam as menções.',
+                    'priority_bucket' => 'alertas_operacionais',
+                    'priority_rank' => 3,
+                    'score' => 78,
+                    'severity_score' => 78,
+                    'deep_link_url' => route('mayor.mentions.config'),
+                    'deep_link_label' => 'Revisar monitoramento',
+                    'conversation_prompt' => 'Monte um checklist curto para revisar termos e palavras-chave do monitoramento de menções do município.',
+                ]);
+            }
 
             $urgentMention = (clone $query)
                 ->where('sentiment', 'urgent')
@@ -742,12 +762,13 @@ class MorningBriefingService
     private function generateOpening(User $user, Collection $cards): string
     {
         $today = now()->locale('pt_BR')->isoFormat('dddd, D [de] MMMM');
+        $preferredName = trim((string) data_get($user->preferences, 'preferred_name', $user->name));
         $topCards = $cards->take(3)->map(function (array $card, int $index) {
             $position = $index + 1;
             return "{$position}. {$card['module_label']}: {$card['title']} | {$card['situation']} | {$card['suggestion']}";
         })->implode("\n");
 
-        $fallback = "Bom dia, {$user->name}. Hoje e {$today}. "
+        $fallback = "Bom dia, {$preferredName}. Hoje e {$today}. "
             . ($cards->isEmpty()
                 ? 'Seu Pra Hoje amanheceu sem urgências novas; vale revisar oportunidades e manter o ritmo do que ja esta em curso.'
                 : 'Seu Pra Hoje separou os pontos que mais pedem decisão agora, em ordem de urgência e impacto.');
@@ -760,7 +781,7 @@ class MorningBriefingService
                 ],
                 [
                     'role' => 'user',
-                    'content' => "Usuario: {$user->name}\nPerfil: {$user->role->label()}\nData: {$today}\nItens priorizados:\n{$topCards}\n\nEscreva uma abertura pessoal curta, acolhedora e objetiva, preparando o usuario para os cards do dia.",
+                    'content' => "Usuario: {$preferredName}\nPerfil: {$user->role->label()}\nData: {$today}\nItens priorizados:\n{$topCards}\n\nEscreva uma abertura pessoal curta, acolhedora e objetiva, preparando o usuario para os cards do dia.",
                 ],
             ], [
                 'temperature' => 0.6,
@@ -813,8 +834,17 @@ class MorningBriefingService
     private function resolveDeliveryChannel(User $user): string
     {
         $preferences = $this->resolvePraHojePreferences($user);
+        $channels = $this->resolveMunicipalityNotificationChannels($user);
 
-        return ($preferences['email_enabled'] ?? false) ? 'app_email' : 'app';
+        if (($channels['platform'] ?? true) && ($preferences['email_enabled'] ?? false) && ($channels['email'] ?? false)) {
+            return 'app_email';
+        }
+
+        if (($preferences['email_enabled'] ?? false) && ($channels['email'] ?? false)) {
+            return 'email';
+        }
+
+        return 'app';
     }
 
     private function resolvePraHojePreferences(User $user): array
@@ -830,6 +860,11 @@ class MorningBriefingService
 
     private function sendPush(User $user, MorningBriefing $briefing, Collection $cards): void
     {
+        if (($this->resolveMunicipalityNotificationChannels($user)['platform'] ?? true) !== true) {
+            $this->sendEmailIfEnabled($user, $briefing);
+            return;
+        }
+
         try {
             $topCard = $cards->first();
             $body = $topCard
@@ -857,6 +892,10 @@ class MorningBriefingService
             return;
         }
 
+        if (($this->resolveMunicipalityNotificationChannels($user)['email'] ?? false) !== true) {
+            return;
+        }
+
         try {
             Mail::raw(
                 trim(($briefing->opening_text ?: 'Seu Pra Hoje ja esta pronto.') . "\n\nAbra agora: " . route('pra-hoje.show', $briefing)),
@@ -868,6 +907,17 @@ class MorningBriefingService
         } catch (\Throwable $e) {
             Log::warning('Pra Hoje: envio opcional por e-mail falhou.', ['exception' => $e]);
         }
+    }
+
+    private function resolveMunicipalityNotificationChannels(User $user): array
+    {
+        $settings = is_array($user->municipality?->settings) ? $user->municipality->settings : [];
+
+        return [
+            'platform' => (bool) data_get($settings, 'notifications.channels.platform', true),
+            'email' => (bool) data_get($settings, 'notifications.channels.email', false),
+            'whatsapp' => (bool) data_get($settings, 'notifications.channels.whatsapp', false),
+        ];
     }
 
     private function isCommunicationOperationDemand(Demand $demand): bool

@@ -52,6 +52,8 @@ Route::middleware(['auth', 'role:admin'])
         Route::resource('municipalities', Admin\MunicipalityController::class);
         Route::patch('municipalities/{municipality}/toggle', [Admin\MunicipalityController::class, 'toggleActive'])
             ->name('municipalities.toggle');
+        Route::post('municipalities/{municipality}/coverage-governance', [Admin\MunicipalityController::class, 'saveCoverageGovernance'])
+            ->name('municipalities.coverage-governance');
         Route::post('municipalities/{municipality}/project-bank/refresh', [Admin\MunicipalityController::class, 'refreshProjectBank'])
             ->name('municipalities.project-bank.refresh');
 
@@ -77,9 +79,12 @@ Route::middleware(['auth', 'role:admin'])
                 Route::get('/',                [Admin\OnboardingController::class, 'show'])->name('show');
                 Route::post('/documents',      [Admin\OnboardingController::class, 'uploadDocuments'])->name('documents');
                 Route::post('/mandato-commitments', [Admin\OnboardingController::class, 'saveMandateCommitments'])->name('mandato-commitments');
+                Route::post('/municipality-profile', [Admin\OnboardingController::class, 'saveMunicipalityProfile'])->name('municipality-profile');
                 Route::post('/voice-profile',  [Admin\OnboardingController::class, 'saveVoiceProfile'])->name('voice-profile');
                 Route::post('/political-map',  [Admin\OnboardingController::class, 'savePoliticalMap'])->name('political-map');
+                Route::post('/communication-context', [Admin\OnboardingController::class, 'saveCommunicationContext'])->name('communication-context');
                 Route::post('/communication-settings', [Admin\OnboardingController::class, 'saveCommunicationSettings'])->name('communication-settings');
+                Route::post('/notification-settings', [Admin\OnboardingController::class, 'saveNotificationSettings'])->name('notification-settings');
                 Route::post('/resolve-ai-settings', [Admin\OnboardingController::class, 'saveResolveAiSettings'])->name('resolve-ai-settings');
                 Route::post('/complete',       [Admin\OnboardingController::class, 'complete'])->name('complete');
                 Route::post('/ingest',         [Admin\OnboardingController::class, 'triggerDataIngestion'])->name('ingest');
@@ -167,6 +172,27 @@ Route::middleware(['auth', 'role:admin'])
             Route::post('/ai',     [Admin\DiagnosticController::class, 'testAI'])->name('test-ai');
             Route::post('/rag',    [Admin\DiagnosticController::class, 'testRAG'])->name('test-rag');
             Route::post('/audio',  [Admin\DiagnosticController::class, 'testAudio'])->name('test-audio');
+        });
+
+        // Central executiva de alertas de cobertura
+        Route::prefix('coverage-alerts')->name('coverage-alerts.')->group(function () {
+            Route::get('/', [Admin\MunicipalityCoverageAlertController::class, 'index'])->name('index');
+            Route::get('/export.csv', [Admin\MunicipalityCoverageAlertController::class, 'exportCsv'])->name('export.csv');
+            Route::get('/export.xlsx', [Admin\MunicipalityCoverageAlertController::class, 'exportXlsx'])->name('export.xlsx');
+            Route::get('/ranking/export.csv', [Admin\MunicipalityCoverageAlertController::class, 'exportExecutiveRankingCsv'])->name('ranking.export.csv');
+            Route::get('/ranking/export.xlsx', [Admin\MunicipalityCoverageAlertController::class, 'exportExecutiveRankingXlsx'])->name('ranking.export.xlsx');
+            Route::get('/ranking/export.pdf', [Admin\MunicipalityCoverageAlertController::class, 'exportExecutiveRankingPdf'])->name('ranking.export.pdf');
+            Route::get('/mailing/{period}/preview', [Admin\MunicipalityCoverageAlertController::class, 'previewMailing'])->name('mailing.preview');
+            Route::post('/mailing/{period}/approve', [Admin\MunicipalityCoverageAlertController::class, 'approveMailing'])->name('mailing.approve');
+            Route::post('/mailing/{period}/revoke', [Admin\MunicipalityCoverageAlertController::class, 'revokeMailing'])->name('mailing.revoke');
+            Route::post('/{alert}/comments', [Admin\MunicipalityCoverageAlertController::class, 'addComment'])->name('comments.store');
+            Route::post('/{alert}/acknowledge', [Admin\MunicipalityCoverageAlertController::class, 'acknowledge'])->name('acknowledge');
+            Route::post('/{alert}/unacknowledge', [Admin\MunicipalityCoverageAlertController::class, 'unacknowledge'])->name('unacknowledge');
+            Route::post('/{alert}/owner', [Admin\MunicipalityCoverageAlertController::class, 'assignOwner'])->name('owner');
+            Route::get('/municipalities/{municipality}', [Admin\MunicipalityCoverageAlertController::class, 'municipality'])->name('municipality');
+            Route::post('/filters', [Admin\MunicipalityCoverageAlertController::class, 'saveFilter'])->name('filters.save');
+            Route::delete('/filters/{filterKey}', [Admin\MunicipalityCoverageAlertController::class, 'deleteFilter'])->name('filters.delete');
+            Route::post('/bulk', [Admin\MunicipalityCoverageAlertController::class, 'bulkAction'])->name('bulk');
         });
 
         // Configurações do sistema

@@ -574,8 +574,8 @@
         }
 
         /* ═══════════════════════════════════════
-                                                                                                                                                                                                                                                                                                               IMAGEM IA — estilos específicos
-                                                                                                                                                                                                                                                                                                            ═══════════════════════════════════════ */
+                                                                                                                                                                                                                                                                                                                   IMAGEM IA — estilos específicos
+                                                                                                                                                                                                                                                                                                                ═══════════════════════════════════════ */
         .image-info-box {
             background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
             border: 1.5px solid #ede9fe;
@@ -2938,6 +2938,7 @@
         $mentionItems = $mentionsBoard['mentions'] ?? collect();
         $mentionKeywords = $mentionsBoard['keywords'] ?? collect();
         $mentionSourceOptions = $mentionsBoard['source_options'] ?? [];
+        $mentionConfiguration = $mentionsBoard['configuration'] ?? [];
         $operationsFilters = $operationsBoard['filters'] ?? [];
         $operationsSummary = $operationsBoard['summary'] ?? [];
         $operationsColumns = $operationsBoard['columns'] ?? [];
@@ -3992,6 +3993,57 @@
                             </div>
                         @endforeach
                     </div>
+                </div>
+            </section>
+
+            <section class="results-shell">
+                <div class="results-card">
+                    <div class="results-card-head">
+                        <div>
+                            <h2 class="section-title">Cobertura configurada do monitoramento</h2>
+                            <p class="section-subtitle">Leitura rápida do que o módulo `Configurações` já alimenta em
+                                Menções e no `Pra hoje`.</p>
+                        </div>
+                        <a class="action-btn" href="{{ route('mayor.mentions.config') }}">Ajustar palavras-chave</a>
+                    </div>
+                    <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.8rem;margin-bottom:1rem">
+                        <div class="mention-metric-card">
+                            <div class="label">Prontidão</div>
+                            <div class="value">{{ $mentionConfiguration['score'] ?? 0 }}%</div>
+                        </div>
+                        <div class="mention-metric-card">
+                            <div class="label">Canais ativos</div>
+                            <div class="value">{{ count($mentionConfiguration['active_channels'] ?? []) }}</div>
+                        </div>
+                        <div class="mention-metric-card">
+                            <div class="label">Termos</div>
+                            <div class="value">{{ count($mentionConfiguration['monitoring_terms'] ?? []) }}</div>
+                        </div>
+                        <div class="mention-metric-card">
+                            <div class="label">Pra hoje</div>
+                            <div class="value">{{ $mentionConfiguration['pra_hoje_time'] ?? '—' }}</div>
+                        </div>
+                    </div>
+                    <div style="display:flex;gap:.5rem;flex-wrap:wrap;margin-bottom:.9rem">
+                        @foreach ($mentionConfiguration['active_channels'] ?? [] as $channel)
+                            <span class="mention-badge"
+                                style="background:#eff6ff;color:#1d4ed8">{{ ucfirst($channel) }}</span>
+                        @endforeach
+                        @foreach (array_slice($mentionConfiguration['monitoring_portals'] ?? [], 0, 4) as $portal)
+                            <span class="mention-badge"
+                                style="background:#f3f4f6;color:#374151">{{ $portal }}</span>
+                        @endforeach
+                    </div>
+                    @if (!empty($mentionConfiguration['issues']))
+                        <div class="queue-empty" style="text-align:left;border-style:solid">
+                            Pendências atuais: {{ implode(', ', array_slice($mentionConfiguration['issues'], 0, 3)) }}.
+                        </div>
+                    @else
+                        <div class="queue-empty"
+                            style="text-align:left;border-style:solid;background:#f0fdf4;color:#166534;border-color:#bbf7d0">
+                            Monitoramento de menções e configuração do `Pra hoje` estão prontos para operação contínua.
+                        </div>
+                    @endif
                 </div>
             </section>
 
