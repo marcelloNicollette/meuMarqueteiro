@@ -729,7 +729,7 @@
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M12 2L2 7l10 5 10-5-10-5zm0 7L2 4v13l10 5 10-5V4l-10 5z" />
                         </svg>
-                        <div class="today-tile-kicker">Oportunidade</div>
+                        <div class="today-tile-kicker">Oportunidades</div>
                     </div>
 
                     @if ($topProgram)
@@ -946,7 +946,7 @@
                             <path
                                 d="M11.8 10.9c-2.27-.59-3-1.2-3-2.15 0-1.09 1.01-1.85 2.7-1.85 1.78 0 2.44.85 2.5 2.1h2.21c-.07-1.72-1.12-3.3-3.21-3.81V3h-3v2.16c-1.94.42-3.5 1.68-3.5 3.61 0 2.31 1.91 3.46 4.7 4.13 2.5.6 3 1.48 3 2.41 0 .69-.49 1.79-2.7 1.79-2.06 0-2.87-.92-2.98-2.1h-2.2c.12 2.19 1.76 3.42 3.68 3.83V21h3v-2.15c1.95-.37 3.5-1.5 3.5-3.55 0-2.84-2.43-3.81-4.7-4.4z" />
                         </svg>
-                        Radar federal
+                        Radar de Recursos
                     </h3>
                     <a href="{{ route('mayor.mandato.federal-programs') }}" class="section-link">Ver todos →</a>
                 </div>
@@ -1033,14 +1033,13 @@
                     <path
                         d="M12 22c1.1 0 2-.9 2-2h-4c0 1.1.9 2 2 2zm6-6v-5c0-3.07-1.64-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2z" />
                 </svg>
-                Notificações push
+                Notificações
             </h3>
             <span id="push-status-badge" style="font-size:.72rem;color:var(--ink-muted)">Verificando...</span>
         </div>
         <div class="section-card-body">
             <p style="font-size:.84rem;color:var(--ink-soft);margin-bottom:1rem;line-height:1.6">
-                Receba alertas do briefing matinal, programas federais e compromissos em risco
-                diretamente no seu dispositivo — mesmo com o app fechado.
+                Receba alertas do resumo do dia e informações relevantes para gestão do Mandato — mesmo com o app fechado.
             </p>
             <div style="display:flex;gap:.75rem;flex-wrap:wrap">
                 <button id="btnAtivarPush" class="btn-secondary" onclick="ativarPush()" style="display:none">
