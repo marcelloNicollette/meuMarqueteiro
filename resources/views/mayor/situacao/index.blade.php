@@ -743,8 +743,8 @@
                             @endif
                         </div>
                     @else
-                        <div class="today-tile-title">Sem destaque no radar</div>
-                        <div class="today-tile-desc">Nenhum programa em alta relevância no momento.</div>
+                        <div class="today-tile-title">Sem destaques no radar</div>
+                        <div class="today-tile-desc">Nenhum programa no momento.</div>
                     @endif
 
                     <a class="today-cta" href="{{ route('mayor.mandato.federal-programs') }}">Abrir radar →</a>
@@ -756,18 +756,18 @@
                             <path
                                 d="M12 3c-1.1 0-2 .9-2 2v6c0 1.1.9 2 2 2s2-.9 2-2V5c0-1.1-.9-2-2-2zm0 14c-1.1 0-2 .9-2 2v1h4v-1c0-1.1-.9-2-2-2zm7-6h-1c0 3.31-2.69 6-6 6s-6-2.69-6-6H5c0 3.86 2.78 7.08 6.5 7.86V22h1V18.86C16.22 18.08 19 14.86 19 11z" />
                         </svg>
-                        <div class="today-tile-kicker">Briefing</div>
+                        <div class="today-tile-kicker">Resumo</div>
                     </div>
 
                     @if ($briefingHoje)
-                        <div class="today-tile-title">Briefing do dia disponível</div>
+                        <div class="today-tile-title">Resumo do dia disponível</div>
                         <div class="today-tile-desc">
                             {{ \Illuminate\Support\Carbon::parse($briefingHoje->date)->format('d/m/Y') }}
                         </div>
                         <a class="today-cta" href="{{ route('mayor.mandato.briefings.show', $briefingHoje) }}">Abrir →</a>
                     @else
-                        <div class="today-tile-title">Gerar briefing do dia</div>
-                        <div class="today-tile-desc">Resumo executivo com alertas e oportunidades do município.</div>
+                        <div class="today-tile-title">Gerar resumo do dia</div>
+                        <div class="today-tile-desc">Alertas e oportunidades do município.</div>
                         <button class="today-cta" type="button" onclick="generateBriefingNow()">Gerar agora →</button>
                     @endif
                 </div>
