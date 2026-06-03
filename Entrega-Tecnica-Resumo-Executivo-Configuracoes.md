@@ -307,7 +307,7 @@ Durante a consolidacao do modulo foram validados tecnicamente:
 
 - concluido no codigo no seu escopo principal atual
 - operacional como painel administrativo transversal
-- integrado aos modulos `Meu Marqueteiro`, `Comunicacao`, `Resolve ai`, `Mandato`, `Projetos` e `Radar de Recursos`
+- integrado aos modulos `Meu Assistente`, `Comunicacao`, `Resolve ai`, `Mandato`, `Projetos` e `Radar de Recursos`
 - apto para uso real no admin
 
 ### Pendencia bloqueante

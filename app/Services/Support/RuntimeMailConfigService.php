@@ -20,7 +20,7 @@ class RuntimeMailConfigService
             'password' => (string) SystemSetting::get('mail_runtime_password', env('MAIL_PASSWORD', '')),
             'encryption' => (string) SystemSetting::get('mail_runtime_encryption', env('MAIL_SCHEME', 'tls')),
             'from_address' => (string) SystemSetting::get('mail_runtime_from_address', env('MAIL_FROM_ADDRESS', 'hello@example.com')),
-            'from_name' => (string) SystemSetting::get('mail_runtime_from_name', env('MAIL_FROM_NAME', 'Meu Marqueteiro')),
+            'from_name' => (string) SystemSetting::get('mail_runtime_from_name', env('MAIL_FROM_NAME', 'Meu Assistente')),
             'ehlo_domain' => (string) SystemSetting::get(
                 'mail_runtime_ehlo_domain',
                 env('MAIL_EHLO_DOMAIN', parse_url((string) env('APP_URL', 'http://localhost'), PHP_URL_HOST) ?: 'localhost')

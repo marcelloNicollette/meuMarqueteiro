@@ -2,7 +2,7 @@ ETAPA 1 - CHAT COMO MODULO CENTRAL
 
 Objetivo desta etapa
 
-- Reposicionar o item CHAT = Meu Marqueteiro como o módulo central da plataforma sem alterar ainda o comportamento em producao.
+- Reposicionar o item CHAT = Meu Assistente como o módulo central da plataforma sem alterar ainda o comportamento em producao.
 - Consolidar o alvo funcional, o gap tecnico e as implementacoes necessárias para evoluir com seguranca.
 - Definir o que entra em MVP, o que entra em fase 2 e o que deve ficar para uma fase futura.
 
@@ -12,7 +12,7 @@ Resumo executivo
 - O problema atual não e ausencia de IA; e ausencia de centralidade do módulo. Hoje o chat conversa bem, mas ainda não orquestra demandas, mandato, acoes, radar de recursos e conteudo de forma unificada.
 - A Etapa 1 não pede refatoracao pesada imediata. Ela pede preparacao arquitetural para o chat virar a porta de entrada principal da plataforma.
 
-Escopo alvo do CHAT = Meu Marqueteiro
+Escopo alvo do CHAT = Meu Assistente
 
 - O chat deixa de ser apenas "assistente pessoal do prefeito" e passa a ser a camada central de orquestracao dos demais módulos.
 - O assistente preserva identidade, avatar, tom direto e especializacao política.
@@ -456,6 +456,6 @@ Backlog tecnico sugerido da proxima execução
 
 Conclusao
 
-- O projeto ja tem fundacao suficiente para reposicionar o CHAT = Meu Marqueteiro como módulo central.
+- O projeto ja tem fundacao suficiente para reposicionar o CHAT = Meu Assistente como módulo central.
 - A implementacao correta não e "trocar o chat"; e sim estruturar metadados, integrar contexto e transformar conversa em acao.
 - A Etapa 1 esta pronta para virar plano de execução tecnica sem necessidade de ruptura grande na base atual.

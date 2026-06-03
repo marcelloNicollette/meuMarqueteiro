@@ -4,7 +4,7 @@ set -e
 APP_DIR="/var/www/html"
 
 echo "================================================"
-echo " Meu Marqueteiro — Inicializando..."
+echo " Meu Assistente — Inicializando..."
 echo "================================================"
 
 # ── 1. Validar projeto montado ────────────────────────────────

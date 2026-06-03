@@ -451,7 +451,7 @@ Na decima primeira iteracao, o `Nucleo de Operacao` deixou de ser apenas um espa
 - integracao direta para:
     - abrir demanda no fluxo detalhado
     - gerar rascunho em `Comunicação`
-    - abrir narrativa no `Meu Marqueteiro`
+    - abrir narrativa no `Meu Assistente`
 - paines laterais de:
     - sugestoes Resolve ai
     - prazos e cobertura

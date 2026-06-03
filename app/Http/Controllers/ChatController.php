@@ -365,7 +365,7 @@ class ChatController extends Controller
             ->limit(2)
             ->get()
             ->reverse()
-            ->map(fn(Message $item) => ($item->role === 'user' ? 'Prefeito' : 'Meu Marqueteiro') . ': ' . Str::limit(trim($item->content), 240))
+            ->map(fn(Message $item) => ($item->role === 'user' ? 'Prefeito' : 'Meu Assistente') . ': ' . Str::limit(trim($item->content), 240))
             ->implode("\n");
 
         $share = MessageShare::create([

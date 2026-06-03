@@ -106,7 +106,7 @@
                     <div style="font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;opacity:.82">
                         {{ data_get($payload, 'identity.department', 'Central Executiva') }}</div>
                     <div style="font-size:1.08rem;font-weight:700;margin-top:.25rem">
-                        {{ data_get($payload, 'identity.institution_name', 'Meu Marqueteiro') }}</div>
+                        {{ data_get($payload, 'identity.institution_name', 'Meu Assistente') }}</div>
                     <div style="font-size:.78rem;opacity:.88;margin-top:.25rem">
                         {{ data_get($payload, 'identity.tagline', '') }}</div>
                 </div>
@@ -129,7 +129,7 @@
                 <div style="font-size:12px;letter-spacing:.08em;text-transform:uppercase;opacity:.82">
                     {{ data_get($payload, 'identity.department', 'Central Executiva') }}</div>
                 <h2 style="margin:.45rem 0 0;font-size:1.35rem">
-                    {{ data_get($payload, 'identity.institution_name', 'Meu Marqueteiro') }}</h2>
+                    {{ data_get($payload, 'identity.institution_name', 'Meu Assistente') }}</h2>
                 <div style="margin-top:.4rem;font-size:.84rem;opacity:.9">Preview do mailing {{ strtolower($periodLabel) }}
                     · {{ $payload['generated_at']->format('d/m/Y H:i') }}</div>
             </div>

@@ -15,7 +15,7 @@
                 {{ data_get($payload, 'identity.department', 'Central Executiva') }}</div>
             <h1 style="margin:8px 0 0;font-size:22px">Ranking executivo periódico</h1>
             <div style="margin-top:6px;font-size:13px;font-weight:700">
-                {{ data_get($payload, 'identity.institution_name', 'Meu Marqueteiro') }}</div>
+                {{ data_get($payload, 'identity.institution_name', 'Meu Assistente') }}</div>
             <div style="margin-top:8px;font-size:13px;opacity:.82">
                 {{ $payload['generated_at']->format('d/m/Y H:i') }} · {{ strtoupper($payload['period'] ?? 'manual') }}
             </div>

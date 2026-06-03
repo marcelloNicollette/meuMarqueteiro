@@ -1,8 +1,8 @@
-# Meu Marqueteiro - Estado Atual do Modulo
+# Meu Assistente - Estado Atual do Modulo
 
 ## Status Geral
 
-O módulo Meu Marqueteiro esta funcional e bem avancado no eixo principal de chat, memoria, exportacao, proatividade e compartilhamento seletivo.
+O módulo Meu Assistente esta funcional e bem avancado no eixo principal de chat, memoria, exportacao, proatividade e compartilhamento seletivo.
 
 No estado atual, ele atende de forma consistente o nucleo do produto como assistente central integrado a dados do município e do mandato.
 
@@ -14,7 +14,7 @@ Fora esses pontos, a area esta madura para uso em MVP ampliado.
 
 ## O Que o Modulo Faz Hoje
 
-### 1. Chat central do Meu Marqueteiro
+### 1. Chat central do Meu Assistente
 
 - interface principal em formato de chat conversacional
 - criacao de novas conversas
@@ -215,7 +215,7 @@ Durante a implementacao e validacao tecnica, o módulo ja teve confirmacao prati
 
 ## Avaliacao Final
 
-Se a referencia for o nucleo funcional do módulo Meu Marqueteiro, a area esta amplamente implementada.
+Se a referencia for o nucleo funcional do módulo Meu Assistente, a area esta amplamente implementada.
 
 Se a referencia for aderência total, literal e completa ao arquivo de especificacao, o que ainda falta esta concentrado na validacao funcional final do audio fallback e no fechamento operacional ponta a ponta.
 

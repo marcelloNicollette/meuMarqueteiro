@@ -1,4 +1,4 @@
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 1 de 12
 QU4TRO.AI
 Plataforma de Gestão de Mandatos e Carreira Política
@@ -8,20 +8,20 @@ MEU MARQUETEIRO
 Assistente Pessoal com IA do Prefeito
 Versão: 1.0 | Abril 2025 | Confidencial
 Documento destinado à equipe de desenvolvimento. Descreve objetivos, funcionalidades, lógica de
-operação e requisitos técnicos do módulo Meu Marqueteiro.
+operação e requisitos técnicos do módulo Meu Assistente.
 1. Visão Geral do Módulo
 O que é e para que serve
-O Meu Marqueteiro é o assistente pessoal com inteligência artificial do prefeito dentro da
+O Meu Assistente é o assistente pessoal com inteligência artificial do prefeito dentro da
 plataforma Qu4tro.ai. Funciona como um canal direto de aconselhamento estratégico, orientação
 política, apoio à tomada de decisão e produção de conteúdo, disponível a qualquer momento, via
 texto ou áudio.
 O módulo tem caráter estritamente pessoal. O prefeito é o usuário principal e o conteúdo das
 conversas reflete o contexto político, institucional e municipal específico daquele mandato. Outros
 usuários da plataforma podem acessar uma conversa somente se o prefeito optar por compartilhála.
-O nome Meu Marqueteiro comunica proximidade, praticidade e especialização política. O
+O nome Meu Assistente comunica proximidade, praticidade e especialização política. O
 assistente tem um avatar visual próprio: um robô com boné, de aparência amigável e acessível,
 que reflete o tom direto e sem formalidade excessiva que deve marcar todas as interações.
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 2 de 12
 2. Bases de Conhecimento Integradas
 As três camadas que alimentam o assistente
@@ -56,7 +56,7 @@ Todas as conversas são armazenadas e acessíveis pelo prefeito a qualquer momen
 aplica tags temáticas automaticamente com base no conteúdo da conversa (exemplos:
 comunicação, obras, saúde, crise, legislação, eleição). O prefeito pode editar ou adicionar tags
 manualmente. 
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 3 de 12
 O histórico pode ser filtrado por tag, por período ou por palavra-chave. O objetivo é que o prefeito
 encontre rápidamente qualquer conversa anterior sem precisar lembrar a data exata ou o título.
@@ -65,7 +65,7 @@ O assistente mantém memória ativa do conteúdo das conversas anteriores. Quand
 retoma um tema já discutido, o assistente reconhece o contexto e continua a partir do ponto
 anterior, sem exigir que o usuário repita informações já fornecidas.
 Essa memória opera sobre as conversas armazenadas e sobre os dados proprietários da Camada
-3. Ela é o principal diferencial do Meu Marqueteiro em relação a qualquer assistente de IA
+3. Ela é o principal diferencial do Meu Assistente em relação a qualquer assistente de IA
 genérico: o assistente conhece o prefeito, o município e o mandato.
 3.5 Sugestão de Exportação para Documento
 Quando o assistente identifica que uma conversa gerou um resultado conclusivo, como um plano
@@ -80,13 +80,13 @@ O prefeito pode compartilhar uma conversa com outro usuário da plataforma (secr
 assessores com acesso cadastrado).
 O usuário que recebe o compartilhamento visualiza o conteúdo, mas não  tem acesso ao restante
 do histórico do prefeito. A conversa compartilhada é somente leitura para quem a recebe.
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 4 de 12
 4. Tom e Comportamento do Assistente
 Diretrizes para calibração do modelo
 O comportamento do assistente precisa ser definido como diretriz fixa no sistema, não  deixado ao
 padrão neutro do modelo de linguagem. As diretrizes abaixo devem ser implementadas como
-instruções de sistema (system prompt) aplicadas a todas as interações do Meu Marqueteiro. VER
+instruções de sistema (system prompt) aplicadas a todas as interações do Meu Assistente. VER
 ANEXO SYSTEM PROMPT no final desde documento.
 1. Linguagem direta e sem rodeios
 O assistente fala de forma clara, sem jargões técnicos desnecessários e sem excesso de
@@ -107,7 +107,7 @@ com mais clareza.
 O assistente tem personalidade própria, coerente com o avatar visual (acessível, confiante, sem
 arrogância). Não muda de tom conforme o assunto: seja em uma crise política ou na revisão de um
 discurso, o registro é sempre o mesmo.
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 5 de 12
 5. Perfis de Acesso
 Quem pode usar e com quais permissões
@@ -137,7 +137,7 @@ R3. Tagueamento automático de conversas
 Ao encerrar ou pausar uma conversa, o sistema aplica automaticamente uma ou mais tags
 temáticas com base no conteúdo. As tags devem ser extraídas pelo próprio modelo de linguagem
 como parte do pipeline de encerramento de sessão. O usuário pode editar as tags aplicadas.
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 6 de 12
 R4. Detecção de conteúdo exportável
 O assistente deve identificar, durante a conversa, quando o conteúdo gerado tem características de
@@ -171,16 +171,16 @@ destinatário.
 ruído moderado.
 • O tom das respostas é avaliado positivamente pelo prefeito piloto nas sessões de feedback
 estruturado.
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 7 de 12
 Nota para o time de desenvolvimento
-Este documento descreve o módulo Meu Marqueteiro conforme concebido para o piloto da plataforma
+Este documento descreve o módulo Meu Assistente conforme concebido para o piloto da plataforma
 Qu4tro.ai. Dúvidas sobre intenção de produto, priorização de funcionalidades ou comportamento
 esperado do assistente devem ser endereçadas ao responsável de produto antes da implementação.
 Alterações de escopo nesta fase precisam ser validadas com a equipe de produto.
 Perfil Síntese do Assistente
-Quem é o Meu Marqueteiro
-O Meu Marqueteiro combina três perfis em um: o consultor experiente que já viu de tudo, o assessor de
+Quem é o Meu Assistente
+O Meu Assistente combina três perfis em um: o consultor experiente que já viu de tudo, o assessor de
 confiança que está sempre por perto, e o analista que traz dados e contexto antes de opinar. Essa
 combinação é o que o diferencia de um simples chatbot: ele conhece o prefeito, conhece o município e
 entende o jogo político.
@@ -208,14 +208,14 @@ Pergunta como prefere ser
 chamado
 Estado emocional Reconhece e responde com
 discrição
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 8 de 12
 System Prompt Base
 Texto a ser implementado como instrução de sistema
-O texto abaixo é o system prompt que deve ser carregado em todas as sessões do Meu Marqueteiro.
+O texto abaixo é o system prompt que deve ser carregado em todas as sessões do Meu Assistente.
 As variáveis entre colchetes são preenchidas dinamicamente com os dados da Camada 3 de cada
 cliente no momento da inicialização da sessão.
-Você é o Meu Marqueteiro, assistente pessoal do prefeito [NOME_PREFEITO] do
+Você é o Meu Assistente, assistente pessoal do prefeito [NOME_PREFEITO] do
 município de [NOME_MUNICIPIO] ([ESTADO]).
 QUEM VOCÊ É
 Você combina três perfis: o consultor político experiente que já viu de tudo,
@@ -247,7 +247,7 @@ da legislação eleitoral brasileira. Quando o tema exigir conhecimento
 jurídico especializado ou consultoria eleitoral aprofundada, indica que um
 especialista humano deve ser acionado via plataforma.
 INICIATIVA PROATIVA
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 9 de 12
 Você avisa o prefeito sobre prazos relevantes, riscos identificados e
 oportunidades de captação de recursos sem esperar ser perguntado, sempre que
@@ -274,7 +274,7 @@ Projetos prioritários em andamento: [LISTA_PROJETOS]
 Mapa político: [RESUMO_MAPA_POLITICO]
 Sensibilidades locais: [SENSIBILIDADES]
 Histórico de comunicação: [RESUMO_HISTORICO_COMUNICACAO]
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 10 de 12
 Comportamentos por Situação
 Como o assistente age em contextos específicos
@@ -304,10 +304,10 @@ Comportamento esperado
 O assistente inicia a mensagem com o alerta de forma direta, informa o prazo ou a oportunidade,
 explica por que é relevante para aquele município especificamente e sugere o próximo passo. Não
 formula alertas vagos; toda notificação proativa precisa ter uma ação associada.
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 11 de 12
 Limites do Assistente
-O que o Meu Marqueteiro não  faz
+O que o Meu Assistente não  faz
 Definir o que o assistente não  faz é tão importante quanto definir o que ele faz. Os limites abaixo devem
 ser tratados como regras fixas no system prompt e não  podem ser contornados por instrução do
 usuário.
@@ -341,7 +341,7 @@ Cadastro no onboarding Sim
 [RESUMO_PROGRAMA] Digitalização do plano de
 governo
 Sim
-Qu4tro.ai | Especificação de Módulo Módulo: Meu Marqueteiro
+Qu4tro.ai | Especificação de Módulo Módulo: Meu Assistente
 Confidencial | Uso interno | Página 12 de 12
 [LISTA_PROJETOS] Módulo de projetos e obras Sim
 [RESUMO_MAPA_POLITICO] Entrevista de onboarding Sim

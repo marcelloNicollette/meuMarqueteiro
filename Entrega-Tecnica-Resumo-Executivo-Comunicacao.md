@@ -21,7 +21,7 @@ No estado final entregue, o módulo cobre:
 - fluxo de aprovacao configuravel por tipo e perfil
 - arquivo com versoes, memoria, sessao de geração e trilha auditavel
 - integracao com `Resolve ai`
-- integracao com `Meu Marqueteiro`
+- integracao com `Meu Assistente`
 
 Do ponto de vista de produto, o módulo esta pronto para operacao real da equipe de comunicação municipal.
 
@@ -152,7 +152,7 @@ O objetivo principal do módulo e:
 - persistencia do movimento
 - evento operacional registrado no histórico da demanda
 - integracao com rascunho de conteudo
-- integracao com narrativa no `Meu Marqueteiro`
+- integracao com narrativa no `Meu Assistente`
 
 ### 4.9 Arquivo e memoria institucional
 
@@ -168,8 +168,8 @@ O objetivo principal do módulo e:
 
 - `Resolve ai` para transformar demanda em conteudo
 - `Resolve ai` para alimentar a pauta operacional
-- `Meu Marqueteiro` para abrir narrativa estrategica
-- `Meu Marqueteiro` com alerta proativo de menções urgentes e negativas
+- `Meu Assistente` para abrir narrativa estrategica
+- `Meu Assistente` com alerta proativo de menções urgentes e negativas
 
 ## 5. Validacao Final Contra o Documento
 
@@ -270,14 +270,14 @@ Como foi fechado:
 - trilha auditavel da geração
 - remocao auditavel do arquivo
 
-### R10 - Integracao com Resolve ai e Meu Marqueteiro
+### R10 - Integracao com Resolve ai e Meu Assistente
 
 - [x] atendido
 
 Como foi fechado:
 
 - `Resolve ai` integrado ao `Nucleo de Operacao` e a geração de rascunho
-- `Meu Marqueteiro` integrado a narrativa e a alertas proativos de menções sensiveis
+- `Meu Assistente` integrado a narrativa e a alertas proativos de menções sensiveis
 
 ## 6. Fluxos Principais Entregues
 
@@ -441,7 +441,7 @@ Como foi fechado:
 2. arrastar cards entre as colunas
 3. abrir a demanda detalhada quando precisar de contexto operacional
 4. gerar conteudo a partir de sugestao do `Resolve ai`
-5. abrir narrativa no `Meu Marqueteiro` quando a pauta pedir articulacao política
+5. abrir narrativa no `Meu Assistente` quando a pauta pedir articulacao política
 
 ### 7.10 Usar Arquivo
 
@@ -462,7 +462,7 @@ Como foi fechado:
 3. gerar rascunho em `Comunicação`
 4. seguir no workflow editorial normal
 
-### 7.12 Usar a integracao com `Meu Marqueteiro`
+### 7.12 Usar a integracao com `Meu Assistente`
 
 1. abrir narrativa estrategica a partir de uma demanda ou pauta
 2. receber no chat alertas proativos de menções urgentes e negativas
@@ -515,7 +515,7 @@ Durante a conclusao foram validados tecnicamente:
 - aviso ao aprovador com link direto
 - sessao de geração e trilha auditavel no arquivo
 - remocao auditavel do arquivo
-- alerta proativo de menções no `Meu Marqueteiro`
+- alerta proativo de menções no `Meu Assistente`
 - diagnostics limpos nos arquivos alterados nas iteracoes finais
 
 ## 10. Checklist Final do Que Ficou Pronto
@@ -553,7 +553,7 @@ Durante a conclusao foram validados tecnicamente:
 - [x] memoria de media training
 - [x] reuso de item anterior
 - [x] integracao com `Resolve ai`
-- [x] integracao com `Meu Marqueteiro`
+- [x] integracao com `Meu Assistente`
 - [x] alerta proativo de menções sensiveis no chat
 - [x] diagnostics limpos nos arquivos finais alterados
 

@@ -29,7 +29,7 @@ Principais blocos funcionais especificados:
 - configuracoes por município
 - histórico por demanda
 - comprovante de conclusao
-- integracao futura com `Comunicação` e `Meu Marqueteiro`
+- integracao futura com `Comunicação` e `Meu Assistente`
 
 ## 3. Escopo Funcional do Modulo
 
@@ -176,7 +176,7 @@ Nesta primeira iteracao, foi entregue a fundacao operacional do módulo:
 
 ### Iteracao 6
 
-- integracao de leitura com `Meu Marqueteiro`
+- integracao de leitura com `Meu Assistente`
 - conversa contextualizada de narrativa política a partir da demanda concluida
 - conversa contextualizada de cobranca e acompanhamento pos-entrega
 
@@ -222,7 +222,7 @@ Estado atual:
 - onboarding operacional de localidades: concluido na quarta camada
 - sugestao de localidades no formulario: concluida na quarta camada
 - integracao com Comunicação: concluida na quinta camada
-- integracao com Meu Marqueteiro: concluida na sexta camada
+- integracao com Meu Assistente: concluida na sexta camada
 - cobrancas proativas automatizadas por prazo: concluida na setima camada
 - lembretes por inatividade e atraso recorrente: concluidos na setima camada
 - recorrencia por bairro e tema: concluida na oitava camada
@@ -248,7 +248,7 @@ Entregas centrais ja cobertas:
 - governanca comparativa por secretaria
 - leitura evolutiva de reincidencia territorial
 - integracao com `Comunicação`
-- integracao com `Meu Marqueteiro`
+- integracao com `Meu Assistente`
 
 O que ainda falta para considerar encerramento formal da entrega:
 

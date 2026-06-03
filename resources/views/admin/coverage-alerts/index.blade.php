@@ -236,7 +236,7 @@
                     <div style="font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;opacity:.82">
                         {{ $mailingGovernance['identity']['department'] ?? 'Central Executiva' }}</div>
                     <div style="font-size:1.05rem;font-weight:700;margin-top:.3rem">
-                        {{ $mailingGovernance['identity']['institution_name'] ?? 'Meu Marqueteiro' }}</div>
+                        {{ $mailingGovernance['identity']['institution_name'] ?? 'Meu Assistente' }}</div>
                     <div style="font-size:.76rem;opacity:.88;margin-top:.25rem">
                         {{ $mailingGovernance['identity']['tagline'] ?? '' }}</div>
                 </div>

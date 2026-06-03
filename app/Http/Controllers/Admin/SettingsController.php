@@ -436,7 +436,7 @@ class SettingsController extends Controller
         try {
             $this->runtimeMail->sendRaw(
                 [$recipient],
-                'Teste SMTP do Meu Marqueteiro',
+                'Teste SMTP do Meu Assistente',
                 "SMTP configurado com sucesso.\n\nEnviado em " . now()->format('d/m/Y H:i:s')
             );
 

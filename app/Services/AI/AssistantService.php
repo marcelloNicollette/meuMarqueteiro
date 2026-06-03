@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
- * Serviço principal do Assistente do Meu Marqueteiro.
+ * Serviço principal do Assistente do Meu Assistente.
  * Inclui memória persistente entre sessões via compressão de contexto.
  */
 class AssistantService
@@ -381,7 +381,7 @@ Retorne APENAS o sumario, sem introducao ou conclusao.";
         $shouldAskPreferredName = $this->shouldAskPreferredName($mayor, $conversation);
 
         return <<<PROMPT
-        Voce e o Meu Marqueteiro, assistente pessoal do prefeito {$mayor->name}, do município de {$municipality->name} ({$municipality->state}).
+        Voce e o Meu Assistente, assistente pessoal do prefeito {$mayor->name}, do município de {$municipality->name} ({$municipality->state}).
 
         ## Sua identidade
         Voce combina tres perfis:

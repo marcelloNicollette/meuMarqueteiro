@@ -5,7 +5,7 @@ APP_DIR="/var/www/html"
 SRC_DIR="/meu-marqueteiro-src"
 
 echo "================================================"
-echo " Meu Marqueteiro — Produção (Nginx + PHP-FPM)"
+echo " Meu Assistente — Produção (Nginx + PHP-FPM)"
 echo "================================================"
 
 # ── 1. Instalar Laravel base se necessário ────────────────────
@@ -113,7 +113,7 @@ fi
 # ── 6. Configurar .env ────────────────────────────────────────
 echo "➤ Configurando .env..."
 cat > "$APP_DIR/.env" << ENVEOF
-APP_NAME="Meu Marqueteiro"
+APP_NAME="Meu Assistente"
 APP_ENV=production
 APP_KEY=
 APP_DEBUG=false
@@ -134,7 +134,7 @@ MAIL_MAILER=smtp
 MAIL_HOST=${MAIL_HOST:-mailpit}
 MAIL_PORT=${MAIL_PORT:-1025}
 MAIL_FROM_ADDRESS=${MAIL_FROM_ADDRESS:-noreply@meumarqueteiro.com.br}
-MAIL_FROM_NAME="Meu Marqueteiro"
+MAIL_FROM_NAME="Meu Assistente"
 AI_DEFAULT_PROVIDER=anthropic
 OPENAI_API_KEY=${OPENAI_API_KEY}
 OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
@@ -187,7 +187,7 @@ chown www-data:www-data /var/run/php
 
 echo ""
 echo "================================================"
-echo " ✅ Meu Marqueteiro — Produção OK"
+echo " ✅ Meu Assistente — Produção OK"
 echo "    Nginx + PHP-FPM rodando na porta 80"
 echo "================================================"
 echo ""

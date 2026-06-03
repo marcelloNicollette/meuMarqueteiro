@@ -5,7 +5,7 @@ APP_DIR="/var/www/html"
 SRC_DIR="/meu-marqueteiro-src"
 
 echo "================================================"
-echo " Meu Marqueteiro — Inicializando..."
+echo " Meu Assistente — Inicializando..."
 echo "================================================"
 
 # ── 1. Se ainda não  tem Laravel instalado, instalar ───────────
@@ -22,7 +22,7 @@ cd "$APP_DIR"
 
 # ── 2. Copiar nosso código por cima do Laravel base ───────────
 echo ""
-echo "➤ Aplicando código do Meu Marqueteiro..."
+echo "➤ Aplicando código do Meu Assistente..."
 
 # Copiar apenas os arquivos que existem no nosso source
 for dir in app config database resources routes; do

@@ -265,7 +265,7 @@ Conclusao:
 - o `Arquivo` ficou forte e util para memoria institucional
 - mas ainda não fecha 100% o requisito de auditoria/versionamento formal
 
-### R10 - Integracao com Resolve ai e Meu Marqueteiro
+### R10 - Integracao com Resolve ai e Meu Assistente
 
 Status:
 
@@ -275,7 +275,7 @@ O que foi confirmado:
 
 - integracao com `Resolve ai` esta forte
 - existe acao para gerar rascunho em `Comunicação` a partir da demanda
-- existe acao para abrir narrativa no `Meu Marqueteiro`
+- existe acao para abrir narrativa no `Meu Assistente`
 
 Evidencia encontrada:
 
@@ -284,12 +284,12 @@ Evidencia encontrada:
 
 Lacuna encontrada:
 
-- não foi confirmada integracao operacional explicita do `Meu Marqueteiro` com alertas proativos de menções urgentes dentro do fluxo do módulo
+- não foi confirmada integracao operacional explicita do `Meu Assistente` com alertas proativos de menções urgentes dentro do fluxo do módulo
 
 Conclusao:
 
 - `Resolve ai` esta atendido com folga
-- `Meu Marqueteiro` aparece integrado de forma relevante, mas ainda não integralmente no recorte auditado
+- `Meu Assistente` aparece integrado de forma relevante, mas ainda não integralmente no recorte auditado
 
 ## 4. Resumo por Status
 
@@ -306,7 +306,7 @@ Conclusao:
 - `R7 - Kanban da pauta`
 - `R8 - Fluxo de aprovacao configuravel`
 - `R9 - Arquivo com histórico de versoes`
-- `R10 - Integracao com Resolve ai e Meu Marqueteiro`
+- `R10 - Integracao com Resolve ai e Meu Assistente`
 
 ### Nao atendido
 
@@ -324,7 +324,7 @@ Para remover a subjetividade, as pontas soltas objetivas nesta etapa sao:
 6. falta drag-and-drop no kanban do `Nucleo de Operacao`
 7. falta motor configuravel de aprovacao por tipo ou perfil
 8. falta camada mais formal de auditoria do `Arquivo` com sessao, log e delecao auditavel
-9. falta confirmar ou implementar a exposicao de menções urgentes no `Meu Marqueteiro`
+9. falta confirmar ou implementar a exposicao de menções urgentes no `Meu Assistente`
 
 ## 6. Decisão de Encerramento
 

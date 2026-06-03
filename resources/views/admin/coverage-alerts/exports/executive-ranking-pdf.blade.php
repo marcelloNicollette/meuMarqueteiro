@@ -140,7 +140,7 @@
                 <td>
                     <div class="subtitle">
                         {{ data_get($payload, 'identity.department', 'Central Executiva de Cobertura') }}</div>
-                    <h1>{{ data_get($payload, 'identity.institution_name', 'Meu Marqueteiro') }}</h1>
+                    <h1>{{ data_get($payload, 'identity.institution_name', 'Meu Assistente') }}</h1>
                     <div style="margin-top:8px;font-size:14px;font-weight:bold">Ranking executivo periódico</div>
                     <div class="tagline">{{ data_get($payload, 'identity.tagline', '') }}</div>
                     <div style="margin-top:10px;font-size:11px;opacity:.86">

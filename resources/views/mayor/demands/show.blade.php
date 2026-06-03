@@ -385,7 +385,7 @@
                                 action="{{ route('mayor.mandato.demands.strategic-conversation', $demand) }}">
                                 @csrf
                                 <input type="hidden" name="mode" value="narrative">
-                                <button class="btn btn-dark" type="submit">Abrir narrativa no Meu Marqueteiro</button>
+                                <button class="btn btn-dark" type="submit">Abrir narrativa no Meu Assistente</button>
                             </form>
                             <form method="POST"
                                 action="{{ route('mayor.mandato.demands.strategic-conversation', $demand) }}">

@@ -74,7 +74,7 @@ class PushController extends Controller
 
         try {
             $this->pushService->sendToUser($user, [
-                'title' => '✅ Meu Marqueteiro',
+                'title' => '✅ Meu Assistente',
                 'body'  => 'Notificações ativadas com sucesso! Você receberá alertas importantes aqui.',
                 'icon'  => '/images/mascote-robo.jpg',
                 'url'   => '/mayor/chat',

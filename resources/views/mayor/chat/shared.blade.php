@@ -97,7 +97,7 @@
     <div class="shared-chat-wrap">
         <div class="shared-chat-card">
             <div class="shared-chat-kicker">Compartilhamento seletivo</div>
-            <div class="shared-chat-title">{{ $share->conversation->title ?: 'Trecho do Meu Marqueteiro' }}</div>
+            <div class="shared-chat-title">{{ $share->conversation->title ?: 'Trecho do Meu Assistente' }}</div>
 
             <div class="shared-chat-meta">
                 <span>Compartilhado por {{ $share->owner->name }}</span>

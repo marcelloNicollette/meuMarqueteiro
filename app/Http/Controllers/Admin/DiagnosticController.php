@@ -232,7 +232,7 @@ class DiagnosticController extends Controller
         try {
             $start = microtime(true);
             $audio = $this->chatAudio->synthesize(
-                text: 'Teste de audio do Meu Marqueteiro.',
+                text: 'Teste de audio do Meu Assistente.',
                 speed: 1.0,
             );
             $ms = round((microtime(true) - $start) * 1000);

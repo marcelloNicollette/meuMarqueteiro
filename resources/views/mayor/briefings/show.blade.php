@@ -421,7 +421,7 @@
                                     <form method="POST"
                                         action="{{ route('pra-hoje.cards.conversation', [$briefing, $index]) }}">
                                         @csrf
-                                        <button type="submit" class="btn-action gold">Falar com o Meu Marqueteiro</button>
+                                        <button type="submit" class="btn-action gold">Falar com o Meu Assistente</button>
                                     </form>
                                 </div>
                             </div>

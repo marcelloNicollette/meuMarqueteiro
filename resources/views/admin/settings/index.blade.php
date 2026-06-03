@@ -205,7 +205,7 @@
                         <div style="font-size:.84rem;font-weight:700;color:#166534;margin-bottom:.25rem">Audio server-side
                             do chat</div>
                         <div style="font-size:.75rem;color:#4b5563;margin-bottom:.9rem">
-                            Define explicitamente o fallback de voz do Meu Marqueteiro quando o navegador não suportar
+                            Define explicitamente o fallback de voz do Meu Assistente quando o navegador não suportar
                             STT/TTS nativo.
                         </div>
                         <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem">
@@ -431,7 +431,7 @@
                         <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Nome do
                             remetente</label>
                         <input type="text" name="mail_runtime_from_name"
-                            value="{{ $mail['mail_runtime_from_name'] }}" placeholder="Meu Marqueteiro"
+                            value="{{ $mail['mail_runtime_from_name'] }}" placeholder="Meu Assistente"
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
                     </div>
                     <div>
@@ -561,8 +561,7 @@
                         {{ $coverageOps['coverage_executive_mail_enabled'] ? 'checked' : '' }}>
                     Ativar mailing executivo da cobertura
                 </label>
-                <label
-                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#374151">
+                <label style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#374151">
                     <input type="checkbox" name="coverage_executive_mail_requires_approval" value="1"
                         {{ $coverageOps['coverage_executive_mail_requires_approval'] ? 'checked' : '' }}>
                     Exigir aprovação manual antes do disparo agendado
@@ -573,8 +572,7 @@
                         {{ $coverageOps['coverage_executive_mail_two_level_approval'] ? 'checked' : '' }}>
                     Exigir aprovação em dois níveis no mailing executivo
                 </label>
-                <label
-                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#374151">
+                <label style="display:flex;align-items:center;gap:.5rem;margin-bottom:1rem;font-size:.82rem;color:#374151">
                     <input type="checkbox" name="coverage_executive_mail_distinct_approvers" value="1"
                         {{ $coverageOps['coverage_executive_mail_distinct_approvers'] ? 'checked' : '' }}>
                     Exigir aprovadores distintos entre os dois níveis
@@ -656,7 +654,8 @@
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
                     </div>
                     <div>
-                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Departamento</label>
+                        <label
+                            style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Departamento</label>
                         <input type="text" name="coverage_executive_mail_identity_department"
                             value="{{ $coverageOps['coverage_executive_mail_identity_department'] }}"
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
@@ -675,7 +674,8 @@
                             value="{{ $coverageOps['coverage_executive_mail_identity_logo'] }}"
                             placeholder="/images/logo-borda-black.png"
                             style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
-                        <div style="font-size:.74rem;color:#6b7280;margin-top:.3rem">Use um caminho público da aplicação para o cabeçalho do PDF.</div>
+                        <div style="font-size:.74rem;color:#6b7280;margin-top:.3rem">Use um caminho público da aplicação
+                            para o cabeçalho do PDF.</div>
                     </div>
                     <div>
                         <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Cor
@@ -724,25 +724,45 @@
                 </div>
 
                 <div style="margin-top:1.25rem;padding-top:1rem;border-top:1px solid #f3f4f6">
-                    <div style="font-size:.9rem;font-weight:700;color:#111827;margin-bottom:.3rem">SLA do owner por perfil</div>
+                    <div style="font-size:.9rem;font-weight:700;color:#111827;margin-bottom:.3rem">SLA do owner por perfil
+                    </div>
                     <div style="font-size:.78rem;color:#6b7280;margin-bottom:.85rem">
                         Define a meta padrão por severidade e o aviso prévio das notificações de vencimento iminente.
                     </div>
-                    <label style="display:flex;align-items:center;gap:.5rem;margin-bottom:.85rem;font-size:.82rem;color:#374151">
+                    <label
+                        style="display:flex;align-items:center;gap:.5rem;margin-bottom:.85rem;font-size:.82rem;color:#374151">
                         <input type="checkbox" name="coverage_alert_owner_notifications_enabled" value="1"
                             {{ $coverageOps['coverage_alert_owner_notifications_enabled'] ? 'checked' : '' }}>
                         Ativar notificações automáticas de vencimento iminente do owner
                     </label>
                     <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:.75rem">
                         <div>
-                            <label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:.3rem">Aviso prévio</label>
-                            <input type="number" name="coverage_alert_owner_warning_minutes" min="15" max="720"
-                                value="{{ $coverageOps['coverage_alert_owner_warning_minutes'] }}"
+                            <label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:.3rem">Aviso
+                                prévio</label>
+                            <input type="number" name="coverage_alert_owner_warning_minutes" min="15"
+                                max="720" value="{{ $coverageOps['coverage_alert_owner_warning_minutes'] }}"
                                 style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
                         </div>
-                        @foreach ([['key' => 'coverage_alert_owner_sla_high_hours', 'label' => 'Base alta'], ['key' => 'coverage_alert_owner_sla_medium_hours', 'label' => 'Base média'], ['key' => 'coverage_alert_owner_sla_default_hours', 'label' => 'Base baixa'], ['key' => 'coverage_alert_owner_sla_admin_high_hours', 'label' => 'Admin alta'], ['key' => 'coverage_alert_owner_sla_admin_medium_hours', 'label' => 'Admin média'], ['key' => 'coverage_alert_owner_sla_admin_default_hours', 'label' => 'Admin baixa'], ['key' => 'coverage_alert_owner_sla_mayor_high_hours', 'label' => 'Prefeito alta'], ['key' => 'coverage_alert_owner_sla_mayor_medium_hours', 'label' => 'Prefeito média'], ['key' => 'coverage_alert_owner_sla_mayor_default_hours', 'label' => 'Prefeito baixa'], ['key' => 'coverage_alert_owner_sla_secretary_high_hours', 'label' => 'Secretário alta'], ['key' => 'coverage_alert_owner_sla_secretary_medium_hours', 'label' => 'Secretário média'], ['key' => 'coverage_alert_owner_sla_secretary_default_hours', 'label' => 'Secretário baixa'], ['key' => 'coverage_alert_owner_sla_advisor_high_hours', 'label' => 'Assessor alta'], ['key' => 'coverage_alert_owner_sla_advisor_medium_hours', 'label' => 'Assessor média'], ['key' => 'coverage_alert_owner_sla_advisor_default_hours', 'label' => 'Assessor baixa']] as $field)
+                        @foreach ([
+            ['key' => 'coverage_alert_owner_sla_high_hours', 'label' => 'Base alta'],
+            ['key' => 'coverage_alert_owner_sla_medium_hours', 'label' => 'Base média'],
+            ['key' => 'coverage_alert_owner_sla_default_hours', 'label' => 'Base baixa'],
+            ['key' => 'coverage_alert_owner_sla_admin_high_hours', 'label' => 'Admin alta'],
+            ['key' => 'coverage_alert_owner_sla_admin_medium_hours', 'label' => 'Admin média'],
+            ['key' => 'coverage_alert_owner_sla_admin_default_hours', 'label' => 'Admin baixa'],
+            ['key' => 'coverage_alert_owner_sla_mayor_high_hours', 'label' => 'Prefeito alta'],
+            ['key' => 'coverage_alert_owner_sla_mayor_medium_hours', 'label' => 'Prefeito média'],
+            ['key' => 'coverage_alert_owner_sla_mayor_default_hours', 'label' => 'Prefeito baixa'],
+            ['key' => 'coverage_alert_owner_sla_secretary_high_hours', 'label' => 'Secretário alta'],
+            ['key' => 'coverage_alert_owner_sla_secretary_medium_hours', 'label' => 'Secretário média'],
+            ['key' => 'coverage_alert_owner_sla_secretary_default_hours', 'label' => 'Secretário baixa'],
+            ['key' => 'coverage_alert_owner_sla_advisor_high_hours', 'label' => 'Assessor alta'],
+            ['key' => 'coverage_alert_owner_sla_advisor_medium_hours', 'label' => 'Assessor média'],
+            ['key' => 'coverage_alert_owner_sla_advisor_default_hours', 'label' => 'Assessor baixa'],
+        ] as $field)
                             <div>
-                                <label style="display:block;font-size:.8rem;font-weight:600;margin-bottom:.3rem">{{ $field['label'] }}</label>
+                                <label
+                                    style="display:block;font-size:.8rem;font-weight:600;margin-bottom:.3rem">{{ $field['label'] }}</label>
                                 <input type="number" name="{{ $field['key'] }}" min="1" max="240"
                                     value="{{ $coverageOps[$field['key']] }}"
                                     style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
@@ -758,27 +778,35 @@
                     </div>
                     <div style="display:grid;gap:.7rem">
                         @foreach ($coverageOwnerSlaUsers as $ownerUser)
-                            <div style="display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,140px));gap:.7rem;align-items:end;padding:.85rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
+                            <div
+                                style="display:grid;grid-template-columns:1.2fr repeat(3,minmax(0,140px));gap:.7rem;align-items:end;padding:.85rem;border:1px solid #e5e7eb;border-radius:10px;background:#fafafa">
                                 <div>
-                                    <div style="font-size:.83rem;font-weight:700;color:#111827">{{ $ownerUser['name'] }}</div>
+                                    <div style="font-size:.83rem;font-weight:700;color:#111827">{{ $ownerUser['name'] }}
+                                    </div>
                                     <div style="font-size:.75rem;color:#6b7280">{{ $ownerUser['role'] }}</div>
                                 </div>
                                 <div>
-                                    <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Alta</label>
-                                    <input type="number" name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][high]" min="0" max="240"
-                                        value="{{ $ownerUser['sla']['high'] }}"
+                                    <label
+                                        style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Alta</label>
+                                    <input type="number"
+                                        name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][high]" min="0"
+                                        max="240" value="{{ $ownerUser['sla']['high'] }}"
                                         style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.84rem">
                                 </div>
                                 <div>
-                                    <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Média</label>
-                                    <input type="number" name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][medium]" min="0" max="240"
-                                        value="{{ $ownerUser['sla']['medium'] }}"
+                                    <label
+                                        style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Média</label>
+                                    <input type="number"
+                                        name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][medium]"
+                                        min="0" max="240" value="{{ $ownerUser['sla']['medium'] }}"
                                         style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.84rem">
                                 </div>
                                 <div>
-                                    <label style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Baixa</label>
-                                    <input type="number" name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][default]" min="0" max="240"
-                                        value="{{ $ownerUser['sla']['default'] }}"
+                                    <label
+                                        style="display:block;font-size:.75rem;font-weight:600;margin-bottom:.25rem">Baixa</label>
+                                    <input type="number"
+                                        name="coverage_owner_sla_overrides[{{ $ownerUser['id'] }}][default]"
+                                        min="0" max="240" value="{{ $ownerUser['sla']['default'] }}"
                                         style="width:100%;padding:.55rem .7rem;border:1px solid #d1d5db;border-radius:8px;font-size:.84rem">
                                 </div>
                             </div>

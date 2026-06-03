@@ -1,8 +1,8 @@
-# Entrega Consolidada do Projeto Meu Marqueteiro
+# Entrega Consolidada do Projeto Meu Assistente
 
 ## Objetivo deste arquivo
 
-Este arquivo consolida os principais documentos de entrega tecnica da plataforma `Meu Marqueteiro` em um unico ponto de consulta dentro de `public`.
+Este arquivo consolida os principais documentos de entrega tecnica da plataforma `Meu Assistente` em um unico ponto de consulta dentro de `public`.
 
 Ele serve para consumo rapido por pessoas, IA, integracoes ou qualquer fluxo que precise entender como o projeto funciona de ponta a ponta.
 
@@ -10,7 +10,7 @@ Ele serve para consumo rapido por pessoas, IA, integracoes ou qualquer fluxo que
 
 A plataforma esta organizada em modulos que se complementam:
 
-- `Meu Marqueteiro`: assistente central com chat, memoria, audio, exportacao e compartilhamento.
+- `Meu Assistente`: assistente central com chat, memoria, audio, exportacao e compartilhamento.
 - `Comunicacao`: producao editorial, monitoramento de mencoes, pauta operacional e arquivo institucional.
 - `Resolve ai`: operacao territorial de demandas, cobranca, notificacao, historico e governanca por secretaria.
 - `Mandato`: traducao do plano de governo em compromissos, acoes, progresso e leitura executiva.
@@ -21,7 +21,7 @@ A plataforma esta organizada em modulos que se complementam:
 
 Em termos funcionais, o fluxo consolidado da plataforma e este:
 
-1. O prefeito e a equipe usam `Meu Marqueteiro` como entrada conversacional para orientacao, memoria e acao.
+1. O prefeito e a equipe usam `Meu Assistente` como entrada conversacional para orientacao, memoria e acao.
 2. O `Resolve ai` transforma problemas e demandas do territorio em execucao rastreavel por secretaria.
 3. O `Mandato` conecta a operacao real aos compromissos do plano de governo e mede cumprimento.
 4. O modulo de `Projetos` estrutura propostas institucionais completas com revisao, aprovacao e exportacao.
@@ -44,11 +44,11 @@ Os conteudos abaixo foram agregados integralmente a partir destes arquivos:
 
 ## Fonte: `Entrega-Tecnica-Resumo-Executivo-Meu-Marqueteiro.md`
 
-# Entrega Tecnica e Resumo Executivo - Modulo Meu Marqueteiro
+# Entrega Tecnica e Resumo Executivo - Modulo Meu Assistente
 
 ## 1. Resumo Executivo
 
-O módulo `Meu Marqueteiro` foi concluido como nucleo conversacional da plataforma, preservando a identidade do assistente politico e ampliando seu papel para operar de forma integrada aos dados do município, do mandato e dos demais módulos.
+O módulo `Meu Assistente` foi concluido como nucleo conversacional da plataforma, preservando a identidade do assistente politico e ampliando seu papel para operar de forma integrada aos dados do município, do mandato e dos demais módulos.
 
 No estado atual, o módulo entrega:
 
@@ -67,7 +67,7 @@ Do ponto de vista operacional, existe apenas uma observacao remanescente: a vali
 
 ## 2. Objetivo do Modulo
 
-O `Meu Marqueteiro` funciona como assistente pessoal do prefeito dentro da plataforma, com foco em orientacao política, comunicação publica, leitura de contexto do mandato, apoio tatico e aproveitamento de informacoes ja disponiveis em outros módulos.
+O `Meu Assistente` funciona como assistente pessoal do prefeito dentro da plataforma, com foco em orientacao política, comunicação publica, leitura de contexto do mandato, apoio tatico e aproveitamento de informacoes ja disponiveis em outros módulos.
 
 O objetivo principal do módulo e:
 
@@ -247,7 +247,7 @@ Isso significa:
 
 ## 9. Recomendacao de Encerramento
 
-Para fins de projeto e continuidade da plataforma, o módulo `Meu Marqueteiro` pode ser considerado finalizado.
+Para fins de projeto e continuidade da plataforma, o módulo `Meu Assistente` pode ser considerado finalizado.
 
 Recomendacao objetiva:
 
@@ -288,7 +288,7 @@ No estado final entregue, o módulo cobre:
 - fluxo de aprovacao configuravel por tipo e perfil
 - arquivo com versoes, memoria, sessao de geração e trilha auditavel
 - integracao com `Resolve ai`
-- integracao com `Meu Marqueteiro`
+- integracao com `Meu Assistente`
 
 Do ponto de vista de produto, o módulo esta pronto para operacao real da equipe de comunicação municipal.
 
@@ -419,7 +419,7 @@ O objetivo principal do módulo e:
 - persistencia do movimento
 - evento operacional registrado no histórico da demanda
 - integracao com rascunho de conteudo
-- integracao com narrativa no `Meu Marqueteiro`
+- integracao com narrativa no `Meu Assistente`
 
 ### 4.9 Arquivo e memoria institucional
 
@@ -435,8 +435,8 @@ O objetivo principal do módulo e:
 
 - `Resolve ai` para transformar demanda em conteudo
 - `Resolve ai` para alimentar a pauta operacional
-- `Meu Marqueteiro` para abrir narrativa estrategica
-- `Meu Marqueteiro` com alerta proativo de menções urgentes e negativas
+- `Meu Assistente` para abrir narrativa estrategica
+- `Meu Assistente` com alerta proativo de menções urgentes e negativas
 
 ## 5. Validacao Final Contra o Documento
 
@@ -537,14 +537,14 @@ Como foi fechado:
 - trilha auditavel da geração
 - remocao auditavel do arquivo
 
-### R10 - Integracao com Resolve ai e Meu Marqueteiro
+### R10 - Integracao com Resolve ai e Meu Assistente
 
 - [x] atendido
 
 Como foi fechado:
 
 - `Resolve ai` integrado ao `Nucleo de Operacao` e a geração de rascunho
-- `Meu Marqueteiro` integrado a narrativa e a alertas proativos de menções sensiveis
+- `Meu Assistente` integrado a narrativa e a alertas proativos de menções sensiveis
 
 ## 6. Fluxos Principais Entregues
 
@@ -708,7 +708,7 @@ Como foi fechado:
 2. arrastar cards entre as colunas
 3. abrir a demanda detalhada quando precisar de contexto operacional
 4. gerar conteudo a partir de sugestao do `Resolve ai`
-5. abrir narrativa no `Meu Marqueteiro` quando a pauta pedir articulacao política
+5. abrir narrativa no `Meu Assistente` quando a pauta pedir articulacao política
 
 ### 7.10 Usar Arquivo
 
@@ -729,7 +729,7 @@ Como foi fechado:
 3. gerar rascunho em `Comunicação`
 4. seguir no workflow editorial normal
 
-### 7.12 Usar a integracao com `Meu Marqueteiro`
+### 7.12 Usar a integracao com `Meu Assistente`
 
 1. abrir narrativa estrategica a partir de uma demanda ou pauta
 2. receber no chat alertas proativos de menções urgentes e negativas
@@ -782,7 +782,7 @@ Durante a conclusao foram validados tecnicamente:
 - aviso ao aprovador com link direto
 - sessao de geração e trilha auditavel no arquivo
 - remocao auditavel do arquivo
-- alerta proativo de menções no `Meu Marqueteiro`
+- alerta proativo de menções no `Meu Assistente`
 - diagnostics limpos nos arquivos alterados nas iteracoes finais
 
 ## 10. Checklist Final do Que Ficou Pronto
@@ -820,7 +820,7 @@ Durante a conclusao foram validados tecnicamente:
 - [x] memoria de media training
 - [x] reuso de item anterior
 - [x] integracao com `Resolve ai`
-- [x] integracao com `Meu Marqueteiro`
+- [x] integracao com `Meu Assistente`
 - [x] alerta proativo de menções sensiveis no chat
 - [x] diagnostics limpos nos arquivos finais alterados
 
@@ -888,7 +888,7 @@ No estado atual, o módulo entrega:
 - indicadores comparativos de desempenho por secretaria
 - leitura evolutiva de reincidencia territorial com janela configuravel por município
 - integracao com `Comunicação`
-- integracao com `Meu Marqueteiro`
+- integracao com `Meu Assistente`
 
 Do ponto de vista de produto, o módulo esta pronto para operacao real no fluxo do prefeito, gabinete e secretarias.
 
@@ -992,8 +992,8 @@ O objetivo principal do módulo e:
 ### 3.8 Integracoes estrategicas
 
 - geração de rascunho em `Comunicação` a partir de demanda concluida
-- abertura de conversa de narrativa política no `Meu Marqueteiro`
-- abertura de conversa de cobranca e acompanhamento no `Meu Marqueteiro`
+- abertura de conversa de narrativa política no `Meu Assistente`
+- abertura de conversa de cobranca e acompanhamento no `Meu Assistente`
 - metadata `origin_module = resolve_ai` em conteudo e conversas
 
 ## 4. Principais Entregas Tecnicas
@@ -1072,7 +1072,7 @@ O objetivo principal do módulo e:
 
 1. uma demanda concluida fica elegivel para integracao
 2. o prefeito gera rascunho em `Comunicação`
-3. ou abre conversa de narrativa/cobranca no `Meu Marqueteiro`
+3. ou abre conversa de narrativa/cobranca no `Meu Assistente`
 4. o contexto da demanda acompanha o novo fluxo
 5. a entrega operacional vira insumo politico e comunicacional
 
@@ -1139,7 +1139,7 @@ O objetivo principal do módulo e:
 ### 6.8 Integracoes
 
 - `Comunicação`
-- `Meu Marqueteiro`
+- `Meu Assistente`
 - contexto `resolve_ai` em conteudo e conversa
 
 ## 7. Como Utilizar o Modulo por Completo
@@ -1196,8 +1196,8 @@ O objetivo principal do módulo e:
 
 1. abrir uma demanda concluida ou aguardando confirmacao
 2. gerar rascunho em `Comunicação` quando houver entrega comunicavel
-3. abrir conversa de narrativa no `Meu Marqueteiro`
-4. abrir conversa de cobranca pos-entrega no `Meu Marqueteiro`
+3. abrir conversa de narrativa no `Meu Assistente`
+4. abrir conversa de cobranca pos-entrega no `Meu Assistente`
 5. seguir com o contexto automatico herdado da demanda
 
 ## 8. Validacoes Realizadas
@@ -1208,7 +1208,7 @@ Durante a entrega foram validados tecnicamente:
 - validacao de rotas e diagnostics nas iteracoes entregues
 - estabilizacao do fluxo por secretaria e painel proprio do secretario
 - validacao do onboarding operacional com secretarias, contatos e localidades
-- integracao com `Comunicação` e `Meu Marqueteiro`
+- integracao com `Comunicação` e `Meu Assistente`
 - funcionamento da regua automatica de inatividade e atraso
 - leitura territorial com hotspots, temas recorrentes e histórico por secretaria
 - camada comparativa com score por pasta e tendencia territorial
@@ -1244,7 +1244,7 @@ Tambem foi validado no fluxo operacional:
 - [x] onboarding de localidades
 - [x] sugestao de localidades no formulario
 - [x] integracao com `Comunicação`
-- [x] integracao com `Meu Marqueteiro`
+- [x] integracao com `Meu Assistente`
 - [x] origem `resolve_ai` em conteudo e conversa
 - [x] hotspots territoriais
 - [x] temas recorrentes
@@ -1318,7 +1318,7 @@ No estado atual, o módulo entrega:
 - alerta operacional geral e por eixo tematico
 - drill-down por eixo com leitura de atendimento e acoes associadas
 - lista dedicada de compromissos pendentes sem acao vinculada
-- integracao por leitura com `Meu Marqueteiro`
+- integracao por leitura com `Meu Assistente`
 - integracao automatica com `Comunicação` quando a acao e concluida
 - integracao com `Projetos` por vinculo da acao a projeto salvo
 - integracao por sugestao com `Radar de Recursos`
@@ -1418,7 +1418,7 @@ O objetivo principal do módulo e:
 
 ### 3.10 Integracoes com outros módulos
 
-- `Meu Marqueteiro`
+- `Meu Assistente`
     - leitura de compromissos pendentes sem acao
     - leitura de projecao e risco
     - leitura de eixos abaixo da media
@@ -1664,7 +1664,7 @@ O dashboard e o melhor ponto de entrada para:
 4. clicar em `Abrir demanda concluida`
 5. revisar se aquela entrega recorrente deve virar acao de governo registrada no `Mandato`
 
-#### Meu Marqueteiro
+#### Meu Assistente
 
 Nao exige clique adicional dentro do `Mandato`.
 
@@ -1728,7 +1728,7 @@ Durante a entrega foram validados tecnicamente:
 - progresso por percentual e por marcos
 - projecao de cumprimento e alerta por eixo
 - lista de compromissos pendentes sem acao
-- leitura do `Mandato` no `Meu Marqueteiro`
+- leitura do `Mandato` no `Meu Assistente`
 - criacao automatica de sugestao para `Comunicação` ao concluir acao
 - vinculo da acao a `Projetos`
 - sugestao do `Radar de Recursos` para compromisso pendente
@@ -1758,7 +1758,7 @@ Tambem foi validado no ambiente:
 - [x] alerta por eixo
 - [x] drill-down por eixo
 - [x] lista de compromissos pendentes sem acao vinculada
-- [x] integracao por leitura com `Meu Marqueteiro`
+- [x] integracao por leitura com `Meu Assistente`
 - [x] integracao automatica com `Comunicação`
 - [x] integracao com `Projetos`
 - [x] sugestao com `Radar de Recursos`

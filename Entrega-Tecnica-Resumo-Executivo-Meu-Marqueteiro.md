@@ -1,8 +1,8 @@
-# Entrega Tecnica e Resumo Executivo - Modulo Meu Marqueteiro
+# Entrega Tecnica e Resumo Executivo - Modulo Meu Assistente
 
 ## 1. Resumo Executivo
 
-O módulo `Meu Marqueteiro` foi concluido como nucleo conversacional da plataforma, preservando a identidade do assistente politico e ampliando seu papel para operar de forma integrada aos dados do município, do mandato e dos demais módulos.
+O módulo `Meu Assistente` foi concluido como nucleo conversacional da plataforma, preservando a identidade do assistente politico e ampliando seu papel para operar de forma integrada aos dados do município, do mandato e dos demais módulos.
 
 No estado atual, o módulo entrega:
 
@@ -21,7 +21,7 @@ Do ponto de vista operacional, existe apenas uma observacao remanescente: a vali
 
 ## 2. Objetivo do Modulo
 
-O `Meu Marqueteiro` funciona como assistente pessoal do prefeito dentro da plataforma, com foco em orientacao política, comunicação publica, leitura de contexto do mandato, apoio tatico e aproveitamento de informacoes ja disponiveis em outros módulos.
+O `Meu Assistente` funciona como assistente pessoal do prefeito dentro da plataforma, com foco em orientacao política, comunicação publica, leitura de contexto do mandato, apoio tatico e aproveitamento de informacoes ja disponiveis em outros módulos.
 
 O objetivo principal do módulo e:
 
@@ -201,7 +201,7 @@ Isso significa:
 
 ## 9. Recomendacao de Encerramento
 
-Para fins de projeto e continuidade da plataforma, o módulo `Meu Marqueteiro` pode ser considerado finalizado.
+Para fins de projeto e continuidade da plataforma, o módulo `Meu Assistente` pode ser considerado finalizado.
 
 Recomendacao objetiva:
 

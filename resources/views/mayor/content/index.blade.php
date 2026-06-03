@@ -574,8 +574,8 @@
         }
 
         /* ═══════════════════════════════════════
-                                                                                                                                                                                                                                                                                                                   IMAGEM IA — estilos específicos
-                                                                                                                                                                                                                                                                                                                ═══════════════════════════════════════ */
+                                                                                                                                                                                                                                                                                                                       IMAGEM IA — estilos específicos
+                                                                                                                                                                                                                                                                                                                    ═══════════════════════════════════════ */
         .image-info-box {
             background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
             border: 1.5px solid #ede9fe;
@@ -4389,7 +4389,7 @@
                                         action="{{ route('mayor.mandato.demands.strategic-conversation', $item['id']) }}">
                                         @csrf
                                         <input type="hidden" name="mode" value="narrative">
-                                        <button type="submit" class="action-btn">Narrativa no Meu Marqueteiro</button>
+                                        <button type="submit" class="action-btn">Narrativa no Meu Assistente</button>
                                     </form>
                                     <a href="{{ $item['show_url'] }}" class="action-btn">Abrir demanda</a>
                                 </div>

@@ -18,7 +18,7 @@ No estado atual, o módulo entrega:
 - alerta operacional geral e por eixo tematico
 - drill-down por eixo com leitura de atendimento e acoes associadas
 - lista dedicada de compromissos pendentes sem acao vinculada
-- integracao por leitura com `Meu Marqueteiro`
+- integracao por leitura com `Meu Assistente`
 - integracao automatica com `Comunicação` quando a acao e concluida
 - integracao com `Projetos` por vinculo da acao a projeto salvo
 - integracao por sugestao com `Radar de Recursos`
@@ -118,7 +118,7 @@ O objetivo principal do módulo e:
 
 ### 3.10 Integracoes com outros módulos
 
-- `Meu Marqueteiro`
+- `Meu Assistente`
     - leitura de compromissos pendentes sem acao
     - leitura de projecao e risco
     - leitura de eixos abaixo da media
@@ -364,7 +364,7 @@ O dashboard e o melhor ponto de entrada para:
 4. clicar em `Abrir demanda concluida`
 5. revisar se aquela entrega recorrente deve virar acao de governo registrada no `Mandato`
 
-#### Meu Marqueteiro
+#### Meu Assistente
 
 Nao exige clique adicional dentro do `Mandato`.
 
@@ -428,7 +428,7 @@ Durante a entrega foram validados tecnicamente:
 - progresso por percentual e por marcos
 - projecao de cumprimento e alerta por eixo
 - lista de compromissos pendentes sem acao
-- leitura do `Mandato` no `Meu Marqueteiro`
+- leitura do `Mandato` no `Meu Assistente`
 - criacao automatica de sugestao para `Comunicação` ao concluir acao
 - vinculo da acao a `Projetos`
 - sugestao do `Radar de Recursos` para compromisso pendente
@@ -458,7 +458,7 @@ Tambem foi validado no ambiente:
 - [x] alerta por eixo
 - [x] drill-down por eixo
 - [x] lista de compromissos pendentes sem acao vinculada
-- [x] integracao por leitura com `Meu Marqueteiro`
+- [x] integracao por leitura com `Meu Assistente`
 - [x] integracao automatica com `Comunicação`
 - [x] integracao com `Projetos`
 - [x] sugestao com `Radar de Recursos`

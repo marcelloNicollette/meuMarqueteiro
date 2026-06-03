@@ -19,7 +19,7 @@ No estado atual, o módulo entrega:
 - indicadores comparativos de desempenho por secretaria
 - leitura evolutiva de reincidencia territorial com janela configuravel por município
 - integracao com `Comunicação`
-- integracao com `Meu Marqueteiro`
+- integracao com `Meu Assistente`
 
 Do ponto de vista de produto, o módulo esta pronto para operacao real no fluxo do prefeito, gabinete e secretarias.
 
@@ -123,8 +123,8 @@ O objetivo principal do módulo e:
 ### 3.8 Integracoes estrategicas
 
 - geração de rascunho em `Comunicação` a partir de demanda concluida
-- abertura de conversa de narrativa política no `Meu Marqueteiro`
-- abertura de conversa de cobranca e acompanhamento no `Meu Marqueteiro`
+- abertura de conversa de narrativa política no `Meu Assistente`
+- abertura de conversa de cobranca e acompanhamento no `Meu Assistente`
 - metadata `origin_module = resolve_ai` em conteudo e conversas
 
 ## 4. Principais Entregas Tecnicas
@@ -203,7 +203,7 @@ O objetivo principal do módulo e:
 
 1. uma demanda concluida fica elegivel para integracao
 2. o prefeito gera rascunho em `Comunicação`
-3. ou abre conversa de narrativa/cobranca no `Meu Marqueteiro`
+3. ou abre conversa de narrativa/cobranca no `Meu Assistente`
 4. o contexto da demanda acompanha o novo fluxo
 5. a entrega operacional vira insumo politico e comunicacional
 
@@ -270,7 +270,7 @@ O objetivo principal do módulo e:
 ### 6.8 Integracoes
 
 - `Comunicação`
-- `Meu Marqueteiro`
+- `Meu Assistente`
 - contexto `resolve_ai` em conteudo e conversa
 
 ## 7. Como Utilizar o Modulo por Completo
@@ -327,8 +327,8 @@ O objetivo principal do módulo e:
 
 1. abrir uma demanda concluida ou aguardando confirmacao
 2. gerar rascunho em `Comunicação` quando houver entrega comunicavel
-3. abrir conversa de narrativa no `Meu Marqueteiro`
-4. abrir conversa de cobranca pos-entrega no `Meu Marqueteiro`
+3. abrir conversa de narrativa no `Meu Assistente`
+4. abrir conversa de cobranca pos-entrega no `Meu Assistente`
 5. seguir com o contexto automatico herdado da demanda
 
 ## 8. Validacoes Realizadas
@@ -339,7 +339,7 @@ Durante a entrega foram validados tecnicamente:
 - validacao de rotas e diagnostics nas iteracoes entregues
 - estabilizacao do fluxo por secretaria e painel proprio do secretario
 - validacao do onboarding operacional com secretarias, contatos e localidades
-- integracao com `Comunicação` e `Meu Marqueteiro`
+- integracao com `Comunicação` e `Meu Assistente`
 - funcionamento da regua automatica de inatividade e atraso
 - leitura territorial com hotspots, temas recorrentes e histórico por secretaria
 - camada comparativa com score por pasta e tendencia territorial
@@ -375,7 +375,7 @@ Tambem foi validado no fluxo operacional:
 - [x] onboarding de localidades
 - [x] sugestao de localidades no formulario
 - [x] integracao com `Comunicação`
-- [x] integracao com `Meu Marqueteiro`
+- [x] integracao com `Meu Assistente`
 - [x] origem `resolve_ai` em conteudo e conversa
 - [x] hotspots territoriais
 - [x] temas recorrentes

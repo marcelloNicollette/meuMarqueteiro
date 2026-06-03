@@ -25,7 +25,7 @@ Objetivo do módulo:
 - ranquear por compatibilidade com o perfil do município
 - separar compatibilidade de viabilidade de captação
 - permitir expandir o card na mesma tela sem perder contexto
-- alimentar Projetos e o assistente Meu Marqueteiro
+- alimentar Projetos e o assistente Meu Assistente
 
 Fontes previstas no documento:
 
@@ -55,7 +55,7 @@ Recursos obrigatórios do módulo:
 - encerrados visiveis por 60 dias com notificacao de reabertura
 - workflow de curadoria humana com fila de validacao
 - integracao com módulo Projetos
-- alertas de prazo para o município e para o Meu Marqueteiro
+- alertas de prazo para o município e para o Meu Assistente
 - histórico pesquisavel
 
 ## 3. Estado atual do projeto
@@ -398,7 +398,7 @@ Entregas:
 - integracao com `ProjectController`
 - vinculo oportunidade-projeto
 
-### Fase 12 - Integracao com Meu Marqueteiro
+### Fase 12 - Integracao com Meu Assistente
 
 - alertas proativos do chat devem usar o novo radar
 - o assistente deve conseguir:

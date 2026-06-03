@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Marqueteiro</title>
+    <title>Meu Assistente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
@@ -418,7 +418,7 @@
                 <div class="brand-logo-icon">
                     <img width="100%" src="/images/logo-borda-white.png" alt="">
                 </div>
-                <!--<span class="brand-logo-name">Meu Marqueteiro</span>-->
+                <!--<span class="brand-logo-name">Meu Assistente</span>-->
             </div>
 
             <div class="brand-hero">

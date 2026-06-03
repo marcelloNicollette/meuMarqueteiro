@@ -5,7 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>Meu Marqueteiro</title>
+    <title>Meu Assistente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
 
     <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
@@ -330,48 +330,10 @@
                     <path d="M3 13h8V3H3v10zm0 8h8v-6H3v6zm10 0h8V11h-8v10zm0-18v6h8V3h-8z" />
                 </svg>
             </a>-->
-
-            @if ($isMayorUser)
-                <a href="{{ route('mayor.situacao') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}"
-                    data-label="Painel">
-                    <img src="/images/icone-painel.svg" alt="">
-                </a>
-                <a href="{{ route('mayor.chat.index') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}"
-                    data-label="Meu marqueteiro">
-                    <img src="/images/icone-meu-marqueteiro.svg" alt="">
-                    @if (false)
-                        {{-- lógica de mensagens não  lidas aqui --}}
-                        <span class="dot"></span>
-                    @endif
-                </a>
-                <a href="{{ route('mayor.projects.index') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.projects*') ? 'active' : '' }}"
-                    data-label="Projetos">
-                    <img src="/images/icone-projetos.svg" alt="">
-                </a>
-                <a href="{{ route('mayor.project-bank.index') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.project-bank*') ? 'active' : '' }}"
-                    data-label="Banco de Projetos">
-                    <img src="/images/icone-projetos.svg" alt="">
-                </a>
-                <a href="{{ route('mayor.content.index') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.content*') || request()->routeIs('mayor.mentions*') ? 'active' : '' }}"
-                    data-label="Comunicação">
-                    <img src="/images/icone-comunicacao.svg" alt="">
-                </a>
-                <a href="{{ route('mayor.mandato.painel') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
-                    data-label="Mandato">
-                    <img src="/images/icone-mandato.svg" alt="">
-                </a>
-                <a href="{{ route('mayor.mandato.federal-programs') }}"
-                    class="sidenav-item {{ request()->routeIs('mayor.mandato.federal-programs*') ? 'active' : '' }}"
-                    data-label="Recursos">
-                    <img src="/images/icone-recursos.svg" alt="">
-                </a>
-            @endif
+            <a href="{{ route('mayor.situacao') }}"
+                class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}" data-label="Painel">
+                <img src="/images/icone-painel.svg" alt="">
+            </a>
             <a href="{{ $praHojeRoute }}"
                 class="sidenav-item {{ request()->routeIs('pra-hoje.*') || request()->routeIs('mayor.mandato.briefings*') ? 'active' : '' }}"
                 data-label="Pra hoje!">
@@ -385,6 +347,40 @@
                 data-label="Resolve ai">
                 <img src="/images/icone-anotaai.svg" alt="">
             </a>
+            @if ($isMayorUser)
+
+                <a href="{{ route('mayor.chat.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}"
+                    data-label="Meu Assistente">
+                    <img src="/images/icone-meu-marqueteiro.svg" alt="">
+                    @if (false)
+                        {{-- lógica de mensagens não  lidas aqui --}}
+                        <span class="dot"></span>
+                    @endif
+                </a>
+
+                <a href="{{ route('mayor.content.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.content*') || request()->routeIs('mayor.mentions*') ? 'active' : '' }}"
+                    data-label="Comunicação">
+                    <img src="/images/icone-comunicacao.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.mandato.federal-programs') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.mandato.federal-programs*') ? 'active' : '' }}"
+                    data-label="Radar de Recursos">
+                    <img src="/images/icone-recursos.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.projects.index') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.projects*') ? 'active' : '' }}"
+                    data-label="Projetos">
+                    <img src="/images/icone-projetos.svg" alt="">
+                </a>
+                <a href="{{ route('mayor.mandato.painel') }}"
+                    class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
+                    data-label="Ações">
+                    <img src="/images/icone-mandato.svg" alt="">
+                </a>
+            @endif
+
         </div>
 
         <div class="sidenav-bottom">
@@ -397,7 +393,7 @@
     {{-- ── Main ─────────────────────────────────────────────────── --}}
     <main class="main">
         <div class="topbar">
-            <div class="topbar-title">@yield('topbar-title', 'Meu Marqueteiro')</div>
+            <div class="topbar-title">@yield('topbar-title', 'Meu Assistente')</div>
             <div class="topbar-date">{{ now()->locale('pt_BR')->isoFormat('ddd, D MMM') }}</div>
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
