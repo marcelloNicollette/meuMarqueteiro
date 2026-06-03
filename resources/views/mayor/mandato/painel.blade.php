@@ -1,7 +1,7 @@
 @extends('layouts.mayor')
 
-@section('title', 'Painel de Mandato')
-@section('topbar-title', 'Painel de Mandato')
+@section('title', 'Ações')
+@section('topbar-title', 'Ações')
 
 @push('styles')
     <style>
