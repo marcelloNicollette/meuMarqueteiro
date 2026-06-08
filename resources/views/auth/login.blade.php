@@ -7,7 +7,7 @@
     <title>Meu Assistente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
+    <link rel="icon" type="image/x-icon" href="/images/icon.svg">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
         rel="stylesheet">
@@ -110,7 +110,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 0.06);
+            background: rgba(255, 255, 255, 1);
             border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(14px);
         }
@@ -407,7 +407,7 @@
         }
 
         .robo-bg {
-            background: url('/images/robo02.png') no-repeat;
+
             width: 100%;
             height: 100%;
             position: absolute;
@@ -420,8 +420,8 @@
         }
 
         .logo {
-            width: 5.5rem;
-            margin: 0 0 1.5rem;
+            width: 50%;
+
         }
 
 
@@ -443,16 +443,17 @@
 
             <div class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img width="100%" src="/images/logo-borda-white.png" alt="">
+                    <img width="100%" src="/images/icon.svg" alt="">
                 </div>
                 <!--<span class="brand-logo-name">Meu Assistente</span>-->
             </div>
 
             <div class="brand-hero">
-                <p class="brand-hero-eyebrow">Novo Brand Book</p>
+                <p class="brand-hero-eyebrow">Qu4tro.ai</p>
                 <h2 class="brand-hero-title">Gestão pública mais clara, estratégica e orientada por dados.</h2>
                 <p class="brand-hero-body">
-                    Uma experiência visual mais limpa, institucional e confiável, alinhada ao novo sistema de tipografia,
+                    Uma experiência visual mais limpa, institucional e confiável, alinhada ao novo sistema de
+                    tipografia,
                     iconografia e cores da Qu4tro.ai.
                 </p>
             </div>
@@ -479,7 +480,7 @@
         <div class="form-panel">
             <div class="form-box">
                 <div class="logo">
-                    <img src="/images/logo-borda-black.png" width="100%" alt="">
+                    <img src="/images/logo-qu4tro.ai.svg" width="100%" alt="">
                 </div>
                 <div class="form-heading">
                     <h1>Entrar na plataforma</h1>

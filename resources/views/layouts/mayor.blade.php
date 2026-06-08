@@ -8,7 +8,7 @@
     <title>Meu Assistente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
+    <link rel="icon" type="image/x-icon" href="/images/icon.svg">
     <link
         href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
         rel="stylesheet">
@@ -496,7 +496,8 @@
                 class="sidenav-item {{ request()->routeIs('mayor.mandato.demands*') || request()->routeIs('resolve-ai.demands*') ? 'active' : '' }}"
                 data-label="Resolve ai">
                 <svg viewBox="0 0 26 26" aria-hidden="true">
-                    <path d="M21 13c0 4.42-3.58 8-8 8a8.1 8.1 0 0 1-3.5-.79L4 22l1.79-5.5A7.93 7.93 0 0 1 5 13c0-4.42 3.58-8 8-8s8 3.58 8 8z" />
+                    <path
+                        d="M21 13c0 4.42-3.58 8-8 8a8.1 8.1 0 0 1-3.5-.79L4 22l1.79-5.5A7.93 7.93 0 0 1 5 13c0-4.42 3.58-8 8-8s8 3.58 8 8z" />
                     <path d="M9.5 13l2 2 4-4" />
                 </svg>
             </a>
@@ -507,8 +508,10 @@
                     data-label="Meu Assistente">
                     <svg viewBox="0 0 26 26" aria-hidden="true">
                         <rect x="6" y="9" width="14" height="11" rx="3" />
-                        <rect x="9" y="13" width="2.5" height="2.5" rx="0.8" fill="currentColor" stroke="none" />
-                        <rect x="14.5" y="13" width="2.5" height="2.5" rx="0.8" fill="currentColor" stroke="none" />
+                        <rect x="9" y="13" width="2.5" height="2.5" rx="0.8" fill="currentColor"
+                            stroke="none" />
+                        <rect x="14.5" y="13" width="2.5" height="2.5" rx="0.8" fill="currentColor"
+                            stroke="none" />
                         <path d="M10 20v2.5" />
                         <path d="M16 20v2.5" />
                         <path d="M13 9V6.5" />
@@ -548,7 +551,8 @@
                     class="sidenav-item {{ request()->routeIs('mayor.projects*') ? 'active' : '' }}"
                     data-label="Projetos">
                     <svg viewBox="0 0 26 26" aria-hidden="true">
-                        <path d="M13 3C9.13 3 6 6.13 6 10c0 2.6 1.4 4.9 3.5 6.2V18h7v-1.8C18.6 14.9 20 12.6 20 10c0-3.87-3.13-7-7-7z" />
+                        <path
+                            d="M13 3C9.13 3 6 6.13 6 10c0 2.6 1.4 4.9 3.5 6.2V18h7v-1.8C18.6 14.9 20 12.6 20 10c0-3.87-3.13-7-7-7z" />
                         <path d="M9.5 18h7" />
                         <path d="M10.5 21h5" />
                         <path d="M11 10l1.5-3 1.5 3 1.5-3" />
