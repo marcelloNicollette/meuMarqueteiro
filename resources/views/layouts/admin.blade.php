@@ -94,7 +94,7 @@
         .sidebar-logo-icon {
             width: 44px;
             height: 44px;
-            background: linear-gradient(135deg, rgba(184, 144, 42, 0.2) 0%, rgba(184, 144, 42, 0.35) 100%);
+            background: white;
             border-radius: 14px;
             display: flex;
             align-items: center;
@@ -103,10 +103,7 @@
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .sidebar-logo-icon img {
-            width: 28px;
-            height: 28px;
-        }
+        .sidebar-logo-icon img {}
 
         .sidebar-logo-text {
             font-family: "Outfit", sans-serif;
@@ -516,7 +513,7 @@
     <aside class="sidebar">
         <div class="sidebar-logo">
             <div class="sidebar-logo-icon">
-                <img width="100%" src="/images/logo-borda-white.png" alt="">
+                <img width="100%" src="/images/icon.svg" alt="">
             </div>
             <span class="sidebar-logo-text">Qu4tro.ai</span>
             <span class="sidebar-badge">Admin</span>

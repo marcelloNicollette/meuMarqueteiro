@@ -86,7 +86,7 @@
         .sidenav-logo {
             width: 52px;
             height: 52px;
-            background: linear-gradient(135deg, rgba(184, 144, 42, 0.2) 0%, rgba(184, 144, 42, 0.35) 100%);
+            background: white;
             border-radius: 18px;
             display: flex;
             align-items: center;
@@ -98,8 +98,6 @@
         }
 
         .sidenav-logo img {
-            width: 34px;
-            height: 34px;
             object-fit: contain;
         }
 
@@ -459,7 +457,7 @@
     {{-- ── Sidenav ──────────────────────────────────────────────── --}}
     <nav class="sidenav">
         <div class="sidenav-logo">
-            <img src="/images/logo-borda-white.png" alt="Qu4tro.ai">
+            <img src="/images/icon.svg" width="100%" alt="Qu4tro.ai">
         </div>
 
         <div class="sidenav-nav">
