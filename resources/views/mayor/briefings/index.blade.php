@@ -36,7 +36,7 @@
         }
 
         .today-date {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.1rem;
             color: #fff;
         }
@@ -85,7 +85,7 @@
         }
 
         .empty-today h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.1rem;
             color: var(--ink);
             margin-bottom: .4rem;
@@ -109,7 +109,7 @@
             border-radius: 10px;
             background: var(--ink);
             color: white;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .88rem;
             font-weight: 500;
             border: none;
@@ -138,7 +138,7 @@
             gap: .35rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .82rem;
             font-weight: 500;
             border: 1.5px solid var(--border);
@@ -161,7 +161,7 @@
 
         /* Histórico */
         .history-section h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .95rem;
             color: var(--ink);
             margin-bottom: 1rem;

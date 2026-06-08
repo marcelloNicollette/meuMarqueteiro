@@ -29,7 +29,7 @@
         }
 
         .hero h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.45rem;
             color: var(--ink);
             margin-bottom: .25rem;
@@ -88,7 +88,7 @@
         }
 
         .card h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
             margin-bottom: .35rem;

@@ -790,7 +790,7 @@
         }
 
         .chat-empty h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.3rem;
             color: var(--ink);
             margin-bottom: .6rem;
@@ -1596,7 +1596,7 @@
             border: none;
             outline: none;
             resize: none;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .93rem;
             color: var(--ink);
             background: none;
@@ -1855,7 +1855,7 @@
 
         .message-bubble h3,
         .message-bubble h4 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-weight: 500;
             margin: .6rem 0 .3rem;
         }

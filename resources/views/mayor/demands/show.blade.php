@@ -21,7 +21,7 @@
         }
 
         .title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.25rem;
             color: var(--ink);
         }
@@ -71,7 +71,7 @@
         }
 
         .section-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
             margin-bottom: .3rem;

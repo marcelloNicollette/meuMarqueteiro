@@ -12,7 +12,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             background: var(--ink);
@@ -44,7 +44,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             background: var(--white);
@@ -71,7 +71,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             background: var(--gold);
@@ -92,7 +92,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             background: none;
@@ -142,7 +142,7 @@
             padding: .5rem .75rem;
             border: 1.5px solid var(--border);
             border-radius: 7px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .84rem;
             color: var(--ink);
             background: var(--white);
@@ -189,7 +189,7 @@
         }
 
         .mandato-header h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.4rem;
             color: var(--ink);
             margin: 0;

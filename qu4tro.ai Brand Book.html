@@ -1,0 +1,3013 @@
+<!doctype html>
+<html lang="pt-BR">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Qu4tro.ai — Brand Book</title>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Outfit:wght@200;300;400;500;600&family=Inter:wght@300;400;500&family=JetBrains+Mono:wght@400;500&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            :root {
+                --noite: #111318;
+                --mandato: #1c243a;
+                --gestao: #373e50;
+                --apoio: #80869a;
+                --clareza: #f6f4f0;
+                --ouro: #b8902a;
+                --acao: #d97706;
+                --institucional: #1a5fa8;
+                --desenvolvimento: #1e7e48;
+                --borda: rgba(255, 255, 255, 0.08);
+                --sidebar-w: 240px;
+            }
+
+            *,
+            *::before,
+            *::after {
+                box-sizing: border-box;
+                margin: 0;
+                padding: 0;
+            }
+
+            html {
+                scroll-behavior: smooth;
+            }
+
+            body {
+                background: var(--noite);
+                color: var(--clareza);
+                font-family: "Inter", sans-serif;
+                font-size: 15px;
+                line-height: 1.6;
+                overflow-x: hidden;
+            }
+
+            /* ─── SIDEBAR ─── */
+            .sidebar {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: var(--sidebar-w);
+                height: 100vh;
+                background: var(--mandato);
+                border-right: 1px solid var(--borda);
+                display: flex;
+                flex-direction: column;
+                z-index: 100;
+                transform: translateX(-100%);
+                transition: transform 0.3s ease;
+            }
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .sidebar-logo {
+                padding: 28px 24px 20px;
+                border-bottom: 1px solid var(--borda);
+            }
+
+            .sidebar-logo svg {
+                width: 120px;
+                height: auto;
+            }
+
+            .sidebar-label {
+                font-family: "Inter", sans-serif;
+                font-size: 9px;
+                letter-spacing: 2.5px;
+                color: var(--apoio);
+                text-transform: uppercase;
+                margin-top: 10px;
+            }
+
+            .nav-list {
+                flex: 1;
+                overflow-y: auto;
+                padding: 16px 0;
+                list-style: none;
+            }
+
+            .nav-list::-webkit-scrollbar {
+                width: 3px;
+            }
+            .nav-list::-webkit-scrollbar-track {
+                background: transparent;
+            }
+            .nav-list::-webkit-scrollbar-thumb {
+                background: var(--gestao);
+                border-radius: 3px;
+            }
+
+            .nav-section-label {
+                font-size: 9px;
+                letter-spacing: 2px;
+                color: var(--apoio);
+                text-transform: uppercase;
+                padding: 14px 24px 6px;
+            }
+
+            .nav-item a {
+                display: flex;
+                align-items: center;
+                gap: 10px;
+                padding: 9px 24px;
+                color: var(--apoio);
+                text-decoration: none;
+                font-size: 13px;
+                font-weight: 400;
+                transition:
+                    color 0.2s,
+                    background 0.2s;
+                border-left: 2px solid transparent;
+            }
+
+            .nav-item a:hover {
+                color: var(--clareza);
+                background: rgba(255, 255, 255, 0.04);
+            }
+
+            .nav-item a.active {
+                color: var(--ouro);
+                border-left-color: var(--ouro);
+                background: rgba(184, 144, 42, 0.06);
+            }
+
+            .nav-dot {
+                width: 5px;
+                height: 5px;
+                border-radius: 50%;
+                background: currentColor;
+                flex-shrink: 0;
+                opacity: 0.5;
+            }
+
+            .nav-item a.active .nav-dot {
+                opacity: 1;
+            }
+
+            .sidebar-footer {
+                padding: 16px 24px;
+                border-top: 1px solid var(--borda);
+                font-size: 11px;
+                color: var(--apoio);
+            }
+
+            /* ─── MENU TOGGLE ─── */
+            .menu-toggle {
+                position: fixed;
+                top: 20px;
+                left: 20px;
+                z-index: 200;
+                width: 40px;
+                height: 40px;
+                background: var(--mandato);
+                border: 1px solid var(--borda);
+                border-radius: 8px;
+                cursor: pointer;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 5px;
+                transition: background 0.2s;
+            }
+            .menu-toggle:hover {
+                background: var(--gestao);
+            }
+            .menu-toggle span {
+                display: block;
+                width: 18px;
+                height: 1.5px;
+                background: var(--clareza);
+                border-radius: 2px;
+                transition:
+                    transform 0.3s,
+                    opacity 0.3s;
+            }
+            .menu-toggle.open span:nth-child(1) {
+                transform: translateY(6.5px) rotate(45deg);
+            }
+            .menu-toggle.open span:nth-child(2) {
+                opacity: 0;
+            }
+            .menu-toggle.open span:nth-child(3) {
+                transform: translateY(-6.5px) rotate(-45deg);
+            }
+
+            .overlay {
+                position: fixed;
+                inset: 0;
+                background: rgba(0, 0, 0, 0.5);
+                z-index: 90;
+                opacity: 0;
+                pointer-events: none;
+                transition: opacity 0.3s;
+            }
+            .overlay.show {
+                opacity: 1;
+                pointer-events: all;
+            }
+
+            /* ─── MAIN ─── */
+            .main {
+                min-height: 100vh;
+            }
+
+            /* ─── HERO ─── */
+            .hero {
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                position: relative;
+                padding: 80px 40px;
+                overflow: hidden;
+                text-align: center;
+            }
+
+            .hero-bg-q {
+                position: absolute;
+                right: -8%;
+                top: 50%;
+                transform: translateY(-50%);
+                opacity: 0.03;
+                pointer-events: none;
+            }
+
+            .hero-badge {
+                font-family: "Inter", sans-serif;
+                font-size: 10px;
+                letter-spacing: 3px;
+                color: var(--ouro);
+                text-transform: uppercase;
+                margin-bottom: 40px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.2s forwards;
+            }
+
+            .hero-logo {
+                margin-bottom: 48px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.4s forwards;
+            }
+
+            .hero-logo svg {
+                width: min(320px, 70vw);
+                height: auto;
+            }
+
+            .hero-concept {
+                max-width: 560px;
+                font-family: "Outfit", sans-serif;
+                font-size: clamp(15px, 2vw, 17px);
+                font-weight: 300;
+                color: var(--apoio);
+                line-height: 1.8;
+                margin-bottom: 56px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.6s forwards;
+            }
+
+            .hero-concept strong {
+                color: var(--clareza);
+                font-weight: 400;
+            }
+
+            .hero-divider {
+                width: 40px;
+                height: 1px;
+                background: var(--ouro);
+                margin: 0 auto 56px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.7s forwards;
+            }
+
+            .hero-cta {
+                display: inline-flex;
+                align-items: center;
+                gap: 10px;
+                padding: 14px 32px;
+                background: transparent;
+                border: 1px solid var(--ouro);
+                color: var(--ouro);
+                font-family: "Outfit", sans-serif;
+                font-size: 13px;
+                font-weight: 400;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                text-decoration: none;
+                border-radius: 4px;
+                cursor: pointer;
+                transition:
+                    background 0.2s,
+                    color 0.2s;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 0.8s forwards;
+            }
+            .hero-cta:hover {
+                background: var(--ouro);
+                color: var(--noite);
+            }
+
+            .hero-scroll {
+                position: absolute;
+                bottom: 32px;
+                left: 50%;
+                transform: translateX(-50%);
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 6px;
+                opacity: 0;
+                animation: fadeUp 0.8s ease 1.2s forwards;
+            }
+            .hero-scroll span {
+                font-size: 10px;
+                letter-spacing: 2px;
+                color: var(--apoio);
+                text-transform: uppercase;
+            }
+            .scroll-line {
+                width: 1px;
+                height: 32px;
+                background: linear-gradient(
+                    to bottom,
+                    var(--apoio),
+                    transparent
+                );
+                animation: scrollPulse 2s ease infinite;
+            }
+
+            /* ─── SECTIONS ─── */
+            .section {
+                padding: 80px 48px;
+                border-top: 1px solid var(--borda);
+                max-width: 900px;
+                margin: 0 auto;
+            }
+
+            .section-header {
+                margin-bottom: 48px;
+            }
+
+            .section-number {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 11px;
+                color: var(--ouro);
+                letter-spacing: 2px;
+                margin-bottom: 8px;
+            }
+
+            .section-title {
+                font-family: "Outfit", sans-serif;
+                font-size: clamp(24px, 4vw, 36px);
+                font-weight: 500;
+                color: var(--clareza);
+                line-height: 1.2;
+                margin-bottom: 16px;
+            }
+
+            .section-desc {
+                font-size: 14px;
+                color: var(--apoio);
+                max-width: 560px;
+                line-height: 1.7;
+            }
+
+            /* ─── CARDS ─── */
+            .card {
+                background: var(--mandato);
+                border: 1px solid var(--borda);
+                border-radius: 12px;
+                padding: 24px;
+                margin-bottom: 16px;
+            }
+
+            .card-label {
+                font-size: 9px;
+                letter-spacing: 2px;
+                color: var(--apoio);
+                text-transform: uppercase;
+                margin-bottom: 20px;
+            }
+
+            /* ─── PALETA ─── */
+            .palette-strip {
+                display: flex;
+                border-radius: 8px;
+                overflow: hidden;
+                margin-bottom: 4px;
+                height: 56px;
+            }
+            .palette-swatch {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                justify-content: flex-end;
+                padding: 6px 8px;
+                min-width: 0;
+            }
+            .swatch-name {
+                font-size: 10px;
+                font-weight: 500;
+                line-height: 1.3;
+                white-space: nowrap;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            }
+            .swatch-hex {
+                font-size: 9px;
+                opacity: 0.7;
+                font-family: "JetBrains Mono", monospace;
+            }
+
+            .color-concept-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 12px;
+                margin-top: 20px;
+            }
+            .color-concept-item {
+                display: flex;
+                gap: 12px;
+                align-items: flex-start;
+                padding: 12px;
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+            }
+            .color-dot {
+                width: 32px;
+                height: 32px;
+                border-radius: 6px;
+                flex-shrink: 0;
+            }
+            .color-name {
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 3px;
+            }
+            .color-text {
+                font-size: 11px;
+                color: var(--apoio);
+                line-height: 1.5;
+            }
+
+            /* ─── TIPOGRAFIA ─── */
+            .type-family {
+                margin-bottom: 32px;
+                padding-bottom: 32px;
+                border-bottom: 1px solid var(--borda);
+            }
+            .type-family:last-child {
+                border-bottom: none;
+                margin-bottom: 0;
+                padding-bottom: 0;
+            }
+            .type-tag {
+                display: inline-block;
+                font-size: 9px;
+                padding: 3px 8px;
+                border-radius: 10px;
+                border: 1px solid var(--borda);
+                color: var(--apoio);
+                margin-bottom: 10px;
+            }
+            .type-name {
+                font-size: 14px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 4px;
+            }
+            .type-role {
+                font-size: 12px;
+                color: var(--apoio);
+                margin-bottom: 16px;
+            }
+            .type-specimen {
+                margin-bottom: 12px;
+            }
+            .type-concept {
+                font-size: 12px;
+                color: var(--apoio);
+                line-height: 1.6;
+            }
+
+            /* Simulações tipográficas */
+            .type-sim {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+                padding: 20px 24px;
+                margin-top: 16px;
+            }
+            .type-sim-label {
+                font-size: 9px;
+                letter-spacing: 2px;
+                color: var(--ouro);
+                text-transform: uppercase;
+                margin-bottom: 14px;
+            }
+            .sim-h1 {
+                font-family: "Outfit", sans-serif;
+                font-size: 28px;
+                font-weight: 600;
+                color: var(--clareza);
+                line-height: 1.2;
+                margin-bottom: 6px;
+            }
+            .sim-h2 {
+                font-family: "Outfit", sans-serif;
+                font-size: 20px;
+                font-weight: 500;
+                color: var(--clareza);
+                line-height: 1.3;
+                margin-bottom: 6px;
+            }
+            .sim-h3 {
+                font-family: "Outfit", sans-serif;
+                font-size: 16px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 8px;
+            }
+            .sim-body {
+                font-family: "Inter", sans-serif;
+                font-size: 14px;
+                color: var(--apoio);
+                line-height: 1.7;
+                margin-bottom: 6px;
+            }
+            .sim-caption {
+                font-family: "Inter", sans-serif;
+                font-size: 11px;
+                color: var(--gestao);
+            }
+            .sim-data {
+                font-family: "JetBrains Mono", monospace;
+                font-size: 22px;
+                font-weight: 500;
+            }
+            .sim-label-ui {
+                font-family: "Inter", sans-serif;
+                font-size: 11px;
+                color: var(--apoio);
+                text-transform: uppercase;
+                letter-spacing: 1px;
+                margin-bottom: 2px;
+            }
+
+            .metrics-demo {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 8px;
+                margin-top: 12px;
+            }
+            .metric-card {
+                background: var(--mandato);
+                border-radius: 8px;
+                padding: 12px 14px;
+            }
+
+            /* ─── ICONOGRAFIA ─── */
+            .icon-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 10px;
+            }
+            .icon-item {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+                padding: 14px;
+                display: flex;
+                align-items: center;
+                gap: 12px;
+            }
+            .icon-box {
+                width: 40px;
+                height: 40px;
+                border-radius: 10px;
+                background: var(--mandato);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+            }
+            .icon-label {
+                font-size: 12px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 2px;
+            }
+            .icon-desc {
+                font-size: 10px;
+                color: var(--apoio);
+                line-height: 1.4;
+            }
+
+            /* ─── GRID ─── */
+            .bp-grid {
+                display: flex;
+                flex-direction: column;
+                gap: 10px;
+            }
+            .bp-row {
+                display: flex;
+                align-items: center;
+                gap: 16px;
+                padding: 12px 16px;
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+            }
+            .bp-badge {
+                font-size: 10px;
+                font-weight: 600;
+                font-family: "JetBrains Mono", monospace;
+                padding: 3px 10px;
+                border-radius: 20px;
+                min-width: 36px;
+                text-align: center;
+                flex-shrink: 0;
+            }
+            .bp-info {
+                flex: 1;
+            }
+            .bp-name {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 2px;
+            }
+            .bp-spec {
+                font-size: 11px;
+                color: var(--apoio);
+            }
+            .col-vis {
+                display: flex;
+                gap: 2px;
+                margin-top: 6px;
+            }
+            .col-b {
+                height: 6px;
+                border-radius: 2px;
+                flex: 1;
+            }
+
+            /* ─── TOM DE VOZ ─── */
+            .voice-attrs {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 20px;
+            }
+            .voice-attr {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+                padding: 14px;
+            }
+            .attr-label {
+                font-size: 9px;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                color: var(--ouro);
+                margin-bottom: 4px;
+            }
+            .attr-val {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--clareza);
+            }
+
+            .pair-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr;
+                gap: 10px;
+                margin-bottom: 10px;
+            }
+            .pair-bad {
+                background: rgba(192, 57, 43, 0.08);
+                border: 1px solid rgba(192, 57, 43, 0.25);
+                border-radius: 8px;
+                padding: 12px 14px;
+            }
+            .pair-good {
+                background: rgba(30, 126, 72, 0.08);
+                border: 1px solid rgba(30, 126, 72, 0.25);
+                border-radius: 8px;
+                padding: 12px 14px;
+            }
+            .pair-tag {
+                font-size: 9px;
+                font-weight: 600;
+                letter-spacing: 1.5px;
+                text-transform: uppercase;
+                margin-bottom: 6px;
+            }
+            .pair-text {
+                font-size: 12px;
+                color: var(--clareza);
+                line-height: 1.6;
+                font-style: italic;
+            }
+
+            .context-item {
+                background: rgba(255, 255, 255, 0.03);
+                border-radius: 8px;
+                padding: 14px 16px;
+                margin-bottom: 8px;
+            }
+            .context-tag {
+                font-size: 9px;
+                color: var(--ouro);
+                text-transform: uppercase;
+                letter-spacing: 1.5px;
+                margin-bottom: 6px;
+            }
+            .context-text {
+                font-size: 13px;
+                color: var(--clareza);
+                line-height: 1.7;
+                font-family: "Outfit", sans-serif;
+                font-weight: 300;
+            }
+
+            /* ─── REGRAS APLICAÇÃO ─── */
+            .versions-grid {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr;
+                gap: 10px;
+            }
+            .version-item {
+                border-radius: 8px;
+                overflow: hidden;
+            }
+            .version-bg {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 20px 16px;
+                min-height: 80px;
+            }
+            .version-footer {
+                padding: 10px 12px;
+                background: rgba(255, 255, 255, 0.04);
+            }
+            .version-name {
+                font-size: 11px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 4px;
+            }
+            .version-tag {
+                display: inline-block;
+                font-size: 9px;
+                padding: 2px 8px;
+                border-radius: 10px;
+            }
+
+            .rule-list {
+                list-style: none;
+            }
+            .rule-item {
+                display: flex;
+                gap: 14px;
+                align-items: flex-start;
+                padding: 12px 0;
+                border-bottom: 1px solid var(--borda);
+            }
+            .rule-item:last-child {
+                border-bottom: none;
+            }
+            .rule-dot {
+                width: 6px;
+                height: 6px;
+                border-radius: 50%;
+                background: var(--ouro);
+                flex-shrink: 0;
+                margin-top: 6px;
+            }
+            .rule-title {
+                font-size: 13px;
+                font-weight: 500;
+                color: var(--clareza);
+                margin-bottom: 2px;
+            }
+            .rule-text {
+                font-size: 12px;
+                color: var(--apoio);
+                line-height: 1.6;
+            }
+
+            /* ─── FAVICON / ÍCONE ─── */
+            .app-icons-row {
+                display: flex;
+                align-items: flex-end;
+                gap: 20px;
+                flex-wrap: wrap;
+            }
+            .app-icon-item {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                gap: 8px;
+            }
+            .app-icon-label {
+                font-size: 10px;
+                color: var(--apoio);
+            }
+
+            /* ─── ANIMAÇÕES ─── */
+            @keyframes fadeUp {
+                from {
+                    opacity: 0;
+                    transform: translateY(20px);
+                }
+                to {
+                    opacity: 1;
+                    transform: translateY(0);
+                }
+            }
+            @keyframes scrollPulse {
+                0%,
+                100% {
+                    opacity: 0.4;
+                }
+                50% {
+                    opacity: 1;
+                }
+            }
+
+            /* ─── RESPONSIVE ─── */
+            @media (max-width: 768px) {
+                .section {
+                    padding: 60px 24px;
+                }
+                .color-concept-grid {
+                    grid-template-columns: 1fr;
+                }
+                .icon-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .voice-attrs {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .versions-grid {
+                    grid-template-columns: 1fr 1fr;
+                }
+                .metrics-demo {
+                    grid-template-columns: 1fr 1fr;
+                }
+            }
+
+            @media (max-width: 480px) {
+                .pair-grid {
+                    grid-template-columns: 1fr;
+                }
+                .icon-grid {
+                    grid-template-columns: 1fr;
+                }
+                .versions-grid {
+                    grid-template-columns: 1fr;
+                }
+                .voice-attrs {
+                    grid-template-columns: 1fr;
+                }
+            }
+        </style>
+    </head>
+    <body>
+        <!-- MENU TOGGLE -->
+        <button class="menu-toggle" id="menuToggle" aria-label="Abrir menu">
+            <span></span><span></span><span></span>
+        </button>
+
+        <!-- OVERLAY -->
+        <div class="overlay" id="overlay"></div>
+
+        <!-- SIDEBAR -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-logo">
+                <svg
+                    viewBox="147 279 163 30"
+                    xmlns="http://www.w3.org/2000/svg"
+                >
+                    <path
+                        fill="#f6f4f0"
+                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 193.25 289 L 187.75 289 187.75 299 Q 187.75 300.4 187.05 301.1 186.4 301.9 185.1 301.9 184.2 301.9 183.65 301.55 183.05 301.2 182.75 300.55 182.45 299.9 182.45 299 L 182.45 289 176.95 289 176.95 299.05 Q 176.95 301.3 178 303.1 179.05 304.85 180.85 305.75 182.65 306.75 185.1 306.75 187.65 306.75 189.35 305.75 191.15 304.85 192.2 303.1 193.25 301.3 193.25 299.05 L 193.25 289 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 209.9 281.55 L 203.8 281.55 195.5 298.05 195.5 301.15 207.4 301.15 207.4 306.8 212.9 306.8 212.9 301.15 215.75 301.15 215.75 296.4 212.9 296.4 212.9 289.45 207.4 289.45 207.4 296.4 202.25 296.4 209.9 281.55 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 220.95 281.65 L 220.95 289.45 217 289.45 217 294.1 220.95 294.1 220.95 306.85 226.4 306.85 226.4 294.1 230.35 294.1 230.35 289.45 226.4 289.45 226.4 281.65 220.95 281.65 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 246.55 290.6 Q 245.85 289.85 244.9 289.45 244.05 289.05 242.7 289.05 239.85 289.05 238.2 290.75 L 238.2 289.4 232.75 289.4 232.75 306.8 238.2 306.8 238.2 297.05 Q 238.3 295.5 239 294.7 239.8 293.9 241.2 293.9 241.95 293.9 242.4 294.1 242.95 294.35 243.3 294.7 L 246.55 290.6 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 257 288.6 Q 254.3 288.6 252.1 289.8 249.9 291.05 248.75 293.05 247.5 295.05 247.5 297.65 247.5 300.25 248.75 302.3 249.95 304.35 252.15 305.55 254.35 306.75 257 306.75 259.7 306.75 261.85 305.55 263.95 304.4 265.25 302.3 266.5 300.25 266.5 297.65 266.5 295.05 265.25 293 263.9 290.85 261.85 289.8 259.7 288.6 257 288.6 M 254.95 294.1 Q 255.9 293.55 257 293.55 258.1 293.55 259.05 294.1 259.95 294.65 260.4 295.5 260.95 296.45 260.95 297.65 260.95 298.7 260.45 299.8 260.05 300.7 259.1 301.25 258.15 301.8 257 301.8 255.9 301.8 254.95 301.25 254.05 300.7 253.55 299.8 253.1 298.85 253.1 297.65 253.1 296.5 253.55 295.5 254.05 294.6 254.95 294.1 Z"
+                    />
+                    <path
+                        fill="#b8902a"
+                        d="M 269.4 303.45 Q 269.4 304.85 270.35 305.8 271.25 306.75 272.65 306.75 274.1 306.75 275 305.8 275.9 304.85 275.9 303.45 275.9 302 275 301.1 274.1 300.15 272.65 300.15 271.25 300.15 270.35 301.1 269.4 302 269.4 303.45 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 282.95 289.85 Q 281.1 291.05 279.95 293.1 278.85 295.2 278.85 297.7 278.85 300.3 279.95 302.4 281.05 304.4 282.95 305.6 284.75 306.75 287.2 306.75 289.05 306.75 290.4 306.1 291.35 305.6 292 305.05 L 292 306.45 297.35 306.45 297.35 289.05 292 289.05 292 290.5 Q 291.3 289.8 290.4 289.35 289.05 288.7 287.2 288.7 284.85 288.7 282.95 289.85 M 284.95 295.6 Q 285.45 294.7 286.35 294.15 287.15 293.65 288.35 293.65 289.55 293.65 290.4 294.15 291.25 294.7 291.75 295.6 292.2 296.5 292.2 297.7 292.2 299.55 291.15 300.65 290.1 301.85 288.3 301.85 287.25 301.85 286.3 301.3 285.4 300.75 284.9 299.85 284.45 298.9 284.45 297.7 284.45 296.45 284.95 295.6 Z"
+                    />
+                    <path
+                        fill="#f6f4f0"
+                        d="M 306.7 289.45 L 301.25 289.45 301.25 306.85 306.7 306.85 306.7 289.45 M 301.85 282.5 Q 301 283.35 301 284.6 301 285.8 301.85 286.75 302.7 287.6 304 287.6 305.3 287.6 306.1 286.75 306.9 285.9 306.9 284.6 306.9 283.3 306.1 282.5 305.3 281.6 304 281.6 302.75 281.6 301.85 282.5 Z"
+                    />
+                </svg>
+                <div class="sidebar-label">Brand Book</div>
+            </div>
+
+            <ul class="nav-list" id="navList">
+                <li class="nav-section-label">Identidade</li>
+                <li class="nav-item">
+                    <a href="#conceito"
+                        ><span class="nav-dot"></span>Conceito de Marca</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a href="#logotipo"
+                        ><span class="nav-dot"></span>Logotipo</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a href="#paleta"
+                        ><span class="nav-dot"></span>Paleta de Cores</a
+                    >
+                </li>
+                <li class="nav-section-label">Sistema Visual</li>
+                <li class="nav-item">
+                    <a href="#tipografia"
+                        ><span class="nav-dot"></span>Tipografia</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a href="#iconografia"
+                        ><span class="nav-dot"></span>Iconografia</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a href="#grid"
+                        ><span class="nav-dot"></span>Grid e Espaçamento</a
+                    >
+                </li>
+                <li class="nav-section-label">Comunicação</li>
+                <li class="nav-item">
+                    <a href="#voz"><span class="nav-dot"></span>Tom de Voz</a>
+                </li>
+                <li class="nav-section-label">Aplicações</li>
+                <li class="nav-item">
+                    <a href="#aplicacao"
+                        ><span class="nav-dot"></span>Regras de Aplicação</a
+                    >
+                </li>
+                <li class="nav-item">
+                    <a href="#digital"
+                        ><span class="nav-dot"></span>Favicon e Ícone de App</a
+                    >
+                </li>
+            </ul>
+
+            <div class="sidebar-footer">Qu4tro.ai © 2025</div>
+        </nav>
+
+        <!-- MAIN -->
+        <main class="main">
+            <!-- ─── HERO ─── -->
+            <section class="hero" id="inicio">
+                <div class="hero-bg-q">
+                    <svg
+                        viewBox="147 279 30 30"
+                        width="600"
+                        height="600"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fill="#f6f4f0"
+                            d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                        />
+                    </svg>
+                </div>
+
+                <div class="hero-badge">Brand Book</div>
+
+                <div class="hero-logo">
+                    <svg
+                        viewBox="147 279 163 30"
+                        xmlns="http://www.w3.org/2000/svg"
+                    >
+                        <path
+                            fill="#f6f4f0"
+                            d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 193.25 289 L 187.75 289 187.75 299 Q 187.75 300.4 187.05 301.1 186.4 301.9 185.1 301.9 184.2 301.9 183.65 301.55 183.05 301.2 182.75 300.55 182.45 299.9 182.45 299 L 182.45 289 176.95 289 176.95 299.05 Q 176.95 301.3 178 303.1 179.05 304.85 180.85 305.75 182.65 306.75 185.1 306.75 187.65 306.75 189.35 305.75 191.15 304.85 192.2 303.1 193.25 301.3 193.25 299.05 L 193.25 289 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 209.9 281.55 L 203.8 281.55 195.5 298.05 195.5 301.15 207.4 301.15 207.4 306.8 212.9 306.8 212.9 301.15 215.75 301.15 215.75 296.4 212.9 296.4 212.9 289.45 207.4 289.45 207.4 296.4 202.25 296.4 209.9 281.55 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 220.95 281.65 L 220.95 289.45 217 289.45 217 294.1 220.95 294.1 220.95 306.85 226.4 306.85 226.4 294.1 230.35 294.1 230.35 289.45 226.4 289.45 226.4 281.65 220.95 281.65 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 246.55 290.6 Q 245.85 289.85 244.9 289.45 244.05 289.05 242.7 289.05 239.85 289.05 238.2 290.75 L 238.2 289.4 232.75 289.4 232.75 306.8 238.2 306.8 238.2 297.05 Q 238.3 295.5 239 294.7 239.8 293.9 241.2 293.9 241.95 293.9 242.4 294.1 242.95 294.35 243.3 294.7 L 246.55 290.6 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 257 288.6 Q 254.3 288.6 252.1 289.8 249.9 291.05 248.75 293.05 247.5 295.05 247.5 297.65 247.5 300.25 248.75 302.3 249.95 304.35 252.15 305.55 254.35 306.75 257 306.75 259.7 306.75 261.85 305.55 263.95 304.4 265.25 302.3 266.5 300.25 266.5 297.65 266.5 295.05 265.25 293 263.9 290.85 261.85 289.8 259.7 288.6 257 288.6 M 254.95 294.1 Q 255.9 293.55 257 293.55 258.1 293.55 259.05 294.1 259.95 294.65 260.4 295.5 260.95 296.45 260.95 297.65 260.95 298.7 260.45 299.8 260.05 300.7 259.1 301.25 258.15 301.8 257 301.8 255.9 301.8 254.95 301.25 254.05 300.7 253.55 299.8 253.1 298.85 253.1 297.65 253.1 296.5 253.55 295.5 254.05 294.6 254.95 294.1 Z"
+                        />
+                        <path
+                            fill="#b8902a"
+                            d="M 269.4 303.45 Q 269.4 304.85 270.35 305.8 271.25 306.75 272.65 306.75 274.1 306.75 275 305.8 275.9 304.85 275.9 303.45 275.9 302 275 301.1 274.1 300.15 272.65 300.15 271.25 300.15 270.35 301.1 269.4 302 269.4 303.45 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 282.95 289.85 Q 281.1 291.05 279.95 293.1 278.85 295.2 278.85 297.7 278.85 300.3 279.95 302.4 281.05 304.4 282.95 305.6 284.75 306.75 287.2 306.75 289.05 306.75 290.4 306.1 291.35 305.6 292 305.05 L 292 306.45 297.35 306.45 297.35 289.05 292 289.05 292 290.5 Q 291.3 289.8 290.4 289.35 289.05 288.7 287.2 288.7 284.85 288.7 282.95 289.85 M 284.95 295.6 Q 285.45 294.7 286.35 294.15 287.15 293.65 288.35 293.65 289.55 293.65 290.4 294.15 291.25 294.7 291.75 295.6 292.2 296.5 292.2 297.7 292.2 299.55 291.15 300.65 290.1 301.85 288.3 301.85 287.25 301.85 286.3 301.3 285.4 300.75 284.9 299.85 284.45 298.9 284.45 297.7 284.45 296.45 284.95 295.6 Z"
+                        />
+                        <path
+                            fill="#f6f4f0"
+                            d="M 306.7 289.45 L 301.25 289.45 301.25 306.85 306.7 306.85 306.7 289.45 M 301.85 282.5 Q 301 283.35 301 284.6 301 285.8 301.85 286.75 302.7 287.6 304 287.6 305.3 287.6 306.1 286.75 306.9 285.9 306.9 284.6 306.9 283.3 306.1 282.5 305.3 281.6 304 281.6 302.75 281.6 301.85 282.5 Z"
+                        />
+                    </svg>
+                </div>
+
+                <div class="hero-divider"></div>
+
+                <p class="hero-concept">
+                    <strong>Quatro anos.</strong> Tempo suficiente para
+                    transformar um município.<br />
+                    A Qu4tro.ai existe para que cada dia desse mandato<br />seja
+                    aproveitado com inteligência, do primeiro dia ao último.
+                </p>
+
+                <a href="#conceito" class="hero-cta">
+                    Acessar Guia
+                    <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+                        <path
+                            d="M7 2L7 12M7 12L3 8M7 12L11 8"
+                            stroke="currentColor"
+                            stroke-width="1.2"
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                        />
+                    </svg>
+                </a>
+
+                <div class="hero-scroll">
+                    <div class="scroll-line"></div>
+                    <span>Rolar</span>
+                </div>
+            </section>
+
+            <!-- ─── 01 CONCEITO ─── -->
+            <section class="section" id="conceito">
+                <div class="section-header">
+                    <div class="section-number">01</div>
+                    <h2 class="section-title">Conceito de Marca</h2>
+                    <p class="section-desc">
+                        A ideia que fundamenta a identidade da Qu4tro.ai e
+                        orienta todas as decisões de comunicação.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <p
+                        style="
+                            font-family: &quot;Outfit&quot;, sans-serif;
+                            font-size: clamp(15px, 2vw, 18px);
+                            font-weight: 300;
+                            color: var(--clareza);
+                            line-height: 1.9;
+                            margin-bottom: 24px;
+                        "
+                    >
+                        Quatro anos. Esse é o tempo que um prefeito tem para
+                        transformar uma cidade, construir uma história e provar
+                        que a confiança depositada pelos cidadãos valeu a pena.
+                    </p>
+                    <p
+                        style="
+                            font-family: &quot;Outfit&quot;, sans-serif;
+                            font-size: clamp(15px, 2vw, 18px);
+                            font-weight: 300;
+                            color: var(--clareza);
+                            line-height: 1.9;
+                            margin-bottom: 24px;
+                        "
+                    >
+                        A Qu4tro.ai nasceu desse entendimento. O "4" no nome
+                        carrega o peso e o significado de um mandato inteiro:
+                        1.460 dias para planejar, executar, comunicar e deixar
+                        um legado que abra caminho para o próximo ciclo da
+                        carreira política.
+                    </p>
+                    <p
+                        style="
+                            font-family: &quot;Outfit&quot;, sans-serif;
+                            font-size: clamp(15px, 2vw, 18px);
+                            font-weight: 300;
+                            color: var(--clareza);
+                            line-height: 1.9;
+                            margin-bottom: 24px;
+                        "
+                    >
+                        A plataforma combina inteligência artificial com a
+                        realidade prática da gestão pública municipal. A
+                        tecnologia fica em segundo plano. O que o prefeito vê é
+                        uma ferramenta simples, com linguagem direta e fluxos
+                        pensados para quem tem pouco tempo e muita
+                        responsabilidade. Sem curvas de aprendizado longas, sem
+                        complexidade desnecessária.
+                    </p>
+                    <p
+                        style="
+                            font-family: &quot;Outfit&quot;, sans-serif;
+                            font-size: clamp(15px, 2vw, 18px);
+                            font-weight: 300;
+                            color: var(--clareza);
+                            line-height: 1.9;
+                        "
+                    >
+                        Gerir bem um mandato é o ativo mais importante de uma
+                        carreira política. A Qu4tro.ai existe para que esses
+                        quatro anos sejam aproveitados com inteligência, do
+                        primeiro dia ao último.
+                    </p>
+                </div>
+            </section>
+
+            <!-- ─── 02 LOGOTIPO ─── -->
+            <section class="section" id="logotipo">
+                <div class="section-header">
+                    <div class="section-number">02</div>
+                    <h2 class="section-title">Logotipo</h2>
+                    <p class="section-desc">
+                        Versões aprovadas, área de proteção, tamanhos mínimos e
+                        usos incorretos.
+                    </p>
+                </div>
+
+                <div class="card" style="margin-bottom: 16px">
+                    <p class="card-label">versões aprovadas</p>
+                    <div class="versions-grid">
+                        <div class="version-item">
+                            <div
+                                class="version-bg"
+                                style="
+                                    background: #111318;
+                                    border-radius: 8px 8px 0 0;
+                                "
+                            >
+                                <svg
+                                    viewBox="147 279 163 30"
+                                    width="100%"
+                                    height="44"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 193.25 289 L 187.75 289 187.75 299 Q 187.75 300.4 187.05 301.1 186.4 301.9 185.1 301.9 184.2 301.9 183.65 301.55 183.05 301.2 182.75 300.55 182.45 299.9 182.45 299 L 182.45 289 176.95 289 176.95 299.05 Q 176.95 301.3 178 303.1 179.05 304.85 180.85 305.75 182.65 306.75 185.1 306.75 187.65 306.75 189.35 305.75 191.15 304.85 192.2 303.1 193.25 301.3 193.25 299.05 L 193.25 289 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 209.9 281.55 L 203.8 281.55 195.5 298.05 195.5 301.15 207.4 301.15 207.4 306.8 212.9 306.8 212.9 301.15 215.75 301.15 215.75 296.4 212.9 296.4 212.9 289.45 207.4 289.45 207.4 296.4 202.25 296.4 209.9 281.55 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 220.95 281.65 L 220.95 289.45 217 289.45 217 294.1 220.95 294.1 220.95 306.85 226.4 306.85 226.4 294.1 230.35 294.1 230.35 289.45 226.4 289.45 226.4 281.65 220.95 281.65 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 246.55 290.6 Q 245.85 289.85 244.9 289.45 244.05 289.05 242.7 289.05 239.85 289.05 238.2 290.75 L 238.2 289.4 232.75 289.4 232.75 306.8 238.2 306.8 238.2 297.05 Q 238.3 295.5 239 294.7 239.8 293.9 241.2 293.9 241.95 293.9 242.4 294.1 242.95 294.35 243.3 294.7 L 246.55 290.6 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 257 288.6 Q 254.3 288.6 252.1 289.8 249.9 291.05 248.75 293.05 247.5 295.05 247.5 297.65 247.5 300.25 248.75 302.3 249.95 304.35 252.15 305.55 254.35 306.75 257 306.75 259.7 306.75 261.85 305.55 263.95 304.4 265.25 302.3 266.5 300.25 266.5 297.65 266.5 295.05 265.25 293 263.9 290.85 261.85 289.8 259.7 288.6 257 288.6 M 254.95 294.1 Q 255.9 293.55 257 293.55 258.1 293.55 259.05 294.1 259.95 294.65 260.4 295.5 260.95 296.45 260.95 297.65 260.95 298.7 260.45 299.8 260.05 300.7 259.1 301.25 258.15 301.8 257 301.8 255.9 301.8 254.95 301.25 254.05 300.7 253.55 299.8 253.1 298.85 253.1 297.65 253.1 296.5 253.55 295.5 254.05 294.6 254.95 294.1 Z"
+                                    />
+                                    <path
+                                        fill="#b8902a"
+                                        d="M 269.4 303.45 Q 269.4 304.85 270.35 305.8 271.25 306.75 272.65 306.75 274.1 306.75 275 305.8 275.9 304.85 275.9 303.45 275.9 302 275 301.1 274.1 300.15 272.65 300.15 271.25 300.15 270.35 301.1 269.4 302 269.4 303.45 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 282.95 289.85 Q 281.1 291.05 279.95 293.1 278.85 295.2 278.85 297.7 278.85 300.3 279.95 302.4 281.05 304.4 282.95 305.6 284.75 306.75 287.2 306.75 289.05 306.75 290.4 306.1 291.35 305.6 292 305.05 L 292 306.45 297.35 306.45 297.35 289.05 292 289.05 292 290.5 Q 291.3 289.8 290.4 289.35 289.05 288.7 287.2 288.7 284.85 288.7 282.95 289.85 M 284.95 295.6 Q 285.45 294.7 286.35 294.15 287.15 293.65 288.35 293.65 289.55 293.65 290.4 294.15 291.25 294.7 291.75 295.6 292.2 296.5 292.2 297.7 292.2 299.55 291.15 300.65 290.1 301.85 288.3 301.85 287.25 301.85 286.3 301.3 285.4 300.75 284.9 299.85 284.45 298.9 284.45 297.7 284.45 296.45 284.95 295.6 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 306.7 289.45 L 301.25 289.45 301.25 306.85 306.7 306.85 306.7 289.45 M 301.85 282.5 Q 301 283.35 301 284.6 301 285.8 301.85 286.75 302.7 287.6 304 287.6 305.3 287.6 306.1 286.75 306.9 285.9 306.9 284.6 306.9 283.3 306.1 282.5 305.3 281.6 304 281.6 302.75 281.6 301.85 282.5 Z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="version-footer">
+                                <div class="version-name">
+                                    Principal — fundo escuro
+                                </div>
+                                <span
+                                    class="version-tag"
+                                    style="
+                                        background: rgba(30, 126, 72, 0.15);
+                                        color: #1e7e48;
+                                    "
+                                    >aprovada</span
+                                >
+                            </div>
+                        </div>
+
+                        <div class="version-item">
+                            <div
+                                class="version-bg"
+                                style="
+                                    background: #f6f4f0;
+                                    border-radius: 8px 8px 0 0;
+                                "
+                            >
+                                <svg
+                                    viewBox="147 279 163 30"
+                                    width="100%"
+                                    height="44"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 193.25 289 L 187.75 289 187.75 299 Q 187.75 300.4 187.05 301.1 186.4 301.9 185.1 301.9 184.2 301.9 183.65 301.55 183.05 301.2 182.75 300.55 182.45 299.9 182.45 299 L 182.45 289 176.95 289 176.95 299.05 Q 176.95 301.3 178 303.1 179.05 304.85 180.85 305.75 182.65 306.75 185.1 306.75 187.65 306.75 189.35 305.75 191.15 304.85 192.2 303.1 193.25 301.3 193.25 299.05 L 193.25 289 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 209.9 281.55 L 203.8 281.55 195.5 298.05 195.5 301.15 207.4 301.15 207.4 306.8 212.9 306.8 212.9 301.15 215.75 301.15 215.75 296.4 212.9 296.4 212.9 289.45 207.4 289.45 207.4 296.4 202.25 296.4 209.9 281.55 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 220.95 281.65 L 220.95 289.45 217 289.45 217 294.1 220.95 294.1 220.95 306.85 226.4 306.85 226.4 294.1 230.35 294.1 230.35 289.45 226.4 289.45 226.4 281.65 220.95 281.65 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 246.55 290.6 Q 245.85 289.85 244.9 289.45 244.05 289.05 242.7 289.05 239.85 289.05 238.2 290.75 L 238.2 289.4 232.75 289.4 232.75 306.8 238.2 306.8 238.2 297.05 Q 238.3 295.5 239 294.7 239.8 293.9 241.2 293.9 241.95 293.9 242.4 294.1 242.95 294.35 243.3 294.7 L 246.55 290.6 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 257 288.6 Q 254.3 288.6 252.1 289.8 249.9 291.05 248.75 293.05 247.5 295.05 247.5 297.65 247.5 300.25 248.75 302.3 249.95 304.35 252.15 305.55 254.35 306.75 257 306.75 259.7 306.75 261.85 305.55 263.95 304.4 265.25 302.3 266.5 300.25 266.5 297.65 266.5 295.05 265.25 293 263.9 290.85 261.85 289.8 259.7 288.6 257 288.6 M 254.95 294.1 Q 255.9 293.55 257 293.55 258.1 293.55 259.05 294.1 259.95 294.65 260.4 295.5 260.95 296.45 260.95 297.65 260.95 298.7 260.45 299.8 260.05 300.7 259.1 301.25 258.15 301.8 257 301.8 255.9 301.8 254.95 301.25 254.05 300.7 253.55 299.8 253.1 298.85 253.1 297.65 253.1 296.5 253.55 295.5 254.05 294.6 254.95 294.1 Z"
+                                    />
+                                    <path
+                                        fill="#b8902a"
+                                        d="M 269.4 303.45 Q 269.4 304.85 270.35 305.8 271.25 306.75 272.65 306.75 274.1 306.75 275 305.8 275.9 304.85 275.9 303.45 275.9 302 275 301.1 274.1 300.15 272.65 300.15 271.25 300.15 270.35 301.1 269.4 302 269.4 303.45 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 282.95 289.85 Q 281.1 291.05 279.95 293.1 278.85 295.2 278.85 297.7 278.85 300.3 279.95 302.4 281.05 304.4 282.95 305.6 284.75 306.75 287.2 306.75 289.05 306.75 290.4 306.1 291.35 305.6 292 305.05 L 292 306.45 297.35 306.45 297.35 289.05 292 289.05 292 290.5 Q 291.3 289.8 290.4 289.35 289.05 288.7 287.2 288.7 284.85 288.7 282.95 289.85 M 284.95 295.6 Q 285.45 294.7 286.35 294.15 287.15 293.65 288.35 293.65 289.55 293.65 290.4 294.15 291.25 294.7 291.75 295.6 292.2 296.5 292.2 297.7 292.2 299.55 291.15 300.65 290.1 301.85 288.3 301.85 287.25 301.85 286.3 301.3 285.4 300.75 284.9 299.85 284.45 298.9 284.45 297.7 284.45 296.45 284.95 295.6 Z"
+                                    />
+                                    <path
+                                        fill="#1c243a"
+                                        d="M 306.7 289.45 L 301.25 289.45 301.25 306.85 306.7 306.85 306.7 289.45 M 301.85 282.5 Q 301 283.35 301 284.6 301 285.8 301.85 286.75 302.7 287.6 304 287.6 305.3 287.6 306.1 286.75 306.9 285.9 306.9 284.6 306.9 283.3 306.1 282.5 305.3 281.6 304 281.6 302.75 281.6 301.85 282.5 Z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="version-footer">
+                                <div class="version-name">
+                                    Variação — fundo claro
+                                </div>
+                                <span
+                                    class="version-tag"
+                                    style="
+                                        background: rgba(30, 126, 72, 0.15);
+                                        color: #1e7e48;
+                                    "
+                                    >aprovada</span
+                                >
+                            </div>
+                        </div>
+
+                        <div class="version-item">
+                            <div
+                                class="version-bg"
+                                style="
+                                    background: #1c243a;
+                                    border-radius: 8px 8px 0 0;
+                                "
+                            >
+                                <svg
+                                    viewBox="147 279 163 30"
+                                    width="100%"
+                                    height="44"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 193.25 289 L 187.75 289 187.75 299 Q 187.75 300.4 187.05 301.1 186.4 301.9 185.1 301.9 184.2 301.9 183.65 301.55 183.05 301.2 182.75 300.55 182.45 299.9 182.45 299 L 182.45 289 176.95 289 176.95 299.05 Q 176.95 301.3 178 303.1 179.05 304.85 180.85 305.75 182.65 306.75 185.1 306.75 187.65 306.75 189.35 305.75 191.15 304.85 192.2 303.1 193.25 301.3 193.25 299.05 L 193.25 289 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 209.9 281.55 L 203.8 281.55 195.5 298.05 195.5 301.15 207.4 301.15 207.4 306.8 212.9 306.8 212.9 301.15 215.75 301.15 215.75 296.4 212.9 296.4 212.9 289.45 207.4 289.45 207.4 296.4 202.25 296.4 209.9 281.55 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 220.95 281.65 L 220.95 289.45 217 289.45 217 294.1 220.95 294.1 220.95 306.85 226.4 306.85 226.4 294.1 230.35 294.1 230.35 289.45 226.4 289.45 226.4 281.65 220.95 281.65 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 246.55 290.6 Q 245.85 289.85 244.9 289.45 244.05 289.05 242.7 289.05 239.85 289.05 238.2 290.75 L 238.2 289.4 232.75 289.4 232.75 306.8 238.2 306.8 238.2 297.05 Q 238.3 295.5 239 294.7 239.8 293.9 241.2 293.9 241.95 293.9 242.4 294.1 242.95 294.35 243.3 294.7 L 246.55 290.6 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 257 288.6 Q 254.3 288.6 252.1 289.8 249.9 291.05 248.75 293.05 247.5 295.05 247.5 297.65 247.5 300.25 248.75 302.3 249.95 304.35 252.15 305.55 254.35 306.75 257 306.75 259.7 306.75 261.85 305.55 263.95 304.4 265.25 302.3 266.5 300.25 266.5 297.65 266.5 295.05 265.25 293 263.9 290.85 261.85 289.8 259.7 288.6 257 288.6 M 254.95 294.1 Q 255.9 293.55 257 293.55 258.1 293.55 259.05 294.1 259.95 294.65 260.4 295.5 260.95 296.45 260.95 297.65 260.95 298.7 260.45 299.8 260.05 300.7 259.1 301.25 258.15 301.8 257 301.8 255.9 301.8 254.95 301.25 254.05 300.7 253.55 299.8 253.1 298.85 253.1 297.65 253.1 296.5 253.55 295.5 254.05 294.6 254.95 294.1 Z"
+                                    />
+                                    <path
+                                        fill="#b8902a"
+                                        d="M 269.4 303.45 Q 269.4 304.85 270.35 305.8 271.25 306.75 272.65 306.75 274.1 306.75 275 305.8 275.9 304.85 275.9 303.45 275.9 302 275 301.1 274.1 300.15 272.65 300.15 271.25 300.15 270.35 301.1 269.4 302 269.4 303.45 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 282.95 289.85 Q 281.1 291.05 279.95 293.1 278.85 295.2 278.85 297.7 278.85 300.3 279.95 302.4 281.05 304.4 282.95 305.6 284.75 306.75 287.2 306.75 289.05 306.75 290.4 306.1 291.35 305.6 292 305.05 L 292 306.45 297.35 306.45 297.35 289.05 292 289.05 292 290.5 Q 291.3 289.8 290.4 289.35 289.05 288.7 287.2 288.7 284.85 288.7 282.95 289.85 M 284.95 295.6 Q 285.45 294.7 286.35 294.15 287.15 293.65 288.35 293.65 289.55 293.65 290.4 294.15 291.25 294.7 291.75 295.6 292.2 296.5 292.2 297.7 292.2 299.55 291.15 300.65 290.1 301.85 288.3 301.85 287.25 301.85 286.3 301.3 285.4 300.75 284.9 299.85 284.45 298.9 284.45 297.7 284.45 296.45 284.95 295.6 Z"
+                                    />
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 306.7 289.45 L 301.25 289.45 301.25 306.85 306.7 306.85 306.7 289.45 M 301.85 282.5 Q 301 283.35 301 284.6 301 285.8 301.85 286.75 302.7 287.6 304 287.6 305.3 287.6 306.1 286.75 306.9 285.9 306.9 284.6 306.9 283.3 306.1 282.5 305.3 281.6 304 281.6 302.75 281.6 301.85 282.5 Z"
+                                    />
+                                </svg>
+                            </div>
+                            <div class="version-footer">
+                                <div class="version-name">Fundo Mandato</div>
+                                <span
+                                    class="version-tag"
+                                    style="
+                                        background: rgba(30, 126, 72, 0.15);
+                                        color: #1e7e48;
+                                    "
+                                    >aprovada</span
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">
+                        tamanhos mínimos e área de proteção
+                    </p>
+                    <div
+                        style="
+                            display: grid;
+                            grid-template-columns: 1fr 1fr;
+                            gap: 16px;
+                        "
+                    >
+                        <div>
+                            <p
+                                style="
+                                    font-size: 11px;
+                                    color: var(--ouro);
+                                    text-transform: uppercase;
+                                    letter-spacing: 1.5px;
+                                    margin-bottom: 10px;
+                                "
+                            >
+                                Tamanhos mínimos
+                            </p>
+                            <ul class="rule-list">
+                                <li class="rule-item">
+                                    <div class="rule-dot"></div>
+                                    <div>
+                                        <div class="rule-title">
+                                            Logotipo completo digital
+                                        </div>
+                                        <div class="rule-text">
+                                            120px de largura
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="rule-item">
+                                    <div class="rule-dot"></div>
+                                    <div>
+                                        <div class="rule-title">
+                                            Logotipo completo impresso
+                                        </div>
+                                        <div class="rule-text">
+                                            40mm de largura
+                                        </div>
+                                    </div>
+                                </li>
+                                <li class="rule-item">
+                                    <div class="rule-dot"></div>
+                                    <div>
+                                        <div class="rule-title">
+                                            Símbolo solo
+                                        </div>
+                                        <div class="rule-text">
+                                            24px digital · 10mm impresso
+                                        </div>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p
+                                style="
+                                    font-size: 11px;
+                                    color: var(--ouro);
+                                    text-transform: uppercase;
+                                    letter-spacing: 1.5px;
+                                    margin-bottom: 10px;
+                                "
+                            >
+                                Área de proteção
+                            </p>
+                            <p
+                                style="
+                                    font-size: 12px;
+                                    color: var(--apoio);
+                                    line-height: 1.7;
+                                "
+                            >
+                                Equivale à altura da letra Q em todos os lados.
+                                Nenhum elemento externo pode invadir essa área.
+                            </p>
+                            <div
+                                style="
+                                    margin-top: 12px;
+                                    border: 1.5px dashed var(--ouro);
+                                    border-radius: 4px;
+                                    padding: 16px;
+                                    display: flex;
+                                    align-items: center;
+                                    justify-content: center;
+                                "
+                            >
+                                <svg
+                                    viewBox="147 279 163 30"
+                                    width="140"
+                                    height="26"
+                                    xmlns="http://www.w3.org/2000/svg"
+                                >
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 193.25 289 L 187.75 289 187.75 299 Q 187.75 300.4 187.05 301.1 186.4 301.9 185.1 301.9 184.2 301.9 183.65 301.55 183.05 301.2 182.75 300.55 182.45 299.9 182.45 299 L 182.45 289 176.95 289 176.95 299.05 Q 176.95 301.3 178 303.1 179.05 304.85 180.85 305.75 182.65 306.75 185.1 306.75 187.65 306.75 189.35 305.75 191.15 304.85 192.2 303.1 193.25 301.3 193.25 299.05 L 193.25 289 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 209.9 281.55 L 203.8 281.55 195.5 298.05 195.5 301.15 207.4 301.15 207.4 306.8 212.9 306.8 212.9 301.15 215.75 301.15 215.75 296.4 212.9 296.4 212.9 289.45 207.4 289.45 207.4 296.4 202.25 296.4 209.9 281.55 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 220.95 281.65 L 220.95 289.45 217 289.45 217 294.1 220.95 294.1 220.95 306.85 226.4 306.85 226.4 294.1 230.35 294.1 230.35 289.45 226.4 289.45 226.4 281.65 220.95 281.65 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 246.55 290.6 Q 245.85 289.85 244.9 289.45 244.05 289.05 242.7 289.05 239.85 289.05 238.2 290.75 L 238.2 289.4 232.75 289.4 232.75 306.8 238.2 306.8 238.2 297.05 Q 238.3 295.5 239 294.7 239.8 293.9 241.2 293.9 241.95 293.9 242.4 294.1 242.95 294.35 243.3 294.7 L 246.55 290.6 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 257 288.6 Q 254.3 288.6 252.1 289.8 249.9 291.05 248.75 293.05 247.5 295.05 247.5 297.65 247.5 300.25 248.75 302.3 249.95 304.35 252.15 305.55 254.35 306.75 257 306.75 259.7 306.75 261.85 305.55 263.95 304.4 265.25 302.3 266.5 300.25 266.5 297.65 266.5 295.05 265.25 293 263.9 290.85 261.85 289.8 259.7 288.6 257 288.6 M 254.95 294.1 Q 255.9 293.55 257 293.55 258.1 293.55 259.05 294.1 259.95 294.65 260.4 295.5 260.95 296.45 260.95 297.65 260.95 298.7 260.45 299.8 260.05 300.7 259.1 301.25 258.15 301.8 257 301.8 255.9 301.8 254.95 301.25 254.05 300.7 253.55 299.8 253.1 298.85 253.1 297.65 253.1 296.5 253.55 295.5 254.05 294.6 254.95 294.1 Z"
+                                    />
+                                    <path
+                                        fill="#b8902a"
+                                        d="M 269.4 303.45 Q 269.4 304.85 270.35 305.8 271.25 306.75 272.65 306.75 274.1 306.75 275 305.8 275.9 304.85 275.9 303.45 275.9 302 275 301.1 274.1 300.15 272.65 300.15 271.25 300.15 270.35 301.1 269.4 302 269.4 303.45 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 282.95 289.85 Q 281.1 291.05 279.95 293.1 278.85 295.2 278.85 297.7 278.85 300.3 279.95 302.4 281.05 304.4 282.95 305.6 284.75 306.75 287.2 306.75 289.05 306.75 290.4 306.1 291.35 305.6 292 305.05 L 292 306.45 297.35 306.45 297.35 289.05 292 289.05 292 290.5 Q 291.3 289.8 290.4 289.35 289.05 288.7 287.2 288.7 284.85 288.7 282.95 289.85 M 284.95 295.6 Q 285.45 294.7 286.35 294.15 287.15 293.65 288.35 293.65 289.55 293.65 290.4 294.15 291.25 294.7 291.75 295.6 292.2 296.5 292.2 297.7 292.2 299.55 291.15 300.65 290.1 301.85 288.3 301.85 287.25 301.85 286.3 301.3 285.4 300.75 284.9 299.85 284.45 298.9 284.45 297.7 284.45 296.45 284.95 295.6 Z"
+                                    />
+                                    <path
+                                        fill="var(--clareza)"
+                                        d="M 306.7 289.45 L 301.25 289.45 301.25 306.85 306.7 306.85 306.7 289.45 M 301.85 282.5 Q 301 283.35 301 284.6 301 285.8 301.85 286.75 302.7 287.6 304 287.6 305.3 287.6 306.1 286.75 306.9 285.9 306.9 284.6 306.9 283.3 306.1 282.5 305.3 281.6 304 281.6 302.75 281.6 301.85 282.5 Z"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── 03 PALETA ─── -->
+            <section class="section" id="paleta">
+                <div class="section-header">
+                    <div class="section-number">03</div>
+                    <h2 class="section-title">Paleta de Cores</h2>
+                    <p class="section-desc">
+                        Nove cores com nomenclatura própria, hierarquia definida
+                        e regras de uso.
+                    </p>
+                </div>
+
+                <div class="card" style="margin-bottom: 16px">
+                    <p class="card-label">paleta completa</p>
+                    <div class="palette-strip" style="margin-bottom: 8px">
+                        <div
+                            class="palette-swatch"
+                            style="background: #111318; flex: 1.3"
+                        >
+                            <span class="swatch-name" style="color: #f6f4f0"
+                                >Noite</span
+                            ><span class="swatch-hex" style="color: #f6f4f0"
+                                >#111318</span
+                            >
+                        </div>
+                        <div class="palette-swatch" style="background: #1c243a">
+                            <span class="swatch-name" style="color: #f6f4f0"
+                                >Mandato</span
+                            ><span class="swatch-hex" style="color: #f6f4f0"
+                                >#1c243a</span
+                            >
+                        </div>
+                        <div class="palette-swatch" style="background: #373e50">
+                            <span class="swatch-name" style="color: #f6f4f0"
+                                >Gestão</span
+                            ><span class="swatch-hex" style="color: #f6f4f0"
+                                >#373e50</span
+                            >
+                        </div>
+                        <div class="palette-swatch" style="background: #80869a">
+                            <span class="swatch-name" style="color: #fff"
+                                >Apoio</span
+                            ><span class="swatch-hex" style="color: #fff"
+                                >#80869a</span
+                            >
+                        </div>
+                        <div
+                            class="palette-swatch"
+                            style="
+                                background: #f6f4f0;
+                                border: 0.5px solid #e0deda;
+                            "
+                        >
+                            <span class="swatch-name" style="color: #1c243a"
+                                >Clareza</span
+                            ><span class="swatch-hex" style="color: #80869a"
+                                >#f6f4f0</span
+                            >
+                        </div>
+                    </div>
+                    <div class="palette-strip">
+                        <div
+                            class="palette-swatch"
+                            style="background: #b8902a; flex: 1.3"
+                        >
+                            <span class="swatch-name" style="color: #fff8e8"
+                                >Ouro Qu4tro</span
+                            ><span class="swatch-hex" style="color: #fff8e8"
+                                >#b8902a</span
+                            >
+                        </div>
+                        <div class="palette-swatch" style="background: #d97706">
+                            <span class="swatch-name" style="color: #fff8e8"
+                                >Ação</span
+                            ><span class="swatch-hex" style="color: #fff8e8"
+                                >#d97706</span
+                            >
+                        </div>
+                        <div class="palette-swatch" style="background: #1a5fa8">
+                            <span class="swatch-name" style="color: #e6f1fb"
+                                >Institucional</span
+                            ><span class="swatch-hex" style="color: #e6f1fb"
+                                >#1a5fa8</span
+                            >
+                        </div>
+                        <div class="palette-swatch" style="background: #1e7e48">
+                            <span class="swatch-name" style="color: #eaf3de"
+                                >Desenvolvimento</span
+                            ><span class="swatch-hex" style="color: #eaf3de"
+                                >#1e7e48</span
+                            >
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">conceito e hierarquia</p>
+                    <div class="color-concept-grid">
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="
+                                    background: #111318;
+                                    border: 1px solid rgba(255, 255, 255, 0.1);
+                                "
+                            ></div>
+                            <div>
+                                <div class="color-name">Noite</div>
+                                <div class="color-text">
+                                    Fundo principal. Autoridade e profundidade.
+                                    Base de todas as aplicações institucionais.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="background: #1c243a"
+                            ></div>
+                            <div>
+                                <div class="color-name">Mandato</div>
+                                <div class="color-text">
+                                    Azul-noite profundo. Os quatro anos como
+                                    estrutura sólida e confiável.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="background: #b8902a"
+                            ></div>
+                            <div>
+                                <div class="color-name">Ouro Qu4tro</div>
+                                <div class="color-text">
+                                    Único acento cromático do logotipo. Valor,
+                                    distinção e resultado do mandato bem
+                                    conduzido.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="
+                                    background: #f6f4f0;
+                                    border: 1px solid rgba(255, 255, 255, 0.15);
+                                "
+                            ></div>
+                            <div>
+                                <div class="color-name">Clareza</div>
+                                <div class="color-text">
+                                    Branco aquecido. Transparência sem a frieza
+                                    do branco puro.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="background: #1a5fa8"
+                            ></div>
+                            <div>
+                                <div class="color-name">Institucional</div>
+                                <div class="color-text">
+                                    Azul governo. Módulos de transparência,
+                                    relatórios e comunicação oficial.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="background: #1e7e48"
+                            ></div>
+                            <div>
+                                <div class="color-name">Desenvolvimento</div>
+                                <div class="color-text">
+                                    Verde das cidades que avançam. Indicadores
+                                    positivos e metas atingidas.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="background: #d97706"
+                            ></div>
+                            <div>
+                                <div class="color-name">Ação</div>
+                                <div class="color-text">
+                                    Alertas, prazos críticos e chamadas para
+                                    ação dentro da plataforma.
+                                </div>
+                            </div>
+                        </div>
+                        <div class="color-concept-item">
+                            <div
+                                class="color-dot"
+                                style="background: #80869a"
+                            ></div>
+                            <div>
+                                <div class="color-name">Apoio</div>
+                                <div class="color-text">
+                                    Textos secundários, legendas e elementos de
+                                    suporte. Hierarquia de leitura.
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── 04 TIPOGRAFIA ─── -->
+            <section class="section" id="tipografia">
+                <div class="section-header">
+                    <div class="section-number">04</div>
+                    <h2 class="section-title">Tipografia</h2>
+                    <p class="section-desc">
+                        Três famílias com funções distintas, todas disponíveis
+                        no Google Fonts.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <div class="type-family">
+                        <span class="type-tag">Família 01 — Títulos</span>
+                        <div class="type-name">Outfit</div>
+                        <div class="type-role">
+                            Títulos, headings, wordmark, chamadas principais
+                        </div>
+                        <div class="type-specimen">
+                            <div
+                                style="
+                                    font-family: &quot;Outfit&quot;, sans-serif;
+                                    font-size: 36px;
+                                    font-weight: 600;
+                                    color: var(--clareza);
+                                    line-height: 1.1;
+                                    margin-bottom: 4px;
+                                "
+                            >
+                                Mandatos Inteligentes
+                            </div>
+                            <div
+                                style="
+                                    font-family: &quot;Outfit&quot;, sans-serif;
+                                    font-size: 24px;
+                                    font-weight: 500;
+                                    color: var(--clareza);
+                                "
+                            >
+                                Painel de gestão
+                            </div>
+                            <div
+                                style="
+                                    font-family: &quot;Outfit&quot;, sans-serif;
+                                    font-size: 18px;
+                                    font-weight: 400;
+                                    color: var(--apoio);
+                                "
+                            >
+                                Indicadores do trimestre
+                            </div>
+                        </div>
+                        <div class="type-concept">
+                            Fonte geométrica com personalidade própria. Já está
+                            no DNA do logotipo, o que garante coerência imediata
+                            entre a marca e toda a comunicação da plataforma.
+                        </div>
+                        <div class="type-sim">
+                            <div class="type-sim-label">
+                                Simulação de aplicação
+                            </div>
+                            <div class="sim-h1">
+                                Gestão municipal inteligente
+                            </div>
+                            <div class="sim-h2">Painel do mandato</div>
+                            <div class="sim-h3">Obras em andamento</div>
+                            <div class="sim-body">
+                                Acompanhe em tempo real o andamento das suas
+                                metas, obras e indicadores de desempenho do
+                                município.
+                            </div>
+                            <div class="sim-caption">
+                                Atualizado hoje às 09h14 · Qu4tro.ai
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="type-family">
+                        <span class="type-tag">Família 02 — Interface</span>
+                        <div class="type-name">Inter</div>
+                        <div class="type-role">
+                            Corpo de texto, labels, botões, navegação,
+                            formulários
+                        </div>
+                        <div class="type-specimen">
+                            <div
+                                style="
+                                    font-family: &quot;Inter&quot;, sans-serif;
+                                    font-size: 16px;
+                                    font-weight: 400;
+                                    color: var(--clareza);
+                                    margin-bottom: 4px;
+                                "
+                            >
+                                A plataforma que organiza os quatro anos do seu
+                                mandato.
+                            </div>
+                            <div
+                                style="
+                                    font-family: &quot;Inter&quot;, sans-serif;
+                                    font-size: 13px;
+                                    font-weight: 400;
+                                    color: var(--apoio);
+                                "
+                            >
+                                Acompanhe metas, prazos e entregas em tempo
+                                real.
+                            </div>
+                        </div>
+                        <div class="type-concept">
+                            Projetada especificamente para telas. Excelente
+                            legibilidade em tamanhos pequenos, suporte nativo a
+                            números tabulares e carregamento leve. A escolha
+                            mais sólida para interfaces com alta densidade de
+                            informação.
+                        </div>
+                    </div>
+
+                    <div class="type-family">
+                        <span class="type-tag">Família 03 — Dados</span>
+                        <div class="type-name">JetBrains Mono</div>
+                        <div class="type-role">
+                            Números, métricas, percentuais, indicadores
+                        </div>
+                        <div class="type-specimen">
+                            <div class="metrics-demo">
+                                <div class="metric-card">
+                                    <div class="sim-label-ui">Metas ativas</div>
+                                    <div
+                                        class="sim-data"
+                                        style="color: var(--clareza)"
+                                    >
+                                        24
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="sim-label-ui">Concluídas</div>
+                                    <div
+                                        class="sim-data"
+                                        style="color: #1e7e48"
+                                    >
+                                        18
+                                    </div>
+                                </div>
+                                <div class="metric-card">
+                                    <div class="sim-label-ui">
+                                        Dias restantes
+                                    </div>
+                                    <div
+                                        class="sim-data"
+                                        style="color: #b8902a"
+                                    >
+                                        412
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="type-concept">
+                            Fonte monoespaçada com largura fixa por caractere.
+                            Garante alinhamento preciso de números em dashboards
+                            e comparativos, além de emprestar aos dados um ar
+                            técnico e confiável.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── 05 ICONOGRAFIA ─── -->
+            <section class="section" id="iconografia">
+                <div class="section-header">
+                    <div class="section-number">05</div>
+                    <h2 class="section-title">Iconografia</h2>
+                    <p class="section-desc">
+                        Ícones SVG com traço de 1.4px, estilo outline, para
+                        todos os módulos da plataforma.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">módulos da plataforma</p>
+                    <div class="icon-grid">
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <rect
+                                        x="6"
+                                        y="9"
+                                        width="14"
+                                        height="11"
+                                        rx="3"
+                                    />
+                                    <rect
+                                        x="9"
+                                        y="13"
+                                        width="2.5"
+                                        height="2.5"
+                                        rx="0.8"
+                                        fill="#f6f4f0"
+                                        stroke="none"
+                                    />
+                                    <rect
+                                        x="14.5"
+                                        y="13"
+                                        width="2.5"
+                                        height="2.5"
+                                        rx="0.8"
+                                        fill="#f6f4f0"
+                                        stroke="none"
+                                    />
+                                    <path d="M10 20v2.5" />
+                                    <path d="M16 20v2.5" />
+                                    <path d="M13 9V6.5" />
+                                    <circle
+                                        cx="13"
+                                        cy="5.5"
+                                        r="1.2"
+                                        fill="#f6f4f0"
+                                        stroke="none"
+                                    />
+                                    <path
+                                        d="M6 14.5H4a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h2"
+                                    />
+                                    <path
+                                        d="M20 14.5h2a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-2"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Meu Assistente</div>
+                                <div class="icon-desc">
+                                    Assistente com IA pessoal do prefeito
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M13 3C9.13 3 6 6.13 6 10c0 2.6 1.4 4.9 3.5 6.2V18h7v-1.8C18.6 14.9 20 12.6 20 10c0-3.87-3.13-7-7-7z"
+                                    />
+                                    <path d="M9.5 18h7" />
+                                    <path d="M10.5 21h5" />
+                                    <path d="M11 10l1.5-3 1.5 3 1.5-3" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Projetos</div>
+                                <div class="icon-desc">
+                                    Ideias em projetos estruturados
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <circle cx="12" cy="13" r="5.5" />
+                                    <path d="M12 10v6" />
+                                    <path
+                                        d="M10 11.5h3a1 1 0 0 1 0 2h-2a1 1 0 0 0 0 2h3"
+                                    />
+                                    <path d="M19.5 6.5a9.5 9.5 0 0 1 0 13" />
+                                    <path d="M4.5 6.5a9.5 9.5 0 0 0 0 13" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Radar de Recursos</div>
+                                <div class="icon-desc">
+                                    Monitoramento de captação
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path
+                                        d="M21 13c0 4.42-3.58 8-8 8a8.1 8.1 0 0 1-3.5-.79L4 22l1.79-5.5A7.93 7.93 0 0 1 5 13c0-4.42 3.58-8 8-8s8 3.58 8 8z"
+                                    />
+                                    <path d="M9.5 13l2 2 4-4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Resolve aí</div>
+                                <div class="icon-desc">Demandas do cidadão</div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <circle cx="18" cy="6" r="2.5" />
+                                    <circle cx="18" cy="20" r="2.5" />
+                                    <circle cx="7" cy="13" r="2.5" />
+                                    <path d="M9.4 11.8l6.2-4" />
+                                    <path d="M9.4 14.2l6.2 4" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Comunicação</div>
+                                <div class="icon-desc">
+                                    Redes sociais e conteúdo
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    xmlns="http://www.w3.org/2000/svg"
+                                    height="24px"
+                                    viewBox="0 -960 960 960"
+                                    width="24px"
+                                    fill="#FFFFFF"
+                                >
+                                    <path
+                                        d="M480-80 120-436l200-244h320l200 244L480-80ZM183-680l-85-85 57-56 85 85-57 56Zm257-80v-120h80v120h-80Zm335 80-57-57 85-85 57 57-85 85ZM480-192l210-208H270l210 208ZM358-600l-99 120h442l-99-120H358Z"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Ações</div>
+                                <div class="icon-desc">
+                                    Plano de governo e evolução
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <rect
+                                        x="4"
+                                        y="5"
+                                        width="18"
+                                        height="17"
+                                        rx="2.5"
+                                    />
+                                    <path d="M4 10h18" />
+                                    <path d="M9 3v4" />
+                                    <path d="M17 3v4" />
+                                    <path d="M8 15h3" />
+                                    <path d="M8 18.5h5" />
+                                    <circle cx="17.5" cy="16.5" r="3.5" />
+                                    <path d="M16 16.5l1 1 2-2" />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Pra hoje</div>
+                                <div class="icon-desc">
+                                    Resumo diário do gestor
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="icon-item">
+                            <div class="icon-box">
+                                <svg
+                                    width="22"
+                                    height="22"
+                                    viewBox="0 0 26 26"
+                                    fill="none"
+                                    stroke="#f6f4f0"
+                                    stroke-width="1.4"
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                >
+                                    <path d="M4 7h18" />
+                                    <path d="M4 13h18" />
+                                    <path d="M4 19h18" />
+                                    <circle
+                                        cx="9"
+                                        cy="7"
+                                        r="2.2"
+                                        fill="#1c243a"
+                                    />
+                                    <circle
+                                        cx="15"
+                                        cy="13"
+                                        r="2.2"
+                                        fill="#1c243a"
+                                    />
+                                    <circle
+                                        cx="10"
+                                        cy="19"
+                                        r="2.2"
+                                        fill="#1c243a"
+                                    />
+                                </svg>
+                            </div>
+                            <div>
+                                <div class="icon-label">Configurações</div>
+                                <div class="icon-desc">
+                                    Parametrização da plataforma
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── 06 GRID ─── -->
+            <section class="section" id="grid">
+                <div class="section-header">
+                    <div class="section-number">06</div>
+                    <h2 class="section-title">Grid e Espaçamento</h2>
+                    <p class="section-desc">
+                        Sistema responsivo com cinco breakpoints e escala de
+                        espaçamento baseada em múltiplos de 4.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">breakpoints</p>
+                    <div class="bp-grid">
+                        <div class="bp-row">
+                            <span
+                                class="bp-badge"
+                                style="background: #1c243a; color: #f6f4f0"
+                                >xs</span
+                            >
+                            <div class="bp-info">
+                                <div class="bp-name">Mobile — 0 a 479px</div>
+                                <div class="bp-spec">
+                                    4 colunas · gutter 16px · margem 16px ·
+                                    bottom navigation
+                                </div>
+                                <div class="col-vis">
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="
+                                            background: var(--gestao);
+                                            opacity: 0.3;
+                                        "
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="
+                                            background: var(--gestao);
+                                            opacity: 0.3;
+                                        "
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="
+                                            background: var(--gestao);
+                                            opacity: 0.3;
+                                        "
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="
+                                            background: var(--gestao);
+                                            opacity: 0.3;
+                                        "
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bp-row">
+                            <span
+                                class="bp-badge"
+                                style="background: #373e50; color: #f6f4f0"
+                                >sm</span
+                            >
+                            <div class="bp-info">
+                                <div class="bp-name">
+                                    Mobile largo — 480 a 767px
+                                </div>
+                                <div class="bp-spec">
+                                    6 colunas · gutter 20px · margem 20px
+                                </div>
+                                <div class="col-vis">
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="
+                                            background: var(--gestao);
+                                            opacity: 0.3;
+                                        "
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="
+                                            background: var(--gestao);
+                                            opacity: 0.3;
+                                        "
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bp-row">
+                            <span
+                                class="bp-badge"
+                                style="background: #1a5fa8; color: #f6f4f0"
+                                >md</span
+                            >
+                            <div class="bp-info">
+                                <div class="bp-name">Tablet — 768 a 1023px</div>
+                                <div class="bp-spec">
+                                    8 colunas · gutter 24px · sidebar com ícones
+                                </div>
+                                <div class="col-vis">
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bp-row">
+                            <span
+                                class="bp-badge"
+                                style="background: #1e7e48; color: #f6f4f0"
+                                >lg</span
+                            >
+                            <div class="bp-info">
+                                <div class="bp-name">
+                                    Desktop — 1024 a 1439px
+                                </div>
+                                <div class="bp-spec">
+                                    12 colunas · gutter 24px · margem 32px ·
+                                    sidebar expandida
+                                </div>
+                                <div class="col-vis">
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="bp-row">
+                            <span
+                                class="bp-badge"
+                                style="background: var(--ouro); color: #1c243a"
+                                >xl</span
+                            >
+                            <div class="bp-info">
+                                <div class="bp-name">
+                                    Desktop largo — 1440px+
+                                </div>
+                                <div class="bp-spec">
+                                    12 colunas · max-width 1440px centralizado ·
+                                    gutter 32px
+                                </div>
+                                <div class="col-vis">
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                    <div
+                                        class="col-b"
+                                        style="background: var(--mandato)"
+                                    ></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── 07 TOM DE VOZ ─── -->
+            <section class="section" id="voz">
+                <div class="section-header">
+                    <div class="section-number">07</div>
+                    <h2 class="section-title">Tom de Voz</h2>
+                    <p class="section-desc">
+                        Como a Qu4tro.ai fala. Dois registros, seis atributos e
+                        regras práticas de escrita.
+                    </p>
+                </div>
+
+                <div class="card" style="margin-bottom: 16px">
+                    <p class="card-label">atributos</p>
+                    <div class="voice-attrs">
+                        <div class="voice-attr">
+                            <div class="attr-label">Direto</div>
+                            <div class="attr-val">
+                                Vai ao ponto sem introduções
+                            </div>
+                        </div>
+                        <div class="voice-attr">
+                            <div class="attr-label">Prático</div>
+                            <div class="attr-val">
+                                Fala do que o prefeito precisa fazer
+                            </div>
+                        </div>
+                        <div class="voice-attr">
+                            <div class="attr-label">Respeitoso</div>
+                            <div class="attr-val">
+                                Trata o prefeito como adulto
+                            </div>
+                        </div>
+                        <div class="voice-attr">
+                            <div class="attr-label">Sem jargão</div>
+                            <div class="attr-val">
+                                Tecnologia em segundo plano
+                            </div>
+                        </div>
+                        <div class="voice-attr">
+                            <div class="attr-label">Confiante</div>
+                            <div class="attr-val">Recomenda com clareza</div>
+                        </div>
+                        <div class="voice-attr">
+                            <div class="attr-label">Em português</div>
+                            <div class="attr-val">Sem termos em inglês</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card" style="margin-bottom: 16px">
+                    <p class="card-label">o que evitar × o que usar</p>
+                    <div class="pair-grid">
+                        <div class="pair-bad">
+                            <div class="pair-tag" style="color: #c0392b">
+                                Evitar
+                            </div>
+                            <div class="pair-text">
+                                "Bem-vindo ao sistema integrado de gestão de
+                                mandatos municipais baseado em inteligência
+                                artificial."
+                            </div>
+                        </div>
+                        <div class="pair-good">
+                            <div class="pair-tag" style="color: #1e7e48">
+                                Usar
+                            </div>
+                            <div class="pair-text">
+                                "Aqui é onde o seu mandato toma forma. Vamos
+                                começar?"
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pair-grid">
+                        <div class="pair-bad">
+                            <div class="pair-tag" style="color: #c0392b">
+                                Evitar
+                            </div>
+                            <div class="pair-text">
+                                "Sua solicitação foi processada com sucesso e
+                                encaminhada para o responsável designado."
+                            </div>
+                        </div>
+                        <div class="pair-good">
+                            <div class="pair-tag" style="color: #1e7e48">
+                                Usar
+                            </div>
+                            <div class="pair-text">
+                                "Demanda enviada. O responsável já foi avisado."
+                            </div>
+                        </div>
+                    </div>
+                    <div class="pair-grid">
+                        <div class="pair-bad">
+                            <div class="pair-tag" style="color: #c0392b">
+                                Evitar
+                            </div>
+                            <div class="pair-text">
+                                "Parabéns! Você completou 75% das suas metas!
+                                Continue assim!"
+                            </div>
+                        </div>
+                        <div class="pair-good">
+                            <div class="pair-tag" style="color: #1e7e48">
+                                Usar
+                            </div>
+                            <div class="pair-text">
+                                "75% das metas concluídas. Faltam 6 para fechar
+                                o trimestre."
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">linguagem por contexto</p>
+                    <div class="context-item">
+                        <div class="context-tag">Primeira configuração</div>
+                        <div class="context-text">
+                            "Antes de começar, preciso entender o seu mandato.
+                            Leva uns 10 minutos e faz toda a diferença no que
+                            você vai ver aqui."
+                        </div>
+                    </div>
+                    <div class="context-item">
+                        <div class="context-tag">Pra hoje</div>
+                        <div class="context-text">
+                            "Bom dia. Três coisas para você ficar de olho hoje:
+                            o prazo do convênio de infraestrutura vence sexta, a
+                            reunião com a câmara está confirmada para as 14h e
+                            tem uma menção negativa circulando nas redes."
+                        </div>
+                    </div>
+                    <div class="context-item">
+                        <div class="context-tag">Alerta de prazo</div>
+                        <div class="context-text">
+                            "O edital do Programa Água para Todos fecha em 8
+                            dias. Você ainda não iniciou a proposta. Quer que eu
+                            monte o projeto agora?"
+                        </div>
+                    </div>
+                    <div class="context-item">
+                        <div class="context-tag">Confirmação de ação</div>
+                        <div class="context-text">
+                            "Demanda registrada e enviada para a Secretaria de
+                            Obras. Prazo estimado: 5 dias úteis."
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ─── 08 APLICAÇÃO ─── -->
+            <section class="section" id="aplicacao">
+                <div class="section-header">
+                    <div class="section-number">08</div>
+                    <h2 class="section-title">Regras de Aplicação</h2>
+                    <p class="section-desc">
+                        Usos corretos, restrições e boas práticas para manter a
+                        integridade da marca.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">regras gerais</p>
+                    <ul class="rule-list">
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    Arquivo original sempre
+                                </div>
+                                <div class="rule-text">
+                                    O logotipo nunca deve ser redesenhado,
+                                    digitado ou recriado. Use sempre os arquivos
+                                    SVG ou PNG fornecidos.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    SVG para digital, PNG para demais usos
+                                </div>
+                                <div class="rule-text">
+                                    O SVG garante qualidade em qualquer tamanho.
+                                    O PNG com fundo transparente é usado quando
+                                    o SVG não é suportado.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    Fundo sempre sólido
+                                </div>
+                                <div class="rule-text">
+                                    O logotipo nunca aparece sobre texturas,
+                                    padrões ou fotografias sem uma camada de cor
+                                    sólida aprovada por baixo.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    Sem distorções ou rotações
+                                </div>
+                                <div class="rule-text">
+                                    O logotipo é sempre horizontal e nas
+                                    proporções originais. Nenhuma transformação
+                                    é permitida.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    Sem sombras ou efeitos
+                                </div>
+                                <div class="rule-text">
+                                    Sem sombras, brilhos, contornos ou qualquer
+                                    efeito aplicado sobre o logotipo.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    O ponto dourado é inviolável
+                                </div>
+                                <div class="rule-text">
+                                    Parte integral da marca. Removê-lo ou
+                                    substituí-lo por outra cor desfaz o único
+                                    acento cromático do logotipo.
+                                </div>
+                            </div>
+                        </li>
+                        <li class="rule-item">
+                            <div class="rule-dot"></div>
+                            <div>
+                                <div class="rule-title">
+                                    Slogan como elemento opcional
+                                </div>
+                                <div class="rule-text">
+                                    "Mandatos Inteligentes" aparece quando há
+                                    espaço e contexto de apresentação da marca.
+                                    Não é obrigatório em todas as aplicações.
+                                </div>
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+            </section>
+
+            <!-- ─── 09 DIGITAL ─── -->
+            <section class="section" id="digital">
+                <div class="section-header">
+                    <div class="section-number">09</div>
+                    <h2 class="section-title">Favicon e Ícone de App</h2>
+                    <p class="section-desc">
+                        Aplicações digitais do símbolo em tamanhos reduzidos
+                        para navegadores e lojas de aplicativos.
+                    </p>
+                </div>
+
+                <div class="card">
+                    <p class="card-label">favicon — navegador</p>
+                    <div class="app-icons-row" style="margin-bottom: 20px">
+                        <div class="app-icon-item">
+                            <svg
+                                width="16"
+                                height="16"
+                                viewBox="0 0 16 16"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect
+                                    width="16"
+                                    height="16"
+                                    fill="#111318"
+                                    rx="3"
+                                />
+                                <svg
+                                    x="2"
+                                    y="2"
+                                    width="12"
+                                    height="12"
+                                    viewBox="147 279 30 30"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                </svg>
+                            </svg>
+                            <span class="app-icon-label">16px</span>
+                        </div>
+                        <div class="app-icon-item">
+                            <svg
+                                width="32"
+                                height="32"
+                                viewBox="0 0 32 32"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect
+                                    width="32"
+                                    height="32"
+                                    fill="#111318"
+                                    rx="5"
+                                />
+                                <svg
+                                    x="4"
+                                    y="4"
+                                    width="24"
+                                    height="24"
+                                    viewBox="147 279 30 30"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                </svg>
+                            </svg>
+                            <span class="app-icon-label">32px</span>
+                        </div>
+                        <div class="app-icon-item">
+                            <svg
+                                width="48"
+                                height="48"
+                                viewBox="0 0 48 48"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect
+                                    width="48"
+                                    height="48"
+                                    fill="#111318"
+                                    rx="7"
+                                />
+                                <svg
+                                    x="6"
+                                    y="6"
+                                    width="36"
+                                    height="36"
+                                    viewBox="147 279 30 30"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                </svg>
+                            </svg>
+                            <span class="app-icon-label">48px</span>
+                        </div>
+                    </div>
+
+                    <p class="card-label" style="margin-top: 8px">
+                        ícone de aplicativo
+                    </p>
+                    <div class="app-icons-row">
+                        <div class="app-icon-item">
+                            <svg
+                                width="60"
+                                height="60"
+                                viewBox="0 0 60 60"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect
+                                    width="60"
+                                    height="60"
+                                    fill="#111318"
+                                    rx="13"
+                                />
+                                <svg
+                                    x="8"
+                                    y="8"
+                                    width="44"
+                                    height="44"
+                                    viewBox="147 279 30 30"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                </svg>
+                            </svg>
+                            <span class="app-icon-label">60px iOS</span>
+                        </div>
+                        <div class="app-icon-item">
+                            <svg
+                                width="80"
+                                height="80"
+                                viewBox="0 0 80 80"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect
+                                    width="80"
+                                    height="80"
+                                    fill="#111318"
+                                    rx="16"
+                                />
+                                <svg
+                                    x="10"
+                                    y="10"
+                                    width="60"
+                                    height="60"
+                                    viewBox="147 279 30 30"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                </svg>
+                            </svg>
+                            <span class="app-icon-label">192px PWA</span>
+                        </div>
+                        <div class="app-icon-item">
+                            <svg
+                                width="100"
+                                height="100"
+                                viewBox="0 0 100 100"
+                                xmlns="http://www.w3.org/2000/svg"
+                            >
+                                <rect
+                                    width="100"
+                                    height="100"
+                                    fill="#111318"
+                                    rx="22"
+                                />
+                                <svg
+                                    x="13"
+                                    y="13"
+                                    width="74"
+                                    height="74"
+                                    viewBox="147 279 30 30"
+                                >
+                                    <path
+                                        fill="#f6f4f0"
+                                        d="M 148.3 287 Q 147.7 288.7 147.5 289.95 L 147.3 292.15 Q 147.3 294.9 148.35 297.3 149.35 299.65 151.15 301.45 153 303.3 155.4 304.25 157.85 305.25 160.65 305.25 L 161.4 305.25 164.1 304.85 Q 165.05 304.6 165.85 304.25 167.05 303.75 168.15 303.05 L 171.95 306.85 175.15 303.55 171.45 299.85 171.5 299.8 Q 172.25 298.8 172.9 297.3 173.9 294.9 173.9 292.2 173.9 289.45 172.9 287 171.75 284.45 170.05 282.9 168.45 281.25 165.85 280.1 163.5 279.15 160.6 279.15 157.7 279.15 155.35 280.1 152.85 281.2 151.15 282.9 149.45 284.45 148.3 287 M 155.15 286.6 Q 157.45 284.25 160.5 284.25 163.65 284.25 165.85 286.6 168.1 289 168.1 292.3 168.1 294.1 167.4 295.75 L 163.45 291.8 160.15 295.05 164.35 299.25 Q 162.65 300.3 160.5 300.3 157.35 300.3 155.15 297.95 152.95 295.7 152.95 292.3 152.95 288.95 155.15 286.6 Z"
+                                    />
+                                </svg>
+                            </svg>
+                            <span class="app-icon-label">1024px App Store</span>
+                        </div>
+                    </div>
+
+                    <p
+                        style="
+                            font-size: 11px;
+                            color: var(--apoio);
+                            margin-top: 16px;
+                            line-height: 1.7;
+                        "
+                    >
+                        Em tamanhos reduzidos, o ponto dourado some e vira ruído
+                        visual. O símbolo do Q sozinho carrega o reconhecimento
+                        da marca com mais clareza nesses contextos.
+                    </p>
+                </div>
+            </section>
+        </main>
+
+        <script>
+            const toggle = document.getElementById("menuToggle");
+            const sidebar = document.getElementById("sidebar");
+            const overlay = document.getElementById("overlay");
+            const navLinks = document.querySelectorAll(".nav-item a");
+
+            function openMenu() {
+                toggle.classList.add("open");
+                sidebar.classList.add("open");
+                overlay.classList.add("show");
+            }
+
+            function closeMenu() {
+                toggle.classList.remove("open");
+                sidebar.classList.remove("open");
+                overlay.classList.remove("show");
+            }
+
+            toggle.addEventListener("click", () => {
+                sidebar.classList.contains("open") ? closeMenu() : openMenu();
+            });
+
+            overlay.addEventListener("click", closeMenu);
+
+            navLinks.forEach((link) => {
+                link.addEventListener("click", () => {
+                    closeMenu();
+                });
+            });
+
+            // Active nav on scroll
+            const sections = document.querySelectorAll("section[id]");
+
+            const observer = new IntersectionObserver(
+                (entries) => {
+                    entries.forEach((entry) => {
+                        if (entry.isIntersecting) {
+                            navLinks.forEach((link) => {
+                                link.classList.remove("active");
+                                if (
+                                    link.getAttribute("href") ===
+                                    "#" + entry.target.id
+                                ) {
+                                    link.classList.add("active");
+                                }
+                            });
+                        }
+                    });
+                },
+                { threshold: 0.3 },
+            );
+
+            sections.forEach((s) => observer.observe(s));
+        </script>
+    </body>
+</html>

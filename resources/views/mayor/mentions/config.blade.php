@@ -11,7 +11,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             background: var(--ink);
@@ -32,7 +32,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             background: var(--white);
@@ -92,7 +92,7 @@
             padding: .55rem .8rem;
             border: 1.5px solid var(--border);
             border-radius: 8px;
-            font-family: 'DM Sans', sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .85rem;
             color: var(--ink);
             background: var(--white);
@@ -129,7 +129,7 @@
         }
 
         .cfg-header h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.35rem;
             color: var(--ink);
             margin: 0;

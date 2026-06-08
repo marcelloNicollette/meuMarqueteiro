@@ -7,10 +7,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Meu Assistente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
     <link
-        href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,500;1,400&family=DM+Sans:wght@300;400;500&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
         rel="stylesheet">
     <style>
         *,
@@ -22,63 +22,85 @@
         }
 
         :root {
-            --ink: #111318;
-            --ink-soft: #3e424f;
-            --ink-muted: #80869a;
-            --gold: #b8902a;
-            --gold-lt: #cfaa50;
-            --accent: #1a5fa8;
-            --surface: #f6f4f0;
+            --noite: #111318;
+            --mandato: #1c243a;
+            --gestao: #373e50;
+            --apoio: #80869a;
+            --clareza: #f6f4f0;
+            --ouro: #b8902a;
+            --acao: #d97706;
+            --institucional: #1a5fa8;
+            --desenvolvimento: #1e7e48;
+            --ink: var(--noite);
+            --ink-soft: var(--gestao);
+            --ink-muted: var(--apoio);
+            --gold: var(--ouro);
+            --gold-lt: #d1af5b;
+            --accent: var(--institucional);
+            --surface: var(--clareza);
+            --surface-soft: #f1eee8;
             --white: #ffffff;
-            --border: #e5e1da;
-            --border-lt: #edeae4;
-            --nav-h: 60px;
-            --sidebar-w: 72px;
-            --green: #1e7e48;
+            --border: #e1ddd6;
+            --border-lt: #ece7df;
+            --nav-h: 76px;
+            --sidebar-w: 96px;
+            --green: var(--desenvolvimento);
             --green-bg: #edf7f1;
             --red: #b52b2b;
             --red-bg: #fdf0f0;
+            --shadow-soft: 0 18px 45px rgba(17, 19, 24, 0.08);
         }
 
         html,
         body {
             height: 100%;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             background: var(--surface);
             color: var(--ink);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(184, 144, 42, 0.08), transparent 26%),
+                linear-gradient(180deg, #faf8f4 0%, var(--surface) 100%);
         }
 
         /* ── Nav lateral (ícones) ─────────────────────────────── */
         .sidenav {
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
+            top: 16px;
+            left: 16px;
+            bottom: 16px;
             width: var(--sidebar-w);
-            background: var(--ink);
+            background: linear-gradient(180deg, var(--noite) 0%, var(--mandato) 100%);
             display: flex;
             flex-direction: column;
             align-items: center;
-            padding: 1.2rem 0;
+            padding: 1.15rem 0;
             z-index: 200;
+            border-radius: 28px;
+            box-shadow: 0 28px 50px rgba(17, 19, 24, 0.22);
+            border: 1px solid rgba(255, 255, 255, 0.06);
         }
 
         .sidenav-logo {
-            width: 36px;
-            height: 36px;
-            background: var(--gold);
-            border-radius: 9px;
+            width: 52px;
+            height: 52px;
+            background: linear-gradient(135deg, rgba(184, 144, 42, 0.2) 0%, rgba(184, 144, 42, 0.35) 100%);
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 1.75rem;
+            margin-bottom: 1.85rem;
             flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(12px);
         }
 
-        .sidenav-logo svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--ink);
+        .sidenav-logo img {
+            width: 34px;
+            height: 34px;
+            object-fit: contain;
         }
 
         .sidenav-nav {
@@ -87,52 +109,73 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: .25rem;
+            gap: .5rem;
         }
 
         .sidenav-item {
-            width: 44px;
-            height: 44px;
-            border-radius: 10px;
+            width: 54px;
+            height: 54px;
+            border-radius: 18px;
             display: flex;
             align-items: center;
             justify-content: center;
-            color: rgba(255, 255, 255, .4);
+            color: rgba(246, 244, 240, 0.68);
             text-decoration: none;
-            transition: background .15s, color .15s;
+            transition: background .18s, color .18s, transform .18s, box-shadow .18s;
             position: relative;
+            border: 1px solid transparent;
         }
 
         .sidenav-item:hover {
-            background: rgba(255, 255, 255, .08);
-            color: rgba(255, 255, 255, .8);
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--clareza);
+            transform: translateY(-1px);
         }
 
         .sidenav-item.active {
-            background: rgba(184, 144, 42, .2);
+            background: rgba(184, 144, 42, 0.18);
             color: var(--gold-lt);
+            border-color: rgba(184, 144, 42, 0.18);
+            box-shadow: inset 0 0 0 1px rgba(184, 144, 42, 0.2);
+        }
+
+        .sidenav-item.active::before {
+            content: "";
+            position: absolute;
+            left: -8px;
+            width: 4px;
+            height: 22px;
+            border-radius: 999px;
+            background: var(--gold);
         }
 
         .sidenav-item svg {
-            width: 20px;
-            height: 20px;
+            width: 23px;
+            height: 23px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* Tooltip */
         .sidenav-item::after {
             content: attr(data-label);
             position: absolute;
-            left: calc(100% + 10px);
-            background: var(--ink);
-            color: #fff;
-            font-size: .72rem;
+            left: calc(100% + 14px);
+            background: rgba(28, 36, 58, 0.96);
+            color: var(--clareza);
+            font-size: .74rem;
             white-space: nowrap;
-            padding: .3rem .65rem;
-            border-radius: 5px;
+            padding: .45rem .72rem;
+            border-radius: 999px;
             opacity: 0;
             pointer-events: none;
             transform: translateX(-4px);
             transition: opacity .15s, transform .15s;
+            border: 1px solid rgba(255, 255, 255, 0.06);
+            box-shadow: 0 10px 24px rgba(17, 19, 24, 0.18);
         }
 
         .sidenav-item:hover::after {
@@ -142,90 +185,109 @@
 
         .sidenav-item .dot {
             position: absolute;
-            top: 7px;
-            right: 7px;
-            width: 7px;
-            height: 7px;
+            top: 10px;
+            right: 10px;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
             background: var(--gold);
-            border: 1.5px solid var(--ink);
+            border: 1.5px solid var(--mandato);
         }
 
         .sidenav-bottom {
-            padding-bottom: .5rem;
+            padding-bottom: .35rem;
         }
 
         .sidenav-avatar {
-            width: 36px;
-            height: 36px;
-            border-radius: 50%;
-            background: var(--gold);
+            width: 46px;
+            height: 46px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Lora', serif;
-            font-size: .9rem;
-            color: var(--ink);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1rem;
+            color: var(--clareza);
             font-weight: 600;
             cursor: pointer;
             flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         /* ── Main ─────────────────────────────────────────────── */
         .main {
-            margin-left: var(--sidebar-w);
+            margin-left: calc(var(--sidebar-w) + 32px);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding: 16px 18px 16px 0;
         }
 
         /* ── Topbar ───────────────────────────────────────────── */
         .topbar {
-            height: var(--nav-h);
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
+            min-height: var(--nav-h);
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(225, 221, 214, 0.9);
             display: flex;
             align-items: center;
-            padding: 0 1.75rem;
-            gap: 1rem;
+            padding: 1rem 1.4rem;
+            gap: .85rem;
             position: sticky;
-            top: 0;
+            top: 16px;
             z-index: 100;
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-soft);
+            flex-wrap: wrap;
         }
 
         .topbar-title {
-            font-family: 'Lora', serif;
-            font-size: 1rem;
-            color: var(--ink);
+            font-family: 'Outfit', sans-serif;
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--mandato);
             flex: 1;
+            letter-spacing: -0.02em;
         }
 
         .topbar-date {
-            font-size: .78rem;
+            font-size: .8rem;
             color: var(--ink-muted);
+            padding: .55rem .85rem;
+            border-radius: 999px;
+            background: var(--surface-soft);
+            border: 1px solid var(--border-lt);
         }
 
         .topbar-briefing {
             display: flex;
             align-items: center;
             gap: .5rem;
-            padding: .4rem .8rem;
-            border-radius: 20px;
-            background: var(--gold-lt);
-            color: var(--ink);
-            font-size: .78rem;
-            font-weight: 500;
+            padding: .72rem 1rem;
+            border-radius: 16px;
+            background: var(--mandato);
+            color: var(--clareza);
+            font-size: .82rem;
+            font-weight: 600;
             text-decoration: none;
-            transition: opacity .15s;
+            transition: transform .15s, box-shadow .15s, background .15s;
+            box-shadow: 0 12px 22px rgba(28, 36, 58, 0.16);
         }
 
         .topbar-briefing:hover {
-            opacity: .85;
+            background: var(--noite);
+            transform: translateY(-1px);
         }
 
         .topbar-briefing svg {
-            width: 13px;
-            height: 13px;
+            width: 16px;
+            height: 16px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.4;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         /* ── Page ─────────────────────────────────────────────── */
@@ -233,18 +295,19 @@
             flex: 1;
             display: flex;
             flex-direction: column;
+            margin-top: 1rem;
         }
 
         /* ── Utilitários ──────────────────────────────────────── */
         .btn {
             display: inline-flex;
             align-items: center;
-            gap: .45rem;
-            padding: .55rem 1rem;
-            border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
-            font-size: .83rem;
-            font-weight: 500;
+            gap: .5rem;
+            padding: .72rem 1.05rem;
+            border-radius: 14px;
+            font-family: "Inter", sans-serif;
+            font-size: .84rem;
+            font-weight: 600;
             cursor: pointer;
             border: none;
             text-decoration: none;
@@ -257,27 +320,59 @@
         }
 
         .btn-dark {
-            background: var(--ink);
-            color: var(--white);
+            background: var(--mandato);
+            color: var(--clareza);
         }
 
         .btn-dark:hover {
-            background: #1e2230;
+            background: var(--noite);
         }
 
         .btn-outline {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.72);
             color: var(--ink-soft);
-            border: 1.5px solid var(--border);
+            border: 1px solid var(--border);
         }
 
         .btn-outline:hover {
-            background: var(--surface);
+            background: var(--white);
         }
 
         .btn-gold {
             background: var(--gold);
-            color: var(--white);
+            color: var(--noite);
+        }
+
+        .topbar-logout {
+            display: inline-flex;
+            align-items: center;
+            gap: .45rem;
+            padding: .72rem .95rem;
+            background: rgba(255, 255, 255, 0.72);
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            font-family: 'Inter', sans-serif;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--ink-muted);
+            cursor: pointer;
+            transition: background .15s, color .15s, transform .15s;
+        }
+
+        .topbar-logout:hover {
+            background: var(--white);
+            color: var(--mandato);
+            transform: translateY(-1px);
+        }
+
+        .topbar-logout svg {
+            width: 15px;
+            height: 15px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.8;
+            stroke-linecap: round;
+            stroke-linejoin: round;
         }
 
         @keyframes fadeIn {
@@ -294,6 +389,53 @@
 
         .page-body {
             animation: fadeIn .25s ease;
+        }
+
+        @media (max-width: 1023px) {
+            .sidenav {
+                left: 12px;
+                top: 12px;
+                bottom: 12px;
+                width: 84px;
+            }
+
+            .main {
+                margin-left: 108px;
+                padding-right: 12px;
+            }
+        }
+
+        @media (max-width: 767px) {
+            .sidenav {
+                position: static;
+                width: auto;
+                height: auto;
+                flex-direction: row;
+                justify-content: space-between;
+                border-radius: 24px;
+                margin: 12px;
+                padding: .85rem;
+            }
+
+            .sidenav-nav {
+                flex-direction: row;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .sidenav-item::after,
+            .sidenav-item.active::before {
+                display: none;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 0 12px 12px;
+            }
+
+            .topbar {
+                top: 0;
+            }
         }
     </style>
     @stack('styles')
@@ -317,10 +459,7 @@
     {{-- ── Sidenav ──────────────────────────────────────────────── --}}
     <nav class="sidenav">
         <div class="sidenav-logo">
-            <svg viewBox="0 0 24 24">
-                <path
-                    d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 14H9V8h2v8zm4 0h-2V8h2v8z" />
-            </svg>
+            <img src="/images/logo-borda-white.png" alt="Qu4tro.ai">
         </div>
 
         <div class="sidenav-nav">
@@ -332,27 +471,51 @@
             </a>-->
             <a href="{{ route('mayor.situacao') }}"
                 class="sidenav-item {{ request()->routeIs('mayor.situacao*') ? 'active' : '' }}" data-label="Painel">
-                <img src="/images/icone-painel.svg" alt="">
+                <svg viewBox="0 0 26 26" aria-hidden="true">
+                    <rect x="4" y="5" width="7" height="7" rx="2" />
+                    <rect x="15" y="5" width="7" height="11" rx="2" />
+                    <rect x="4" y="15" width="7" height="7" rx="2" />
+                    <rect x="15" y="19" width="7" height="3" rx="1.5" />
+                </svg>
             </a>
             <a href="{{ $praHojeRoute }}"
                 class="sidenav-item {{ request()->routeIs('pra-hoje.*') || request()->routeIs('mayor.mandato.briefings*') ? 'active' : '' }}"
                 data-label="Pra hoje!">
-                <svg viewBox="0 0 24 24" fill="#FFFFFF">
-                    <path
-                        d="M12 4a1 1 0 0 1 1 1v1.05a6 6 0 1 1-2 0V5a1 1 0 0 1 1-1Zm0 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm0-6a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0V3a1 1 0 0 1 1-1Zm0 17a1 1 0 0 1 1 1v.5a1 1 0 1 1-2 0V20a1 1 0 0 1 1-1Zm9-8a1 1 0 0 1 0 2h-.5a1 1 0 1 1 0-2H21ZM4.5 11a1 1 0 1 1 0 2H4a1 1 0 1 1 0-2h.5Zm13.16-5.66a1 1 0 0 1 1.41 1.41l-.35.36a1 1 0 0 1-1.42-1.42l.36-.35Zm-11.32 11.32a1 1 0 0 1 1.41 1.41l-.35.36a1 1 0 0 1-1.42-1.42l.36-.35Zm12.03 1.77a1 1 0 0 1-1.41 0l-.36-.35a1 1 0 1 1 1.42-1.42l.35.36a1 1 0 0 1 0 1.41ZM7.05 7.4a1 1 0 0 1-1.41 0l-.36-.35A1 1 0 0 1 6.7 5.64l.35.35a1 1 0 0 1 0 1.42Z" />
+                <svg viewBox="0 0 26 26" aria-hidden="true">
+                    <rect x="4" y="5" width="18" height="17" rx="3" />
+                    <path d="M4 10h18" />
+                    <path d="M9 3v4" />
+                    <path d="M17 3v4" />
+                    <path d="M8 15h3" />
+                    <path d="M8 18.5h5" />
+                    <circle cx="17.5" cy="16.5" r="3.5" />
+                    <path d="M16 16.5l1 1 2-2" />
                 </svg>
             </a>
             <a href="{{ $resolveAiRoute }}"
                 class="sidenav-item {{ request()->routeIs('mayor.mandato.demands*') || request()->routeIs('resolve-ai.demands*') ? 'active' : '' }}"
                 data-label="Resolve ai">
-                <img src="/images/icone-anotaai.svg" alt="">
+                <svg viewBox="0 0 26 26" aria-hidden="true">
+                    <path d="M21 13c0 4.42-3.58 8-8 8a8.1 8.1 0 0 1-3.5-.79L4 22l1.79-5.5A7.93 7.93 0 0 1 5 13c0-4.42 3.58-8 8-8s8 3.58 8 8z" />
+                    <path d="M9.5 13l2 2 4-4" />
+                </svg>
             </a>
             @if ($isMayorUser)
 
                 <a href="{{ route('mayor.chat.index') }}"
                     class="sidenav-item {{ request()->routeIs('mayor.chat*') ? 'active' : '' }}"
                     data-label="Meu Assistente">
-                    <img src="/images/icone-meu-marqueteiro.svg" alt="">
+                    <svg viewBox="0 0 26 26" aria-hidden="true">
+                        <rect x="6" y="9" width="14" height="11" rx="3" />
+                        <rect x="9" y="13" width="2.5" height="2.5" rx="0.8" fill="currentColor" stroke="none" />
+                        <rect x="14.5" y="13" width="2.5" height="2.5" rx="0.8" fill="currentColor" stroke="none" />
+                        <path d="M10 20v2.5" />
+                        <path d="M16 20v2.5" />
+                        <path d="M13 9V6.5" />
+                        <circle cx="13" cy="5.5" r="1.2" fill="currentColor" stroke="none" />
+                        <path d="M6 14.5H4a1 1 0 0 0-1 1v1a1 1 0 0 0 1 1h2" />
+                        <path d="M20 14.5h2a1 1 0 0 1 1 1v1a1 1 0 0 1-1 1h-2" />
+                    </svg>
                     @if (false)
                         {{-- lógica de mensagens não  lidas aqui --}}
                         <span class="dot"></span>
@@ -362,22 +525,42 @@
                 <a href="{{ route('mayor.content.index') }}"
                     class="sidenav-item {{ request()->routeIs('mayor.content*') || request()->routeIs('mayor.mentions*') ? 'active' : '' }}"
                     data-label="Comunicação">
-                    <img src="/images/icone-comunicacao.svg" alt="">
+                    <svg viewBox="0 0 26 26" aria-hidden="true">
+                        <circle cx="18" cy="6" r="2.5" />
+                        <circle cx="18" cy="20" r="2.5" />
+                        <circle cx="7" cy="13" r="2.5" />
+                        <path d="M9.4 11.8l6.2-4" />
+                        <path d="M9.4 14.2l6.2 4" />
+                    </svg>
                 </a>
                 <a href="{{ route('mayor.mandato.federal-programs') }}"
                     class="sidenav-item {{ request()->routeIs('mayor.mandato.federal-programs*') ? 'active' : '' }}"
                     data-label="Radar de Recursos">
-                    <img src="/images/icone-recursos.svg" alt="">
+                    <svg viewBox="0 0 26 26" aria-hidden="true">
+                        <circle cx="12" cy="13" r="5.5" />
+                        <path d="M12 10v6" />
+                        <path d="M10 11.5h3a1 1 0 0 1 0 2h-2a1 1 0 0 0 0 2h3" />
+                        <path d="M19.5 6.5a9.5 9.5 0 0 1 0 13" />
+                        <path d="M4.5 6.5a9.5 9.5 0 0 0 0 13" />
+                    </svg>
                 </a>
                 <a href="{{ route('mayor.projects.index') }}"
                     class="sidenav-item {{ request()->routeIs('mayor.projects*') ? 'active' : '' }}"
                     data-label="Projetos">
-                    <img src="/images/icone-projetos.svg" alt="">
+                    <svg viewBox="0 0 26 26" aria-hidden="true">
+                        <path d="M13 3C9.13 3 6 6.13 6 10c0 2.6 1.4 4.9 3.5 6.2V18h7v-1.8C18.6 14.9 20 12.6 20 10c0-3.87-3.13-7-7-7z" />
+                        <path d="M9.5 18h7" />
+                        <path d="M10.5 21h5" />
+                        <path d="M11 10l1.5-3 1.5 3 1.5-3" />
+                    </svg>
                 </a>
                 <a href="{{ route('mayor.mandato.painel') }}"
                     class="sidenav-item {{ request()->routeIs('mayor.mandato*') && !request()->routeIs('mayor.mandato.demands*') ? 'active' : '' }}"
                     data-label="Ações">
-                    <img src="/images/icone-mandato.svg" alt="">
+                    <svg viewBox="0 -960 960 960" aria-hidden="true" style="fill: currentColor; stroke: none;">
+                        <path
+                            d="M480-80 120-436l200-244h320l200 244L480-80ZM183-680l-85-85 57-56 85 85-57 56Zm257-80v-120h80v120h-80Zm335 80-57-57 85-85 57 57-85 85ZM480-192l210-208H270l210 208ZM358-600l-99 120h442l-99-120H358Z" />
+                    </svg>
                 </a>
             @endif
 
@@ -397,20 +580,24 @@
             <div class="topbar-date">{{ now()->locale('pt_BR')->isoFormat('ddd, D MMM') }}</div>
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
-                <button type="submit"
-                    style="display:flex;align-items:center;gap:.4rem;padding:.45rem .9rem;background:none;border:1.5px solid var(--border);border-radius:8px;font-family:'DM Sans',sans-serif;font-size:.8rem;color:var(--ink-muted);cursor:pointer">
-                    <svg width='13' height='13' viewBox='0 0 24 24' fill='currentColor'>
-                        <path
-                            d='M17 7l-1.41 1.41L18.17 11H8v2h10.17l-2.58 2.58L17 17l5-5zM4 5h8V3H4c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h8v-2H4V5z' />
+                <button type="submit" class="topbar-logout">
+                    <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                        <path d="M16 17l5-5-5-5" />
+                        <path d="M21 12H9" />
                     </svg>
                     Sair
                 </button>
             </form>
 
             <a href="{{ $praHojeRoute }}" class="topbar-briefing">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path
-                        d="M12 4a1 1 0 0 1 1 1v1.05a6 6 0 1 1-2 0V5a1 1 0 0 1 1-1Zm0 4a4 4 0 1 0 0 8 4 4 0 0 0 0-8Z" />
+                <svg viewBox="0 0 26 26" aria-hidden="true">
+                    <rect x="4" y="5" width="18" height="17" rx="3" />
+                    <path d="M4 10h18" />
+                    <path d="M9 3v4" />
+                    <path d="M17 3v4" />
+                    <circle cx="17.5" cy="16.5" r="3.5" />
+                    <path d="M16 16.5l1 1 2-2" />
                 </svg>
                 Pra hoje!
             </a>

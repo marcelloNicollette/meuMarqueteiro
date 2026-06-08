@@ -36,7 +36,7 @@
         }
 
         .briefing-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.4rem;
             color: #fff;
             line-height: 1.3;
@@ -86,7 +86,7 @@
         }
 
         .stat-value {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.6rem;
             font-weight: 600;
             color: var(--ink);
@@ -202,7 +202,7 @@
 
         /* Estilizar o markdown renderizado */
         .briefing-content h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin: 1.5rem 0 .6rem;
@@ -258,7 +258,7 @@
             gap: .35rem;
             padding: .45rem .9rem;
             border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .78rem;
             font-weight: 500;
             cursor: pointer;

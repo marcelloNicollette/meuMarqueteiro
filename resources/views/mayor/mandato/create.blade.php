@@ -38,7 +38,7 @@
         }
 
         .form-card h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.25rem;
             color: var(--ink);
             margin-bottom: .35rem;
@@ -95,7 +95,7 @@
             border-radius: 9px;
             border: 1.5px solid var(--border);
             background: var(--white);
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .85rem;
             color: var(--ink);
             outline: none;
@@ -194,7 +194,7 @@
             gap: .4rem;
             padding: .6rem 1.2rem;
             border-radius: 9px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .85rem;
             font-weight: 500;
             cursor: pointer;

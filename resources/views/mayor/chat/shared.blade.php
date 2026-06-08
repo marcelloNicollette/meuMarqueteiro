@@ -28,7 +28,7 @@
         }
 
         .shared-chat-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.35rem;
             color: var(--ink);
             margin-bottom: .6rem;

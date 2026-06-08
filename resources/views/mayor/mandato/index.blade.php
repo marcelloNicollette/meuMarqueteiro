@@ -21,7 +21,7 @@
         }
 
         .mandato-header h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.5rem;
             color: var(--ink);
             margin-bottom: .25rem;
@@ -67,7 +67,7 @@
         }
 
         .mh-headline {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.3rem;
             color: #fff;
             margin-bottom: 1.1rem;
@@ -77,7 +77,7 @@
         .mh-headline .risk-flag {
             font-size: .82rem;
             color: #f59e0b;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-weight: 500;
             margin-left: .5rem;
         }
@@ -114,7 +114,7 @@
         }
 
         .mh-pct {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 3rem;
             color: var(--gold-lt);
             line-height: 1;
@@ -213,7 +213,7 @@
         }
 
         .qs-val {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.5rem;
             color: var(--ink);
             line-height: 1;
@@ -235,7 +235,7 @@
         }
 
         .section-toolbar h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
             flex: 1;
@@ -246,7 +246,7 @@
             border-radius: 8px;
             border: 1.5px solid var(--border);
             background: var(--white);
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .78rem;
             color: var(--ink);
             cursor: pointer;
@@ -269,7 +269,7 @@
             border: 1.5px solid var(--border);
             background: none;
             cursor: pointer;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .77rem;
             font-weight: 500;
             color: var(--ink-muted);
@@ -407,7 +407,7 @@
         }
 
         .c-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .95rem;
             font-weight: 500;
             color: var(--ink);
@@ -636,7 +636,7 @@
             gap: .4rem;
             padding: .55rem 1.1rem;
             border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             cursor: pointer;

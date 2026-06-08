@@ -22,7 +22,7 @@
         }
 
         .project-bank-hero h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.8rem;
             margin-bottom: .45rem;
         }

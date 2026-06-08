@@ -48,7 +48,7 @@
         }
 
         .stat-value {
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: 2.2rem;
             color: var(--ink);
             line-height: 1;
@@ -139,7 +139,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .8rem;
             color: var(--gold);
             font-weight: 600;

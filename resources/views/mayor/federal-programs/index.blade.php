@@ -16,7 +16,7 @@
         }
 
         .programs-header h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.5rem;
             color: var(--ink);
             margin-bottom: .3rem;
@@ -70,7 +70,7 @@
         }
 
         .highlight-text h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: #fff;
             margin-bottom: .25rem;
@@ -89,7 +89,7 @@
             border-radius: 8px;
             background: var(--gold);
             color: var(--ink);
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             font-weight: 500;
             border: none;
@@ -127,7 +127,7 @@
             background: #fff;
             color: var(--ink-muted);
             cursor: pointer;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .79rem;
             font-weight: 600;
             transition: all .15s;
@@ -191,7 +191,7 @@
             border: 1.5px solid var(--border);
             background: none;
             cursor: pointer;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .8rem;
             font-weight: 500;
             color: var(--ink-muted);
@@ -319,7 +319,7 @@
         }
 
         .prog-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .97rem;
             color: var(--ink);
             line-height: 1.35;
@@ -417,7 +417,7 @@
             gap: .4rem;
             padding: .4rem .8rem;
             border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .78rem;
             font-weight: 500;
             background: var(--ink);
@@ -471,7 +471,7 @@
             gap: .4rem;
             padding: .4rem .85rem;
             border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .78rem;
             font-weight: 600;
             background: var(--gold);
@@ -498,7 +498,7 @@
             gap: .35rem;
             padding: .38rem .75rem;
             border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .74rem;
             font-weight: 600;
             background: #fff;
@@ -536,7 +536,7 @@
             gap: .35rem;
             padding: .38rem .75rem;
             border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .74rem;
             font-weight: 600;
             background: #f8fafc;
@@ -635,7 +635,7 @@
         }
 
         .detail-head h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.18rem;
             color: var(--ink);
             margin-bottom: .35rem;

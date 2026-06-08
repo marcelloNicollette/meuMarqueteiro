@@ -7,10 +7,10 @@
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Meu Assistente</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
-
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,400&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
         rel="stylesheet">
     <style>
         *,
@@ -22,89 +22,108 @@
         }
 
         :root {
-            --ink: #0f1117;
-            --ink-soft: #3d4152;
-            --ink-muted: #7c8190;
-            --gold: #b8902a;
-            --gold-lt: #d4a840;
+            --noite: #111318;
+            --mandato: #1c243a;
+            --gestao: #373e50;
+            --apoio: #80869a;
+            --clareza: #f6f4f0;
+            --ouro: #b8902a;
+            --acao: #d97706;
+            --institucional: #1a5fa8;
+            --desenvolvimento: #1e7e48;
+            --ink: var(--noite);
+            --ink-soft: var(--gestao);
+            --ink-muted: var(--apoio);
+            --gold: var(--ouro);
+            --gold-lt: #d1af5b;
             --gold-bg: #fdf8ee;
-            --cream: #f5f2ed;
+            --cream: var(--clareza);
             --white: #ffffff;
-            --border: #e4e0d8;
-            --border-lt: #f0ede8;
-            --sidebar-w: 240px;
-            --green: #1e7e48;
+            --border: #e1ddd6;
+            --border-lt: #ece7df;
+            --sidebar-w: 274px;
+            --green: var(--desenvolvimento);
             --green-bg: #edf7f1;
-            --orange: #c05c00;
+            --orange: var(--acao);
             --orange-bg: #fff3e8;
             --red: #b52b2b;
             --red-bg: #fdf0f0;
-            --blue: #1a5fa8;
+            --blue: var(--institucional);
             --blue-bg: #eff5ff;
+            --shadow-soft: 0 18px 44px rgba(17, 19, 24, 0.08);
         }
 
         html,
         body {
             height: 100%;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             background: var(--cream);
             color: var(--ink);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top right, rgba(184, 144, 42, 0.07), transparent 24%),
+                linear-gradient(180deg, #faf8f4 0%, var(--cream) 100%);
         }
 
         /* ── Sidebar ──────────────────────────────────────────── */
         .sidebar {
             position: fixed;
-            top: 0;
-            left: 0;
-            bottom: 0;
+            top: 16px;
+            left: 16px;
+            bottom: 16px;
             width: var(--sidebar-w);
-            background: var(--ink);
+            background: linear-gradient(180deg, var(--noite) 0%, var(--mandato) 100%);
             display: flex;
             flex-direction: column;
             z-index: 100;
-            border-right: 1px solid rgba(255, 255, 255, .04);
+            border-radius: 28px;
+            border: 1px solid rgba(255, 255, 255, .06);
+            box-shadow: 0 28px 50px rgba(17, 19, 24, 0.22);
         }
 
         .sidebar-logo {
-            padding: 1.6rem 1.4rem 1.4rem;
+            padding: 1.55rem 1.4rem 1.35rem;
             display: flex;
             align-items: center;
-            gap: .65rem;
+            gap: .8rem;
             border-bottom: 1px solid rgba(255, 255, 255, .06);
         }
 
         .sidebar-logo-icon {
-            width: 34px;
-            height: 34px;
-            background: var(--gold);
-            border-radius: 7px;
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, rgba(184, 144, 42, 0.2) 0%, rgba(184, 144, 42, 0.35) 100%);
+            border-radius: 14px;
             display: flex;
             align-items: center;
             justify-content: center;
             flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
-        .sidebar-logo-icon svg {
-            width: 18px;
-            height: 18px;
-            fill: var(--ink);
+        .sidebar-logo-icon img {
+            width: 28px;
+            height: 28px;
         }
 
         .sidebar-logo-text {
-            font-family: "Open Sans", sans-serif;
-            font-size: 1rem;
-            color: #fff;
+            font-family: "Outfit", sans-serif;
+            font-size: 1.05rem;
+            font-weight: 600;
+            color: var(--clareza);
         }
 
         .sidebar-badge {
-            font-size: .6rem;
-            font-weight: 500;
+            font-size: .62rem;
+            font-weight: 700;
             letter-spacing: .1em;
             text-transform: uppercase;
-            background: rgba(184, 144, 42, .2);
+            background: rgba(184, 144, 42, 0.18);
             color: var(--gold-lt);
-            padding: .15rem .45rem;
-            border-radius: 3px;
+            padding: .2rem .48rem;
+            border-radius: 999px;
             margin-left: .3rem;
         }
 
@@ -114,10 +133,10 @@
 
         .sidebar-section-label {
             font-size: .62rem;
-            font-weight: 500;
+            font-weight: 600;
             letter-spacing: .18em;
             text-transform: uppercase;
-            color: rgba(255, 255, 255, .25);
+            color: rgba(246, 244, 240, 0.28);
             padding: 0 .4rem;
             margin-bottom: .3rem;
         }
@@ -126,23 +145,27 @@
             display: flex;
             align-items: center;
             gap: .65rem;
-            padding: .62rem .75rem;
-            border-radius: 7px;
-            font-size: .86rem;
-            color: rgba(255, 255, 255, .55);
+            padding: .78rem .85rem;
+            border-radius: 16px;
+            font-size: .87rem;
+            color: rgba(246, 244, 240, 0.62);
             text-decoration: none;
-            transition: background .15s, color .15s;
-            margin-bottom: .1rem;
+            transition: background .15s, color .15s, transform .15s;
+            margin-bottom: .18rem;
+            border: 1px solid transparent;
         }
 
         .nav-item:hover {
             background: rgba(255, 255, 255, .06);
-            color: rgba(255, 255, 255, .85);
+            color: var(--clareza);
+            transform: translateX(2px);
         }
 
         .nav-item.active {
-            background: rgba(184, 144, 42, .15);
+            background: rgba(184, 144, 42, .16);
             color: var(--gold-lt);
+            border-color: rgba(184, 144, 42, 0.18);
+            box-shadow: inset 0 0 0 1px rgba(184, 144, 42, 0.2);
         }
 
         .nav-item svg {
@@ -159,11 +182,11 @@
         .nav-item .nav-badge {
             margin-left: auto;
             background: var(--gold);
-            color: var(--ink);
+            color: var(--noite);
             font-size: .65rem;
             font-weight: 600;
             padding: .15rem .45rem;
-            border-radius: 10px;
+            border-radius: 999px;
         }
 
         .sidebar-spacer {
@@ -179,24 +202,25 @@
         }
 
         .sidebar-user-avatar {
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            background: var(--gold);
+            width: 40px;
+            height: 40px;
+            border-radius: 14px;
+            background: rgba(255, 255, 255, 0.1);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: "Open Sans", sans-serif;
-            font-size: .85rem;
-            color: var(--ink);
+            font-family: "Outfit", sans-serif;
+            font-size: .9rem;
+            color: var(--clareza);
             font-weight: 600;
             flex-shrink: 0;
+            border: 1px solid rgba(255, 255, 255, 0.08);
         }
 
         .sidebar-user-name {
             font-size: .82rem;
             font-weight: 500;
-            color: rgba(255, 255, 255, .7);
+            color: rgba(255, 255, 255, .78);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -205,18 +229,18 @@
 
         .sidebar-user-role {
             font-size: .7rem;
-            color: rgba(255, 255, 255, .3);
+            color: rgba(255, 255, 255, .4);
             margin-top: .05rem;
         }
 
         .sidebar-logout {
-            color: rgba(0, 0, 0, 1);
+            color: rgba(246, 244, 240, 0.54);
             text-decoration: none;
             transition: color .15s;
         }
 
         .sidebar-logout:hover {
-            color: rgba(255, 255, 255, .7);
+            color: rgba(255, 255, 255, .85);
         }
 
         .sidebar-logout svg {
@@ -226,23 +250,29 @@
 
         /* ── Main ─────────────────────────────────────────────── */
         .main {
-            margin-left: var(--sidebar-w);
+            margin-left: calc(var(--sidebar-w) + 32px);
             min-height: 100vh;
             display: flex;
             flex-direction: column;
+            padding: 16px 18px 16px 0;
         }
 
         .topbar {
-            background: var(--white);
-            border-bottom: 1px solid var(--border);
-            padding: 0 2rem;
-            height: 58px;
+            background: rgba(255, 255, 255, 0.82);
+            border: 1px solid rgba(225, 221, 214, 0.9);
+            padding: 1rem 1.4rem;
+            min-height: 76px;
             display: flex;
             align-items: center;
             justify-content: space-between;
             position: sticky;
-            top: 0;
+            top: 16px;
             z-index: 50;
+            border-radius: 24px;
+            backdrop-filter: blur(16px);
+            box-shadow: var(--shadow-soft);
+            gap: 1rem;
+            flex-wrap: wrap;
         }
 
         .topbar-breadcrumb {
@@ -254,8 +284,10 @@
         }
 
         .topbar-breadcrumb strong {
-            color: var(--ink);
-            font-weight: 500;
+            color: var(--mandato);
+            font-weight: 600;
+            font-family: "Outfit", sans-serif;
+            font-size: 1.15rem;
         }
 
         .topbar-breadcrumb span {
@@ -272,10 +304,10 @@
             display: flex;
             align-items: center;
             gap: .5rem;
-            background: var(--cream);
+            background: #fbfaf7;
             border: 1px solid var(--border);
-            border-radius: 7px;
-            padding: .45rem .75rem;
+            border-radius: 16px;
+            padding: .62rem .85rem;
         }
 
         .topbar-search svg {
@@ -288,7 +320,7 @@
             background: none;
             border: none;
             outline: none;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .83rem;
             color: var(--ink);
             width: 180px;
@@ -299,7 +331,7 @@
         }
 
         .content {
-            padding: 2rem;
+            padding: 1rem 0 0;
             flex: 1;
         }
 
@@ -309,11 +341,12 @@
         }
 
         .page-header h1 {
-            font-family: "Open Sans", sans-serif;
-            font-size: 1.6rem;
+            font-family: "Outfit", sans-serif;
+            font-size: 1.9rem;
             font-weight: 600;
-            color: var(--ink);
-            margin-bottom: .3rem;
+            color: var(--mandato);
+            margin-bottom: .35rem;
+            letter-spacing: -0.02em;
         }
 
         .page-header p {
@@ -324,12 +357,13 @@
         .card {
             background: var(--white);
             border: 1px solid var(--border);
-            border-radius: 12px;
+            border-radius: 18px;
             overflow: hidden;
+            box-shadow: 0 12px 28px rgba(17, 19, 24, 0.05);
         }
 
         .card-header {
-            padding: 1.1rem 1.4rem;
+            padding: 1.1rem 1.35rem;
             border-bottom: 1px solid var(--border-lt);
             display: flex;
             align-items: center;
@@ -337,9 +371,10 @@
         }
 
         .card-header h3 {
-            font-size: .9rem;
-            font-weight: 500;
-            color: var(--ink);
+            font-size: .95rem;
+            font-weight: 600;
+            color: var(--mandato);
+            font-family: "Outfit", sans-serif;
         }
 
         .card-body {
@@ -350,11 +385,11 @@
             display: inline-flex;
             align-items: center;
             gap: .5rem;
-            padding: .55rem 1rem;
-            border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
-            font-size: .83rem;
-            font-weight: 500;
+            padding: .72rem 1.05rem;
+            border-radius: 14px;
+            font-family: "Inter", sans-serif;
+            font-size: .84rem;
+            font-weight: 600;
             text-decoration: none;
             border: none;
             cursor: pointer;
@@ -367,27 +402,27 @@
         }
 
         .btn-dark {
-            background: var(--ink);
-            color: var(--white);
+            background: var(--mandato);
+            color: var(--clareza);
         }
 
         .btn-dark:hover {
-            background: #1e2230;
+            background: var(--noite);
         }
 
         .btn-outline {
-            background: transparent;
+            background: rgba(255, 255, 255, 0.72);
             color: var(--ink-soft);
             border: 1px solid var(--border);
         }
 
         .btn-outline:hover {
-            background: var(--cream);
+            background: var(--white);
         }
 
         .btn-gold {
             background: var(--gold);
-            color: var(--white);
+            color: var(--noite);
         }
 
         .btn-gold:hover {
@@ -443,6 +478,34 @@
         .content {
             animation: fadeIn .3s ease;
         }
+
+        @media (max-width: 1180px) {
+            .sidebar {
+                width: 244px;
+            }
+
+            .main {
+                margin-left: 276px;
+            }
+        }
+
+        @media (max-width: 980px) {
+            .sidebar {
+                position: static;
+                width: auto;
+                margin: 12px;
+                bottom: auto;
+            }
+
+            .main {
+                margin-left: 0;
+                padding: 0 12px 12px;
+            }
+
+            .topbar {
+                top: 0;
+            }
+        }
     </style>
     @stack('styles')
 </head>
@@ -455,7 +518,7 @@
             <div class="sidebar-logo-icon">
                 <img width="100%" src="/images/logo-borda-white.png" alt="">
             </div>
-            <span class="sidebar-logo-text">Marqueteiro</span>
+            <span class="sidebar-logo-text">Qu4tro.ai</span>
             <span class="sidebar-badge">Admin</span>
         </div>
 

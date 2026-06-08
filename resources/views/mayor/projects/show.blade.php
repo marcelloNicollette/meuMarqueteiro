@@ -24,7 +24,7 @@
         }
 
         .project-show-header h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.45rem;
             color: var(--ink);
             margin-bottom: .35rem;
@@ -106,7 +106,7 @@
         }
 
         .project-summary-card span {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.22rem;
             color: var(--ink);
         }
@@ -202,7 +202,7 @@
         }
 
         .project-funding-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin-bottom: .22rem;
@@ -238,7 +238,7 @@
         }
 
         .project-funding-summary-item span {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.02rem;
             color: var(--ink);
         }
@@ -347,7 +347,7 @@
         }
 
         .project-overlap-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin-bottom: .22rem;
@@ -383,7 +383,7 @@
         }
 
         .project-overlap-summary-item span {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.02rem;
             color: var(--ink);
         }
@@ -479,7 +479,7 @@
         }
 
         .project-questionnaire-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin-bottom: .25rem;
@@ -522,7 +522,7 @@
         }
 
         .project-question-progress-item span {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.08rem;
             color: var(--ink);
         }
@@ -614,7 +614,7 @@
         }
 
         .project-metadata-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin-bottom: .22rem;
@@ -739,7 +739,7 @@
         }
 
         .project-sections-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
         }
@@ -847,7 +847,7 @@
         }
 
         .project-side-card h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .95rem;
             color: var(--ink);
             margin-bottom: .2rem;
@@ -935,7 +935,7 @@
         }
 
         .project-history-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin-bottom: .22rem;
@@ -1003,7 +1003,7 @@
         }
 
         .project-revisions-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
             margin-bottom: .22rem;
@@ -1039,7 +1039,7 @@
         }
 
         .project-revision-summary-item span {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.02rem;
             color: var(--ink);
         }

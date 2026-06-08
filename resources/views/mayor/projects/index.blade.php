@@ -24,7 +24,7 @@
         }
 
         .projects-hero h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.55rem;
             margin-bottom: .35rem;
         }
@@ -64,7 +64,7 @@
         }
 
         .project-stat-value {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.5rem;
             color: var(--ink);
         }
@@ -83,7 +83,7 @@
         }
 
         .projects-toolbar h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.08rem;
             color: var(--ink);
         }
@@ -163,7 +163,7 @@
         }
 
         .projects-invite-panel h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
             margin-bottom: .25rem;
@@ -226,7 +226,7 @@
         }
 
         .project-card-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
             line-height: 1.35;
@@ -345,7 +345,7 @@
         }
 
         .projects-empty h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.15rem;
             color: var(--ink);
             margin-bottom: .4rem;

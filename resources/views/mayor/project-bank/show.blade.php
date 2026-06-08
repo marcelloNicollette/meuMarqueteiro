@@ -26,7 +26,7 @@
         }
 
         .project-thesis-head h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.8rem;
             margin: .6rem 0;
         }

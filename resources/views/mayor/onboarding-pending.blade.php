@@ -20,7 +20,7 @@
         html,
         body {
             height: 100%;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             background: #0f1117;
             display: flex;
             align-items: center;
@@ -65,7 +65,7 @@
         }
 
         h1 {
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: 1.6rem;
             color: #fff;
             margin-bottom: .75rem;
@@ -115,7 +115,7 @@
             background: none;
             border: 1px solid rgba(255, 255, 255, .12);
             color: rgba(255, 255, 255, .4);
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .82rem;
             padding: .55rem 1.2rem;
             border-radius: 8px;

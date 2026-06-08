@@ -35,7 +35,7 @@
         }
 
         .project-create-header h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.45rem;
             color: var(--ink);
             margin-bottom: .25rem;
@@ -129,7 +129,7 @@
         }
 
         .project-side-head {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.02rem;
             color: var(--ink);
             margin-bottom: .85rem;

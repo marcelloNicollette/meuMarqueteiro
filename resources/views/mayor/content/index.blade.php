@@ -30,7 +30,7 @@
         }
 
         .panel-header h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
             margin-bottom: .15rem;
@@ -91,7 +91,7 @@
             border: none;
             background: none;
             cursor: pointer;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .72rem;
             font-weight: 500;
             color: var(--ink-muted);
@@ -143,7 +143,7 @@
             background: var(--surface);
             border: 1.5px solid var(--border);
             border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .87rem;
             color: var(--ink);
             outline: none;
@@ -175,7 +175,7 @@
             border: 1.5px solid var(--border);
             background: none;
             cursor: pointer;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .76rem;
             color: var(--ink-soft);
             transition: all .15s;
@@ -205,7 +205,7 @@
             color: var(--white);
             border: none;
             border-radius: 9px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .9rem;
             font-weight: 500;
             cursor: pointer;
@@ -290,7 +290,7 @@
         }
 
         .results-empty h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.1rem;
             color: var(--ink);
             margin-bottom: .5rem;
@@ -398,7 +398,7 @@
             cursor: pointer;
             border: none;
             background: none;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             border-bottom: 2px solid transparent;
             transition: all .15s;
         }
@@ -435,7 +435,7 @@
             gap: .4rem;
             padding: .45rem .85rem;
             border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .78rem;
             font-weight: 500;
             cursor: pointer;
@@ -479,7 +479,7 @@
         }
 
         .crisis-result h4 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .95rem;
             color: var(--ink);
             margin-bottom: .85rem;
@@ -612,7 +612,7 @@
         }
 
         .img-results-header h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1rem;
             color: var(--ink);
         }
@@ -647,7 +647,7 @@
             gap: .35rem;
             padding: .38rem .8rem;
             border-radius: 7px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .76rem;
             font-weight: 600;
             cursor: pointer;
@@ -921,7 +921,7 @@
             gap: .4rem;
             padding: .5rem 1rem;
             border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             font-size: .78rem;
             font-weight: 600;
             cursor: pointer;
@@ -1106,7 +1106,7 @@
         }
 
         .hero-title h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.45rem;
             color: var(--ink);
             margin: 0 0 .35rem;
@@ -1476,7 +1476,7 @@
         }
 
         .operations-column-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .98rem;
             color: var(--ink);
             margin: 0;
@@ -1694,7 +1694,7 @@
         }
 
         .section-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.02rem;
             color: var(--ink);
             margin: 0;
@@ -2601,7 +2601,7 @@
         }
 
         .collab-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .98rem;
             color: var(--ink);
             margin: 0;
@@ -5770,7 +5770,7 @@
             focusResultsArea();
             const hdr = document.createElement('div');
             hdr.style.cssText = 'display:flex;align-items:center;justify-content:space-between';
-            hdr.innerHTML = '<h3 style="font-family:\'Lora\',serif;font-size:1rem;color:var(--ink)">' + esc(data
+            hdr.innerHTML = '<h3 style="font-family:\'Outfit\',sans-serif;font-size:1rem;color:var(--ink)">' + esc(data
                 .title ||
                 'Conteúdo gerado') + '</h3>';
             panel.appendChild(hdr);

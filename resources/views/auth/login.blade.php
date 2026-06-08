@@ -9,9 +9,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/logo-borda-black.png">
     <link
-        href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap"
-        rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@500;600&display=swap"
         rel="stylesheet">
     <style>
         *,
@@ -23,23 +21,38 @@
         }
 
         :root {
-            --ink: #0f1117;
-            --ink-soft: #4a4f5e;
-            --ink-muted: #8b909f;
-            --gold: #b8902a;
-            --gold-lt: #d4a840;
-            --cream: #f7f4ef;
+            --noite: #111318;
+            --mandato: #1c243a;
+            --gestao: #373e50;
+            --apoio: #80869a;
+            --clareza: #f6f4f0;
+            --ouro: #b8902a;
+            --institucional: #1a5fa8;
+            --desenvolvimento: #1e7e48;
+            --ink: var(--noite);
+            --ink-soft: var(--gestao);
+            --ink-muted: var(--apoio);
+            --gold: var(--ouro);
+            --gold-lt: #d1af5b;
+            --cream: var(--clareza);
             --white: #ffffff;
-            --border: #e2ddd6;
+            --border: #e1ddd6;
             --red: #c0392b;
+            --shadow-soft: 0 30px 60px rgba(17, 19, 24, 0.18);
         }
 
         html,
         body {
             height: 100%;
-            font-family: "Open Sans", sans-serif;
+            font-family: "Inter", sans-serif;
             background: var(--cream);
             color: var(--ink);
+        }
+
+        body {
+            background:
+                radial-gradient(circle at top left, rgba(184, 144, 42, 0.08), transparent 28%),
+                linear-gradient(180deg, #faf8f4 0%, var(--cream) 100%);
         }
 
         /* ── Layout ─────────────────────────────────────────── */
@@ -51,7 +64,7 @@
 
         /* ── Painel esquerdo — identidade visual ─────────────── */
         .brand-panel {
-            background: var(--ink);
+            background: linear-gradient(180deg, var(--noite) 0%, var(--mandato) 100%);
             display: flex;
             flex-direction: column;
             justify-content: space-between;
@@ -91,13 +104,15 @@
         }
 
         .brand-logo-icon {
-            width: 80px;
-            height: 80px;
-            /*background: var(--white);*/
-            border-radius: 8px;
+            width: 84px;
+            height: 84px;
+            border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
+            background: rgba(255, 255, 255, 0.06);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            backdrop-filter: blur(14px);
         }
 
         .brand-logo-icon svg {
@@ -107,7 +122,7 @@
         }
 
         .brand-logo-name {
-            font-family: "Open Sans", sans-serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.15rem;
             color: var(--white);
             letter-spacing: .01em;
@@ -119,32 +134,34 @@
         }
 
         .brand-hero-eyebrow {
-            font-size: 2.6rem;
-            font-weight: 600;
+            font-size: .8rem;
+            font-weight: 700;
             text-transform: uppercase;
             color: var(--gold);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1rem;
+            letter-spacing: .2em;
         }
 
         .brand-hero-title {
-            font-family: "Open Sans", sans-serif;
-            font-size: 2.5rem;
-            line-height: 1.2;
+            font-family: "Outfit", sans-serif;
+            font-size: 3.1rem;
+            line-height: 1.04;
             color: var(--white);
-            margin-bottom: 1.5rem;
-            font-weight: 500;
+            margin-bottom: 1.2rem;
+            font-weight: 600;
+            letter-spacing: -0.03em;
         }
 
         .brand-hero-title em {
-            font-style: italic;
+            font-style: normal;
             color: var(--gold-lt);
         }
 
         .brand-hero-body {
-            font-size: .9rem;
-            line-height: 1.8;
-            color: rgba(255, 255, 255, .5);
-            max-width: 340px;
+            font-size: .95rem;
+            line-height: 1.75;
+            color: rgba(255, 255, 255, .68);
+            max-width: 420px;
         }
 
         .brand-footer {
@@ -158,7 +175,7 @@
         }
 
         .brand-stat-value {
-            font-family: "Open Sans", sans-serif;
+            font-family: "JetBrains Mono", monospace;
             font-size: 1.8rem;
             color: var(--white);
         }
@@ -182,7 +199,13 @@
 
         .form-box {
             width: 100%;
-            max-width: 400px;
+            max-width: 440px;
+            background: rgba(255, 255, 255, 0.84);
+            border: 1px solid rgba(225, 221, 214, 0.92);
+            border-radius: 28px;
+            padding: 2.25rem;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(16px);
         }
 
         .form-heading {
@@ -190,11 +213,12 @@
         }
 
         .form-heading h1 {
-            font-family: "Open Sans", sans-serif;
-            font-size: 2rem;
+            font-family: "Outfit", sans-serif;
+            font-size: 2.1rem;
             font-weight: 600;
-            color: var(--ink);
-            margin-bottom: .5rem;
+            color: var(--mandato);
+            margin-bottom: .45rem;
+            letter-spacing: -0.02em;
         }
 
         .form-heading p {
@@ -236,9 +260,9 @@
 
         .field label {
             display: block;
-            font-size: .78rem;
-            font-weight: 500;
-            letter-spacing: .06em;
+            font-size: .74rem;
+            font-weight: 700;
+            letter-spacing: .14em;
             text-transform: uppercase;
             color: var(--ink-soft);
             margin-bottom: .55rem;
@@ -246,11 +270,11 @@
 
         .field input {
             width: 100%;
-            padding: .85rem 1rem;
+            padding: .95rem 1rem;
             background: var(--white);
-            border: 1.5px solid var(--border);
-            border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            font-family: "Inter", sans-serif;
             font-size: .93rem;
             color: var(--ink);
             outline: none;
@@ -259,7 +283,7 @@
 
         .field input:focus {
             border-color: var(--gold);
-            box-shadow: 0 0 0 3px rgba(184, 144, 42, .1);
+            box-shadow: 0 0 0 4px rgba(184, 144, 42, .12);
         }
 
         .field input.is-invalid {
@@ -299,23 +323,24 @@
         /* Botão ─── */
         .btn-primary {
             width: 100%;
-            padding: .95rem;
-            background: var(--ink);
+            padding: 1rem;
+            background: linear-gradient(135deg, var(--mandato) 0%, var(--noite) 100%);
             color: var(--white);
             border: none;
-            border-radius: 8px;
-            font-family: "Open Sans", sans-serif;
+            border-radius: 18px;
+            font-family: "Inter", sans-serif;
             font-size: .93rem;
-            font-weight: 500;
-            letter-spacing: .04em;
+            font-weight: 700;
+            letter-spacing: .02em;
             cursor: pointer;
             transition: background .2s, transform .1s;
             position: relative;
             overflow: hidden;
+            box-shadow: 0 16px 26px rgba(28, 36, 58, 0.18);
         }
 
         .btn-primary:hover {
-            background: #1e2230;
+            background: linear-gradient(135deg, var(--noite) 0%, var(--mandato) 100%);
         }
 
         .btn-primary:active {
@@ -386,15 +411,17 @@
             width: 100%;
             height: 100%;
             position: absolute;
-            top: 0%;
-            z-index: 10;
-            right: 100px;
-            background-position: top;
+            top: 0;
+            z-index: 1;
+            right: 40px;
+            background-position: right top;
+            opacity: .14;
+            filter: grayscale(1) contrast(1.1);
         }
 
         .logo {
-            width: 10rem;
-            margin: 0 auto;
+            width: 5.5rem;
+            margin: 0 0 1.5rem;
         }
 
 
@@ -422,10 +449,12 @@
             </div>
 
             <div class="brand-hero">
-                <p class="brand-hero-eyebrow">MEU MARQUETEIRO</p>
-                <h2 class="brand-hero-title">O Assistente IA<br> a serviço
-                    do seu <br>mandato e carreira <br>política
-                </h2>
+                <p class="brand-hero-eyebrow">Novo Brand Book</p>
+                <h2 class="brand-hero-title">Gestão pública mais clara, estratégica e orientada por dados.</h2>
+                <p class="brand-hero-body">
+                    Uma experiência visual mais limpa, institucional e confiável, alinhada ao novo sistema de tipografia,
+                    iconografia e cores da Qu4tro.ai.
+                </p>
             </div>
 
             <div class="brand-footer">
@@ -435,8 +464,12 @@
                         <div class="brand-stat-label">Disponível</div>
                     </div>
                     <div>
+                        <div class="brand-stat-value">IA</div>
+                        <div class="brand-stat-label">Assistida</div>
+                    </div>
+                    <div>
                         <div class="brand-stat-value">100%</div>
-                        <div class="brand-stat-label">Treinado</div>
+                        <div class="brand-stat-label">Alinhado à marca</div>
                     </div>
                 </div>
             </div>
@@ -449,8 +482,8 @@
                     <img src="/images/logo-borda-black.png" width="100%" alt="">
                 </div>
                 <div class="form-heading">
-                    <h1>Bem-vindo</h1>
-                    <p>Acesse com seu e-mail e senha cadastrados pelo consultor.</p>
+                    <h1>Entrar na plataforma</h1>
+                    <p>Acesse com seu e-mail e senha cadastrados para continuar no ambiente da Qu4tro.ai.</p>
                 </div>
 
                 {{-- Erros globais --}}

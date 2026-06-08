@@ -23,7 +23,7 @@
         }
 
         .situacao-header-left h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.25rem;
             color: #fff;
             margin-bottom: .3rem;
@@ -58,7 +58,7 @@
         }
 
         .today-head h2 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
         }
@@ -182,7 +182,7 @@
         }
 
         .mandate-ring-pct {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.3rem;
             font-weight: 600;
             color: #fff;
@@ -248,7 +248,7 @@
         }
 
         .kpi-value {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 2rem;
             font-weight: 600;
             line-height: 1;
@@ -312,7 +312,7 @@
         }
 
         .section-card-header h3 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: .95rem;
             color: var(--ink);
             display: flex;
@@ -528,7 +528,7 @@
         }
 
         .activity-value {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.5rem;
             color: var(--ink);
             font-weight: 600;
@@ -953,17 +953,17 @@
                 <div class="section-card-body">
                     <div style="display:flex;gap:.75rem;margin-bottom:1rem">
                         <div style="flex:1;text-align:center;background:var(--surface);border-radius:8px;padding:.65rem">
-                            <div style="font-family:'Lora',serif;font-size:1.4rem;color:#1e7e48">{{ $programasAbertos }}
+                            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;color:#1e7e48">{{ $programasAbertos }}
                             </div>
                             <div style="font-size:.7rem;color:var(--ink-muted)">abertos</div>
                         </div>
                         <div style="flex:1;text-align:center;background:var(--surface);border-radius:8px;padding:.65rem">
-                            <div style="font-family:'Lora',serif;font-size:1.4rem;color:#1a5fa8">{{ $programasMonitor }}
+                            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;color:#1a5fa8">{{ $programasMonitor }}
                             </div>
                             <div style="font-size:.7rem;color:var(--ink-muted)">monitorando</div>
                         </div>
                         <div style="flex:1;text-align:center;background:var(--surface);border-radius:8px;padding:.65rem">
-                            <div style="font-family:'Lora',serif;font-size:1.4rem;color:var(--ink)">{{ $totalProgramas }}
+                            <div style="font-family:'Outfit',sans-serif;font-size:1.4rem;color:var(--ink)">{{ $totalProgramas }}
                             </div>
                             <div style="font-size:.7rem;color:var(--ink-muted)">total</div>
                         </div>

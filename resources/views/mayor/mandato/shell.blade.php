@@ -32,7 +32,7 @@
         }
 
         .mandate-shell-hero h1 {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.5rem;
             margin-bottom: .35rem;
         }
@@ -131,7 +131,7 @@
         }
 
         .mandate-panel-title {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.05rem;
             color: var(--ink);
         }
@@ -165,7 +165,7 @@
         }
 
         .mandate-kpi-value {
-            font-family: 'Lora', serif;
+            font-family: "Outfit", sans-serif;
             font-size: 1.55rem;
             color: var(--ink);
             line-height: 1;
