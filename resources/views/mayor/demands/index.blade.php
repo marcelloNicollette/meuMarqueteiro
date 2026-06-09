@@ -10,7 +10,7 @@
             display: flex;
             flex-direction: column;
             gap: 1.2rem;
-            max-width: 1180px;
+            max-width: 100%;
         }
 
         .hero,
@@ -79,7 +79,7 @@
 
         .split-grid {
             display: grid;
-            grid-template-columns: 1.15fr .85fr;
+            /*grid-template-columns: 1.15fr .85fr;*/
             gap: 1rem;
         }
 
@@ -623,265 +623,265 @@
         </div>
 
         <!--<div class="card" style="padding:1rem 1.1rem">
-                                        <h2>Regras operacionais</h2>
-                                        <p class="section-copy" style="margin-bottom:.65rem">
-                                            Prazos e canais ativos configurados para este município no Resolve ai.
-                                        </p>
-                                        <div
-                                            style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;font-size:.8rem;color:var(--ink-soft)">
-                                            <div><strong>Alta:</strong> {{ $resolveAiSettings['priority_hours']['alta'] ?? 48 }}h</div>
-                                            <div><strong>Média:</strong> {{ $resolveAiSettings['priority_hours']['media'] ?? 168 }}h</div>
-                                            <div><strong>Baixa:</strong> {{ $resolveAiSettings['priority_hours']['baixa'] ?? 360 }}h</div>
-                                            <div><strong>Alerta:</strong> {{ $resolveAiSettings['alert_lead_hours'] ?? 24 }}h antes</div>
-                                            <div><strong>Sem andamento:</strong> {{ $resolveAiSettings['inactivity_followup_hours'] ?? 48 }}h</div>
-                                            <div><strong>Repetição atraso:</strong> {{ $resolveAiSettings['overdue_repeat_hours'] ?? 24 }}h</div>
-                                            <div><strong>Janela recente:</strong> {{ $resolveAiSettings['comparative_recent_window_days'] ?? 90 }} dias
-                                            </div>
-                                            <div><strong>Janela anterior:</strong> {{ $resolveAiSettings['comparative_previous_window_days'] ?? 90 }}
-                                                dias</div>
-                                        </div>
-                                    </div>-->
+                                                    <h2>Regras operacionais</h2>
+                                                    <p class="section-copy" style="margin-bottom:.65rem">
+                                                        Prazos e canais ativos configurados para este município no Resolve ai.
+                                                    </p>
+                                                    <div
+                                                        style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;font-size:.8rem;color:var(--ink-soft)">
+                                                        <div><strong>Alta:</strong> {{ $resolveAiSettings['priority_hours']['alta'] ?? 48 }}h</div>
+                                                        <div><strong>Média:</strong> {{ $resolveAiSettings['priority_hours']['media'] ?? 168 }}h</div>
+                                                        <div><strong>Baixa:</strong> {{ $resolveAiSettings['priority_hours']['baixa'] ?? 360 }}h</div>
+                                                        <div><strong>Alerta:</strong> {{ $resolveAiSettings['alert_lead_hours'] ?? 24 }}h antes</div>
+                                                        <div><strong>Sem andamento:</strong> {{ $resolveAiSettings['inactivity_followup_hours'] ?? 48 }}h</div>
+                                                        <div><strong>Repetição atraso:</strong> {{ $resolveAiSettings['overdue_repeat_hours'] ?? 24 }}h</div>
+                                                        <div><strong>Janela recente:</strong> {{ $resolveAiSettings['comparative_recent_window_days'] ?? 90 }} dias
+                                                        </div>
+                                                        <div><strong>Janela anterior:</strong> {{ $resolveAiSettings['comparative_previous_window_days'] ?? 90 }}
+                                                            dias</div>
+                                                    </div>
+                                                </div>-->
 
         <!--<div class="card">
-                                    <h2>Desempenho por secretaria</h2>
-                                    <p class="section-copy">
-                                        Governança comparativa em {{ $secretariatPerformance['window_label'] }} com leitura de execução,
-                                        atraso, tempo médio de fechamento e tendência em {{ $secretariatPerformance['comparison_label'] }}.
-                                    </p>
-                                    <div class="performance-list">
-                                        @forelse ($secretariatPerformance['areas'] as $areaPerformance)
+                                                <h2>Desempenho por secretaria</h2>
+                                                <p class="section-copy">
+                                                    Governança comparativa em {{ $secretariatPerformance['window_label'] }} com leitura de execução,
+                                                    atraso, tempo médio de fechamento e tendência em {{ $secretariatPerformance['comparison_label'] }}.
+                                                </p>
+                                                <div class="performance-list">
+                                                    @forelse ($secretariatPerformance['areas'] as $areaPerformance)
     <div class="performance-item">
-                                                <div class="performance-head">
-                                                    <div>
-                                                        <div class="performance-title">{{ $areaPerformance['area_name'] }}</div>
-                                                        <div class="territory-item-meta" style="margin-top:.2rem">
-                                                            Hotspot principal: {{ $areaPerformance['top_locality'] }} · Tema dominante:
-                                                            {{ $areaPerformance['top_theme'] }}
+                                                            <div class="performance-head">
+                                                                <div>
+                                                                    <div class="performance-title">{{ $areaPerformance['area_name'] }}</div>
+                                                                    <div class="territory-item-meta" style="margin-top:.2rem">
+                                                                        Hotspot principal: {{ $areaPerformance['top_locality'] }} · Tema dominante:
+                                                                        {{ $areaPerformance['top_theme'] }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="performance-score {{ $scoreClass($areaPerformance['score_tone']) }}">
+                                                                    {{ number_format($areaPerformance['score'], 1, ',', '.') }}
+                                                                </div>
+                                                            </div>
+                                                            <div class="territory-item-meta" style="margin-top:.55rem">
+                                                                <span class="delta-chip {{ $areaPerformance['trend_direction'] }}">
+                                                                    {{ $areaPerformance['trend_label'] }}
+                                                                </span>
+                                                                {{ $areaPerformance['score_label'] }} ·
+                                                                {{ $areaPerformance['comparison_label'] ?? $secretariatPerformance['comparison_label'] }}
+                                                            </div>
+                                                            <div class="performance-metrics">
+                                                                <div class="metric-box">
+                                                                    <div class="label">Volume</div>
+                                                                    <div class="value">{{ $areaPerformance['total'] }}</div>
+                                                                    <div class="meta">
+                                                                        Abertas: {{ $areaPerformance['open_total'] }} · Atrasadas:
+                                                                        {{ $areaPerformance['overdue_total'] }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="metric-box">
+                                                                    <div class="label">Resolução</div>
+                                                                    <div class="value">{{ number_format($areaPerformance['resolution_rate'], 1, ',', '.') }}%
+                                                                    </div>
+                                                                    <div class="meta">
+                                                                        Concluídas: {{ $areaPerformance['completed_total'] }} · No prazo:
+                                                                        {{ number_format($areaPerformance['on_time_rate'], 1, ',', '.') }}%
+                                                                    </div>
+                                                                </div>
+                                                                <div class="metric-box">
+                                                                    <div class="label">Tempo médio</div>
+                                                                    <div class="value">{{ $areaPerformance['avg_resolution_label'] }}</div>
+                                                                    <div class="meta">
+                                                                        Janela recente: {{ $areaPerformance['recent_total'] }} · Anterior:
+                                                                        {{ $areaPerformance['previous_total'] }}
+                                                                    </div>
+                                                                </div>
+                                                                <div class="metric-box">
+                                                                    <div class="label">Tendência</div>
+                                                                    <div class="value">
+                                                                        {{ $areaPerformance['score_delta'] > 0 ? '+' : '' }}{{ number_format($areaPerformance['score_delta'], 1, ',', '.') }}
+                                                                    </div>
+                                                                    <div class="meta">
+                                                                        Resolução
+                                                                        {{ number_format($areaPerformance['previous_resolution_rate'], 1, ',', '.') }}% ->
+                                                                        {{ number_format($areaPerformance['recent_resolution_rate'], 1, ',', '.') }}% · Atraso
+                                                                        {{ number_format($areaPerformance['previous_overdue_rate'], 1, ',', '.') }}% ->
+                                                                        {{ number_format($areaPerformance['recent_overdue_rate'], 1, ',', '.') }}% · Backlog
+                                                                        {{ number_format($areaPerformance['previous_backlog_rate'], 1, ',', '.') }}% ->
+                                                                        {{ number_format($areaPerformance['recent_backlog_rate'], 1, ',', '.') }}%
+                                                                    </div>
+                                                                </div>
+                                                            </div>
                                                         </div>
-                                                    </div>
-                                                    <div class="performance-score {{ $scoreClass($areaPerformance['score_tone']) }}">
-                                                        {{ number_format($areaPerformance['score'], 1, ',', '.') }}
-                                                    </div>
-                                                </div>
-                                                <div class="territory-item-meta" style="margin-top:.55rem">
-                                                    <span class="delta-chip {{ $areaPerformance['trend_direction'] }}">
-                                                        {{ $areaPerformance['trend_label'] }}
-                                                    </span>
-                                                    {{ $areaPerformance['score_label'] }} ·
-                                                    {{ $areaPerformance['comparison_label'] ?? $secretariatPerformance['comparison_label'] }}
-                                                </div>
-                                                <div class="performance-metrics">
-                                                    <div class="metric-box">
-                                                        <div class="label">Volume</div>
-                                                        <div class="value">{{ $areaPerformance['total'] }}</div>
-                                                        <div class="meta">
-                                                            Abertas: {{ $areaPerformance['open_total'] }} · Atrasadas:
-                                                            {{ $areaPerformance['overdue_total'] }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="metric-box">
-                                                        <div class="label">Resolução</div>
-                                                        <div class="value">{{ number_format($areaPerformance['resolution_rate'], 1, ',', '.') }}%
-                                                        </div>
-                                                        <div class="meta">
-                                                            Concluídas: {{ $areaPerformance['completed_total'] }} · No prazo:
-                                                            {{ number_format($areaPerformance['on_time_rate'], 1, ',', '.') }}%
-                                                        </div>
-                                                    </div>
-                                                    <div class="metric-box">
-                                                        <div class="label">Tempo médio</div>
-                                                        <div class="value">{{ $areaPerformance['avg_resolution_label'] }}</div>
-                                                        <div class="meta">
-                                                            Janela recente: {{ $areaPerformance['recent_total'] }} · Anterior:
-                                                            {{ $areaPerformance['previous_total'] }}
-                                                        </div>
-                                                    </div>
-                                                    <div class="metric-box">
-                                                        <div class="label">Tendência</div>
-                                                        <div class="value">
-                                                            {{ $areaPerformance['score_delta'] > 0 ? '+' : '' }}{{ number_format($areaPerformance['score_delta'], 1, ',', '.') }}
-                                                        </div>
-                                                        <div class="meta">
-                                                            Resolução
-                                                            {{ number_format($areaPerformance['previous_resolution_rate'], 1, ',', '.') }}% ->
-                                                            {{ number_format($areaPerformance['recent_resolution_rate'], 1, ',', '.') }}% · Atraso
-                                                            {{ number_format($areaPerformance['previous_overdue_rate'], 1, ',', '.') }}% ->
-                                                            {{ number_format($areaPerformance['recent_overdue_rate'], 1, ',', '.') }}% · Backlog
-                                                            {{ number_format($areaPerformance['previous_backlog_rate'], 1, ',', '.') }}% ->
-                                                            {{ number_format($areaPerformance['recent_backlog_rate'], 1, ',', '.') }}%
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
                 @empty
-                                            <div class="empty">Ainda não há dados suficientes para comparar o desempenho entre secretarias.</div>
+                                                        <div class="empty">Ainda não há dados suficientes para comparar o desempenho entre secretarias.</div>
     @endforelse
-                                    </div>
-                                </div>-->
+                                                </div>
+                                            </div>-->
 
         <!--<div class="territory-grid">
-                                <div class="card">
-                                    <h2>Reincidência em alta</h2>
-                                    <p class="section-copy">
-                                        Localidade + tema onde o problema está subindo na janela recente e exige cobrança mais firme.
-                                    </p>
-                                    <div class="territory-list">
-                                        @forelse ($territorialTrend['rising'] as $trendItem)
+                                            <div class="card">
+                                                <h2>Reincidência em alta</h2>
+                                                <p class="section-copy">
+                                                    Localidade + tema onde o problema está subindo na janela recente e exige cobrança mais firme.
+                                                </p>
+                                                <div class="territory-list">
+                                                    @forelse ($territorialTrend['rising'] as $trendItem)
     <div class="territory-item">
-                                                <div class="territory-item-head">
-                                                    <div class="territory-item-title">{{ $trendItem['locality'] }}</div>
-                                                    <div class="territory-item-count">{{ $trendItem['delta_label'] }}</div>
-                                                </div>
-                                                <div class="territory-item-meta">
-                                                    Tema: {{ $trendItem['theme'] }}<br>
-                                                    Secretaria dominante: {{ $trendItem['area_name'] }}<br>
-                                                    {{ $trendItem['meta_label'] }} · Atrasadas na janela recente:
-                                                    {{ $trendItem['recent_overdue_total'] }}
+                                                            <div class="territory-item-head">
+                                                                <div class="territory-item-title">{{ $trendItem['locality'] }}</div>
+                                                                <div class="territory-item-count">{{ $trendItem['delta_label'] }}</div>
+                                                            </div>
+                                                            <div class="territory-item-meta">
+                                                                Tema: {{ $trendItem['theme'] }}<br>
+                                                                Secretaria dominante: {{ $trendItem['area_name'] }}<br>
+                                                                {{ $trendItem['meta_label'] }} · Atrasadas na janela recente:
+                                                                {{ $trendItem['recent_overdue_total'] }}
+                                                            </div>
+                                                        </div>
+                    @empty
+                                                        <div class="empty" style="padding:1rem 0">Sem sinais relevantes de aumento de reincidência.</div>
+    @endforelse
                                                 </div>
                                             </div>
-                    @empty
-                                            <div class="empty" style="padding:1rem 0">Sem sinais relevantes de aumento de reincidência.</div>
-    @endforelse
-                                    </div>
-                                </div>
 
-                                <div class="card">
-                                    <h2>Reincidência em queda</h2>
-                                    <p class="section-copy">
-                                        Territórios onde a pressão caiu, ajudando a identificar bolsões com redução de recorrência.
-                                    </p>
-                                    <div class="territory-list">
-                                        @forelse ($territorialTrend['falling'] as $trendItem)
+                                            <div class="card">
+                                                <h2>Reincidência em queda</h2>
+                                                <p class="section-copy">
+                                                    Territórios onde a pressão caiu, ajudando a identificar bolsões com redução de recorrência.
+                                                </p>
+                                                <div class="territory-list">
+                                                    @forelse ($territorialTrend['falling'] as $trendItem)
     <div class="territory-item">
-                                                <div class="territory-item-head">
-                                                    <div class="territory-item-title">{{ $trendItem['locality'] }}</div>
-                                                    <div class="territory-item-count">{{ $trendItem['delta_label'] }}</div>
-                                                </div>
-                                                <div class="territory-item-meta">
-                                                    Tema: {{ $trendItem['theme'] }}<br>
-                                                    Secretaria dominante: {{ $trendItem['area_name'] }}<br>
-                                                    {{ $trendItem['meta_label'] }} · Resolução recente:
-                                                    {{ number_format($trendItem['recent_resolution_rate'], 1, ',', '.') }}%
+                                                            <div class="territory-item-head">
+                                                                <div class="territory-item-title">{{ $trendItem['locality'] }}</div>
+                                                                <div class="territory-item-count">{{ $trendItem['delta_label'] }}</div>
+                                                            </div>
+                                                            <div class="territory-item-meta">
+                                                                Tema: {{ $trendItem['theme'] }}<br>
+                                                                Secretaria dominante: {{ $trendItem['area_name'] }}<br>
+                                                                {{ $trendItem['meta_label'] }} · Resolução recente:
+                                                                {{ number_format($trendItem['recent_resolution_rate'], 1, ',', '.') }}%
+                                                            </div>
+                                                        </div>
+                    @empty
+                                                        <div class="empty" style="padding:1rem 0">Ainda não há queda relevante para destacar.</div>
+    @endforelse
                                                 </div>
                                             </div>
-                    @empty
-                                            <div class="empty" style="padding:1rem 0">Ainda não há queda relevante para destacar.</div>
-    @endforelse
-                                    </div>
-                                </div>
 
-                                <div class="card">
-                                    <h2>Execução no território</h2>
-                                    <p class="section-copy">
-                                        Leitura evolutiva do que está melhorando ou piorando no campo em
-                                        {{ $territorialTrend['comparison_label'] }}.
-                                    </p>
-                                    <div class="territory-list">
-                                        @forelse ($territorialTrend['execution'] as $trendItem)
+                                            <div class="card">
+                                                <h2>Execução no território</h2>
+                                                <p class="section-copy">
+                                                    Leitura evolutiva do que está melhorando ou piorando no campo em
+                                                    {{ $territorialTrend['comparison_label'] }}.
+                                                </p>
+                                                <div class="territory-list">
+                                                    @forelse ($territorialTrend['execution'] as $trendItem)
     <div class="territory-item">
-                                                <div class="territory-item-head">
-                                                    <div class="territory-item-title">{{ $trendItem['locality'] }}</div>
-                                                    <div class="territory-item-count">
-                                                        {{ number_format($trendItem['execution_delta'], 1, ',', '.') }}</div>
-                                                </div>
-                                                <div class="territory-item-meta">
-                                                    Tema: {{ $trendItem['theme'] }}<br>
-                                                    {{ $trendItem['trend_label'] }} · Secretaria dominante: {{ $trendItem['area_name'] }}<br>
-                                                    Resolução: {{ number_format($trendItem['previous_resolution_rate'], 1, ',', '.') }}% ->
-                                                    {{ number_format($trendItem['recent_resolution_rate'], 1, ',', '.') }}% · Atraso:
-                                                    {{ number_format($trendItem['previous_overdue_rate'], 1, ',', '.') }}% ->
-                                                    {{ number_format($trendItem['recent_overdue_rate'], 1, ',', '.') }}% · Backlog:
-                                                    {{ number_format($trendItem['previous_backlog_rate'], 1, ',', '.') }}% ->
-                                                    {{ number_format($trendItem['recent_backlog_rate'], 1, ',', '.') }}%
+                                                            <div class="territory-item-head">
+                                                                <div class="territory-item-title">{{ $trendItem['locality'] }}</div>
+                                                                <div class="territory-item-count">
+                                                                    {{ number_format($trendItem['execution_delta'], 1, ',', '.') }}</div>
+                                                            </div>
+                                                            <div class="territory-item-meta">
+                                                                Tema: {{ $trendItem['theme'] }}<br>
+                                                                {{ $trendItem['trend_label'] }} · Secretaria dominante: {{ $trendItem['area_name'] }}<br>
+                                                                Resolução: {{ number_format($trendItem['previous_resolution_rate'], 1, ',', '.') }}% ->
+                                                                {{ number_format($trendItem['recent_resolution_rate'], 1, ',', '.') }}% · Atraso:
+                                                                {{ number_format($trendItem['previous_overdue_rate'], 1, ',', '.') }}% ->
+                                                                {{ number_format($trendItem['recent_overdue_rate'], 1, ',', '.') }}% · Backlog:
+                                                                {{ number_format($trendItem['previous_backlog_rate'], 1, ',', '.') }}% ->
+                                                                {{ number_format($trendItem['recent_backlog_rate'], 1, ',', '.') }}%
+                                                            </div>
+                                                        </div>
+                    @empty
+                                                        <div class="empty" style="padding:1rem 0">Sem variação operacional forte o suficiente para leitura
+                                                            evolutiva.</div>
+    @endforelse
                                                 </div>
                                             </div>
-                    @empty
-                                            <div class="empty" style="padding:1rem 0">Sem variação operacional forte o suficiente para leitura
-                                                evolutiva.</div>
-    @endforelse
-                                    </div>
-                                </div>
-                            </div>-->
+                                        </div>-->
 
         <!--<div class="territory-grid">
-                            <div class="card">
-                                <h2>Hotspots territoriais</h2>
-                                <p class="section-copy">
-                                    Bairros e localidades com maior recorrência operacional em
-                                    {{ $territorialIntelligence['window_label'] }}.
-                                </p>
-                                <div class="territory-list">
-                                    @forelse ($territorialIntelligence['hotspots'] as $hotspot)
+                                        <div class="card">
+                                            <h2>Hotspots territoriais</h2>
+                                            <p class="section-copy">
+                                                Bairros e localidades com maior recorrência operacional em
+                                                {{ $territorialIntelligence['window_label'] }}.
+                                            </p>
+                                            <div class="territory-list">
+                                                @forelse ($territorialIntelligence['hotspots'] as $hotspot)
     <div class="territory-item">
-                                            <div class="territory-item-head">
-                                                <div class="territory-item-title">{{ $hotspot['locality'] }}</div>
-                                                <div class="territory-item-count">{{ $hotspot['total'] }} demanda(s)</div>
-                                            </div>
-                                            <div class="territory-item-meta">
-                                                Tema dominante: {{ $hotspot['top_theme'] }}<br>
-                                                Abertas: {{ $hotspot['open_total'] }} · Atrasadas: {{ $hotspot['overdue_total'] }} ·
-                                                Concluídas: {{ $hotspot['completed_total'] }}<br>
-                                                Último registro: {{ $hotspot['last_seen_at']?->format('d/m/Y') ?? '—' }}
-                                            </div>
-                                        </div>
+                                                        <div class="territory-item-head">
+                                                            <div class="territory-item-title">{{ $hotspot['locality'] }}</div>
+                                                            <div class="territory-item-count">{{ $hotspot['total'] }} demanda(s)</div>
+                                                        </div>
+                                                        <div class="territory-item-meta">
+                                                            Tema dominante: {{ $hotspot['top_theme'] }}<br>
+                                                            Abertas: {{ $hotspot['open_total'] }} · Atrasadas: {{ $hotspot['overdue_total'] }} ·
+                                                            Concluídas: {{ $hotspot['completed_total'] }}<br>
+                                                            Último registro: {{ $hotspot['last_seen_at']?->format('d/m/Y') ?? '—' }}
+                                                        </div>
+                                                    </div>
                     @empty
-                                        <div class="empty" style="padding:1rem 0">Ainda não há massa crítica para leitura territorial.
-                                        </div>
+                                                    <div class="empty" style="padding:1rem 0">Ainda não há massa crítica para leitura territorial.
+                                                    </div>
     @endforelse
-                                </div>
-                            </div>
+                                            </div>
+                                        </div>
 
-                            <div class="card">
-                                <h2>Temas recorrentes</h2>
-                                <p class="section-copy">
-                                    Principais tipos de problema que mais reaparecem no território e onde pressionam mais.
-                                </p>
-                                <div class="territory-list">
-                                    @forelse ($territorialIntelligence['themes'] as $theme)
+                                        <div class="card">
+                                            <h2>Temas recorrentes</h2>
+                                            <p class="section-copy">
+                                                Principais tipos de problema que mais reaparecem no território e onde pressionam mais.
+                                            </p>
+                                            <div class="territory-list">
+                                                @forelse ($territorialIntelligence['themes'] as $theme)
     <div class="territory-item">
-                                            <div class="territory-item-head">
-                                                <div class="territory-item-title">{{ $theme['theme'] }}</div>
-                                                <div class="territory-item-count">{{ $theme['total'] }} caso(s)</div>
-                                            </div>
-                                            <div class="territory-item-meta">
-                                                Principal localidade: {{ $theme['top_locality'] }}<br>
-                                                Secretaria mais acionada: {{ $theme['top_area'] }}<br>
-                                                Abertos: {{ $theme['open_total'] }} · Atrasados: {{ $theme['overdue_total'] }}
+                                                        <div class="territory-item-head">
+                                                            <div class="territory-item-title">{{ $theme['theme'] }}</div>
+                                                            <div class="territory-item-count">{{ $theme['total'] }} caso(s)</div>
+                                                        </div>
+                                                        <div class="territory-item-meta">
+                                                            Principal localidade: {{ $theme['top_locality'] }}<br>
+                                                            Secretaria mais acionada: {{ $theme['top_area'] }}<br>
+                                                            Abertos: {{ $theme['open_total'] }} · Atrasados: {{ $theme['overdue_total'] }}
+                                                        </div>
+                                                    </div>
+                    @empty
+                                                    <div class="empty" style="padding:1rem 0">Os temas recorrentes aparecerão conforme a base
+                                                        crescer.</div>
+    @endforelse
                                             </div>
                                         </div>
-                    @empty
-                                        <div class="empty" style="padding:1rem 0">Os temas recorrentes aparecerão conforme a base
-                                            crescer.</div>
-    @endforelse
-                                </div>
-                            </div>
 
-                            <div class="card">
-                                <h2>Histórico por secretaria</h2>
-                                <p class="section-copy">
-                                    Memória operacional por pasta, cruzando volume, hotspot principal e temas mais frequentes.
-                                </p>
-                                <div class="territory-list">
-                                    @forelse ($territorialIntelligence['areas'] as $areaHistory)
+                                        <div class="card">
+                                            <h2>Histórico por secretaria</h2>
+                                            <p class="section-copy">
+                                                Memória operacional por pasta, cruzando volume, hotspot principal e temas mais frequentes.
+                                            </p>
+                                            <div class="territory-list">
+                                                @forelse ($territorialIntelligence['areas'] as $areaHistory)
     <div class="territory-item">
-                                            <div class="territory-item-head">
-                                                <div class="territory-item-title">{{ $areaHistory['area_name'] }}</div>
-                                                <div class="territory-item-count">{{ $areaHistory['total'] }} registro(s)</div>
-                                            </div>
-                                            <div class="territory-item-meta">
-                                                Hotspot: {{ $areaHistory['top_locality'] }}<br>
-                                                Temas: {{ implode(' · ', $areaHistory['top_themes']) ?: 'Atendimento geral' }}<br>
-                                                Abertos: {{ $areaHistory['open_total'] }} · Atrasados: {{ $areaHistory['overdue_total'] }}
-                                                · Concluídos: {{ $areaHistory['completed_total'] }}
+                                                        <div class="territory-item-head">
+                                                            <div class="territory-item-title">{{ $areaHistory['area_name'] }}</div>
+                                                            <div class="territory-item-count">{{ $areaHistory['total'] }} registro(s)</div>
+                                                        </div>
+                                                        <div class="territory-item-meta">
+                                                            Hotspot: {{ $areaHistory['top_locality'] }}<br>
+                                                            Temas: {{ implode(' · ', $areaHistory['top_themes']) ?: 'Atendimento geral' }}<br>
+                                                            Abertos: {{ $areaHistory['open_total'] }} · Atrasados: {{ $areaHistory['overdue_total'] }}
+                                                            · Concluídos: {{ $areaHistory['completed_total'] }}
+                                                        </div>
+                                                    </div>
+                    @empty
+                                                    <div class="empty" style="padding:1rem 0">O histórico por secretaria será consolidado com novas
+                                                        demandas.</div>
+    @endforelse
                                             </div>
                                         </div>
-                    @empty
-                                        <div class="empty" style="padding:1rem 0">O histórico por secretaria será consolidado com novas
-                                            demandas.</div>
-    @endforelse
-                                </div>
-                            </div>
-                        </div>-->
+                                    </div>-->
 
         <div class="split-grid">
             @if ($canCreateDemand)
