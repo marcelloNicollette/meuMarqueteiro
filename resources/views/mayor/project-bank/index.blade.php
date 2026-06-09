@@ -224,15 +224,15 @@
 @section('content')
     <div class="project-bank-page">
         <!--<section class="project-bank-hero">
-                    <h1>Projetos</h1>
+                        <h1>Projetos</h1>
 
-                    <div class="project-bank-meta">
-                        <span>{{ $theses->count() }} tese(s) nesta visão</span>
-                        <span>{{ $savedCount }} salva(s) por voce</span>
-                        <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
-                        <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
-                    </div>
-                </section>-->
+                        <div class="project-bank-meta">
+                            <span>{{ $theses->count() }} tese(s) nesta visão</span>
+                            <span>{{ $savedCount }} salva(s) por voce</span>
+                            <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
+                            <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
+                        </div>
+                    </section>-->
 
         @if ($notifications->isNotEmpty())
             <section class="project-bank-notifications">
@@ -373,7 +373,7 @@
             <section class="project-bank-section">
                 <div class="project-bank-section-head" style="margin-bottom:1rem">
                     <div>
-                        <h2>Idéias de projetos para o municipio</h2>
+                        <h2>Idéias de projetos para o seu município</h2>
 
                     </div>
                     <div class="project-bank-counter">
