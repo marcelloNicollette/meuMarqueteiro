@@ -6,7 +6,7 @@
 @push('styles')
     <style>
         .project-bank-page {
-            padding: 1.5rem;
+            padding: 1.5rem 0;
             display: grid;
             gap: 1.25rem;
         }
@@ -224,15 +224,15 @@
 @section('content')
     <div class="project-bank-page">
         <!--<section class="project-bank-hero">
-                <h1>Projetos</h1>
+                    <h1>Projetos</h1>
 
-                <div class="project-bank-meta">
-                    <span>{{ $theses->count() }} tese(s) nesta visão</span>
-                    <span>{{ $savedCount }} salva(s) por voce</span>
-                    <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
-                    <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
-                </div>
-            </section>-->
+                    <div class="project-bank-meta">
+                        <span>{{ $theses->count() }} tese(s) nesta visão</span>
+                        <span>{{ $savedCount }} salva(s) por voce</span>
+                        <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
+                        <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
+                    </div>
+                </section>-->
 
         @if ($notifications->isNotEmpty())
             <section class="project-bank-notifications">
