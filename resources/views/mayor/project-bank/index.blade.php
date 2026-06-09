@@ -45,7 +45,7 @@
 
         .project-bank-filters form {
             display: grid;
-            grid-template-columns: repeat(5, minmax(0, 1fr));
+            grid-template-columns: repeat(4, minmax(0, 1fr));
             gap: .85rem;
         }
 
@@ -224,15 +224,15 @@
 @section('content')
     <div class="project-bank-page">
         <!--<section class="project-bank-hero">
-                                                                    <h1>Projetos</h1>
+                                                                        <h1>Projetos</h1>
 
-                                                                    <div class="project-bank-meta">
-                                                                        <span>{{ $theses->count() }} tese(s) nesta visão</span>
-                                                                        <span>{{ $savedCount }} salva(s) por voce</span>
-                                                                        <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
-                                                                        <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
-                                                                    </div>
-                                                                </section>-->
+                                                                        <div class="project-bank-meta">
+                                                                            <span>{{ $theses->count() }} tese(s) nesta visão</span>
+                                                                            <span>{{ $savedCount }} salva(s) por voce</span>
+                                                                            <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
+                                                                            <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
+                                                                        </div>
+                                                                    </section>-->
 
         @if ($notifications->isNotEmpty())
             <section class="project-bank-notifications">
@@ -302,36 +302,36 @@
         </section>
 
         <!--<section class="project-bank-section">
-                    <div class="project-bank-section-head" style="margin-bottom:1rem">
-                        <div>
-                            <h2>Salvas por voce</h2>
-                            <p>Espaco dedicado para retomar depois as teses que entraram no seu radar.</p>
+                        <div class="project-bank-section-head" style="margin-bottom:1rem">
+                            <div>
+                                <h2>Salvas por voce</h2>
+                                <p>Espaco dedicado para retomar depois as teses que entraram no seu radar.</p>
+                            </div>
+                            <div class="project-bank-counter">
+                                <strong id="project-bank-saved-visible-count">{{ $savedTheses->count() }}</strong> de
+                                {{ $savedTheses->count() }}
+                                salva(s) visiveis
+                            </div>
                         </div>
-                        <div class="project-bank-counter">
-                            <strong id="project-bank-saved-visible-count">{{ $savedTheses->count() }}</strong> de
-                            {{ $savedTheses->count() }}
-                            salva(s) visiveis
-                        </div>
-                    </div>
 
-                    @if ($savedTheses->isEmpty())
-                        <section class="project-bank-empty">
-                            Voce ainda nao salvou nenhuma tese. Quando clicar em `Salvar para depois`, ela aparece aqui em destaque.
-                        </section>
+                        @if ($savedTheses->isEmpty())
+                            <section class="project-bank-empty">
+                                Voce ainda nao salvou nenhuma tese. Quando clicar em `Salvar para depois`, ela aparece aqui em destaque.
+                            </section>
 @else
     <section class="project-bank-list" data-bank-list="saved">
-                            @foreach ($savedTheses as $thesis)
+                                @foreach ($savedTheses as $thesis)
     @include('mayor.project-bank.partials.thesis-card', [
         'thesis' => $thesis,
         'canGenerateProject' => $canGenerateProject,
     ])
     @endforeach
-                        </section>
-                        <section class="project-bank-empty is-inline" id="project-bank-saved-empty">
-                            Nenhuma tese salva combina com os filtros atuais.
-                        </section>
-                    @endif
-                </section>-->
+                            </section>
+                            <section class="project-bank-empty is-inline" id="project-bank-saved-empty">
+                                Nenhuma tese salva combina com os filtros atuais.
+                            </section>
+                        @endif
+                    </section>-->
 
         @if ($theses->isEmpty())
             <section class="project-bank-empty">
