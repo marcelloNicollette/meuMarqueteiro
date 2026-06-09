@@ -1,7 +1,8 @@
 @extends('layouts.mayor')
 
-@section('title', 'Banco de Projetos')
+@section('title', 'Projetos')
 
+@section('topbar-title', 'Projetos')
 @push('styles')
     <style>
         .project-bank-page {
@@ -222,19 +223,16 @@
 
 @section('content')
     <div class="project-bank-page">
-        <section class="project-bank-hero">
-            <h1>Banco de Projetos</h1>
-            <p>
-                Vitrine de teses prontas para o município, organizada por urgência e aderência. Cada tese pode virar um
-                projeto completo no módulo `Projetos` com o contexto inicial ja carregado.
-            </p>
-            <div class="project-bank-meta">
-                <span>{{ $theses->count() }} tese(s) nesta visão</span>
-                <span>{{ $savedCount }} salva(s) por voce</span>
-                <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
-                <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
-            </div>
-        </section>
+        <!--<section class="project-bank-hero">
+                <h1>Projetos</h1>
+
+                <div class="project-bank-meta">
+                    <span>{{ $theses->count() }} tese(s) nesta visão</span>
+                    <span>{{ $savedCount }} salva(s) por voce</span>
+                    <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
+                    <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
+                </div>
+            </section>-->
 
         @if ($notifications->isNotEmpty())
             <section class="project-bank-notifications">
