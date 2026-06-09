@@ -45,7 +45,7 @@
 
         .project-bank-filters form {
             display: grid;
-            grid-template-columns: repeat(7, minmax(0, 1fr));
+            grid-template-columns: repeat(5, minmax(0, 1fr));
             gap: .85rem;
         }
 
@@ -224,15 +224,15 @@
 @section('content')
     <div class="project-bank-page">
         <!--<section class="project-bank-hero">
-                                            <h1>Projetos</h1>
+                                                        <h1>Projetos</h1>
 
-                                            <div class="project-bank-meta">
-                                                <span>{{ $theses->count() }} tese(s) nesta visão</span>
-                                                <span>{{ $savedCount }} salva(s) por voce</span>
-                                                <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
-                                                <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
-                                            </div>
-                                        </section>-->
+                                                        <div class="project-bank-meta">
+                                                            <span>{{ $theses->count() }} tese(s) nesta visão</span>
+                                                            <span>{{ $savedCount }} salva(s) por voce</span>
+                                                            <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
+                                                            <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
+                                                        </div>
+                                                    </section>-->
 
         @if ($notifications->isNotEmpty())
             <section class="project-bank-notifications">
@@ -290,38 +290,11 @@
                     </select>
                 </div>
                 <div>
-                    <label for="urgency">Urgência</label>
-                    <select id="urgency" name="urgency">
-                        <option value="">Todas</option>
-                        @foreach (['alta' => 'Alta', 'media' => 'Media', 'baixa' => 'Baixa'] as $value => $label)
-                            <option value="{{ $value }}" @selected(($activeFilters['urgency'] ?? '') === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="size">Porte</label>
-                    <select id="size" name="size">
-                        <option value="">Todos</option>
-                        @foreach (['pequeno' => 'Pequeno', 'medio' => 'Medio', 'grande' => 'Grande'] as $value => $label)
-                            <option value="{{ $value }}" @selected(($activeFilters['size'] ?? '') === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
-                    <label for="complexity">Complexidade</label>
-                    <select id="complexity" name="complexity">
-                        <option value="">Todas</option>
-                        @foreach (['baixa' => 'Baixa', 'media' => 'Media', 'alta' => 'Alta'] as $value => $label)
-                            <option value="{{ $value }}" @selected(($activeFilters['complexity'] ?? '') === $value)>{{ $label }}</option>
-                        @endforeach
-                    </select>
-                </div>
-                <div>
                     <label for="search">Busca</label>
                     <input id="search" name="search" type="text" value="{{ $activeFilters['search'] ?? '' }}"
                         placeholder="Título, justificativa ou categoria">
                 </div>
-                <div class="">
+                <div class="pt-[1.3rem]">
                     <button type="button" class="btn" id="project-bank-clear-filters">Limpar filtros</button>
                 </div>
             </form>
