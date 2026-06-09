@@ -45,7 +45,7 @@
 
         .project-bank-filters form {
             display: grid;
-            grid-template-columns: repeat(6, minmax(0, 1fr));
+            grid-template-columns: repeat(7, minmax(0, 1fr));
             gap: .85rem;
         }
 
@@ -224,15 +224,15 @@
 @section('content')
     <div class="project-bank-page">
         <!--<section class="project-bank-hero">
-                        <h1>Projetos</h1>
+                                            <h1>Projetos</h1>
 
-                        <div class="project-bank-meta">
-                            <span>{{ $theses->count() }} tese(s) nesta visão</span>
-                            <span>{{ $savedCount }} salva(s) por voce</span>
-                            <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
-                            <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
-                        </div>
-                    </section>-->
+                                            <div class="project-bank-meta">
+                                                <span>{{ $theses->count() }} tese(s) nesta visão</span>
+                                                <span>{{ $savedCount }} salva(s) por voce</span>
+                                                <span>{{ $urgentWindowCount }} com prazo em ate 60 dias</span>
+                                                <span>{{ $unreadNotificationsCount }} notificacao(oes) nao lida(s)</span>
+                                            </div>
+                                        </section>-->
 
         @if ($notifications->isNotEmpty())
             <section class="project-bank-notifications">
@@ -321,15 +321,11 @@
                     <input id="search" name="search" type="text" value="{{ $activeFilters['search'] ?? '' }}"
                         placeholder="Título, justificativa ou categoria">
                 </div>
-            </form>
-            <div class="project-bank-toolbar">
-                <div class="project-bank-counter">
-                    Biblioteca completa do municipio: {{ $theses->count() }} tese(s)
-                </div>
-                <div class="project-bank-actions-inline">
+                <div class="">
                     <button type="button" class="btn" id="project-bank-clear-filters">Limpar filtros</button>
                 </div>
-            </div>
+            </form>
+
         </section>
 
         <section class="project-bank-section">
