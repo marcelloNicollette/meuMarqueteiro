@@ -91,6 +91,7 @@ class AppServiceProvider extends ServiceProvider
                 $app->make(\App\Services\Mandato\MandateProjectionService::class),
                 $app->make(\App\Services\Radar\HybridRadarReadService::class),
                 $app->make(\App\Services\Projects\ProjectFundingMatchService::class),
+                $app->make(\App\Services\Support\MunicipalityConfigurationStatusService::class),
                 $app->make(WebPushService::class),
             )
         );

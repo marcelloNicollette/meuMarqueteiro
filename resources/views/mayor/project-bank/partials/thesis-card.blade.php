@@ -1,22 +1,21 @@
 @php
     $userState = $thesis->userStates->first();
     $trackingStatus = $thesis->trackingStatus();
-    $searchText = strtolower(trim(implode(' ', array_filter([
-        $thesis->title,
-        $thesis->justification,
-        $thesis->category,
-        $thesis->funding_source,
-    ]))));
+    $searchText = strtolower(
+        trim(
+            implode(
+                ' ',
+                array_filter([$thesis->title, $thesis->justification, $thesis->category, $thesis->funding_source]),
+            ),
+        ),
+    );
 @endphp
 
-<article class="project-bank-card"
-    data-card="thesis"
-    data-saved="{{ $userState?->is_saved ? '1' : '0' }}"
+<article class="project-bank-card" data-card="thesis" data-saved="{{ $userState?->is_saved ? '1' : '0' }}"
     data-category="{{ strtolower((string) $thesis->category) }}"
     data-urgency="{{ strtolower((string) $thesis->urgency) }}"
     data-size="{{ strtolower((string) $thesis->estimated_size) }}"
-    data-complexity="{{ strtolower((string) $thesis->execution_complexity) }}"
-    data-search="{{ $searchText }}">
+    data-complexity="{{ strtolower((string) $thesis->execution_complexity) }}" data-search="{{ $searchText }}">
     <div class="project-bank-card-head">
         <div>
             <div class="project-bank-chips">
@@ -34,7 +33,7 @@
     </div>
 
     <div class="project-bank-actions">
-        <a href="{{ route('mayor.project-bank.show', $thesis) }}" class="btn btn-dark">Abrir tese</a>
+        <a href="{{ route('mayor.project-bank.show', $thesis) }}" class="btn btn-dark">Saber mais</a>
         <form method="POST" action="{{ route('mayor.project-bank.save', $thesis) }}">
             @csrf
             <button type="submit" class="btn">

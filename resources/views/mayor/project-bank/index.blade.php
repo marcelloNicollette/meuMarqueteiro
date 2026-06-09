@@ -375,13 +375,13 @@
             <section class="project-bank-section">
                 <div class="project-bank-section-head" style="margin-bottom:1rem">
                     <div>
-                        <h2>Biblioteca do municipio</h2>
-                        <p>Lista completa das teses disponiveis, com refinamento imediato por busca, urgencia e perfil.</p>
+                        <h2>Idéias de projetos para o municipio</h2>
+
                     </div>
                     <div class="project-bank-counter">
                         <strong id="project-bank-library-visible-count">{{ $theses->count() }}</strong> de
                         {{ $theses->count() }}
-                        tese(s) visiveis
+                        projeto(s) visiveis
                     </div>
                 </div>
                 <section class="project-bank-list" data-bank-list="library">
