@@ -450,16 +450,15 @@
 
             <div class="brand-hero">
                 <p class="brand-hero-eyebrow">Qu4tro.ai</p>
-                <h2 class="brand-hero-title">Gestão pública mais clara, estratégica e orientada por dados.</h2>
+                <h2 class="brand-hero-title">Mandatos Inteligentes.</h2>
                 <p class="brand-hero-body">
-                    Uma experiência visual mais limpa, institucional e confiável, alinhada ao novo sistema de
-                    tipografia,
-                    iconografia e cores da Qu4tro.ai.
+                    A plataforma que coloca o prefeito no controle do mandato, com clareza sobre o que já foi entregue e
+                    o que ainda falta.
                 </p>
             </div>
 
             <div class="brand-footer">
-                <div class="brand-stats">
+                <!--<div class="brand-stats">
                     <div>
                         <div class="brand-stat-value">24h</div>
                         <div class="brand-stat-label">Disponível</div>
@@ -472,7 +471,7 @@
                         <div class="brand-stat-value">100%</div>
                         <div class="brand-stat-label">Alinhado à marca</div>
                     </div>
-                </div>
+                </div>-->
             </div>
         </div>
 
