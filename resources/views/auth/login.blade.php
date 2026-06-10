@@ -109,7 +109,7 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            backdrop-filter: blur(14px);
+            margin: 0 auto;
         }
 
         .brand-logo-icon svg {
