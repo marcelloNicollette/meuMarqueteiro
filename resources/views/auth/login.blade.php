@@ -104,12 +104,12 @@
         }
 
         .brand-logo-icon {
-            width: 50%;
+            width: 40%;
             border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            margin: 0 auto;
+            margin: 2rem 0;
         }
 
         .brand-logo-icon svg {
@@ -439,13 +439,14 @@
         <div class="brand-panel">
 
             <div class="brand-logo">
-                <div class="brand-logo-icon">
-                    <img width="100%" src="/images/logo-qu4tro.ai-white.svg" alt="">
-                </div>
+
                 <!--<span class="brand-logo-name">Meu Assistente</span>-->
             </div>
 
             <div class="brand-hero">
+                <div class="brand-logo-icon">
+                    <img width="100%" src="/images/logo-qu4tro.ai-white.svg" alt="">
+                </div>
                 <h2 class="brand-hero-title">Mandatos Inteligentes.</h2>
                 <p class="brand-hero-body">
                     A plataforma que coloca o prefeito no controle do mandato e nos dados que orientam políticas
