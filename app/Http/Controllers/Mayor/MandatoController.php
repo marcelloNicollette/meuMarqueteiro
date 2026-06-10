@@ -14,7 +14,6 @@ use App\Services\Mandato\MandateAxisCatalogService;
 use App\Services\Mandato\MandateCommunicationSuggestionService;
 use App\Services\Mandato\MandateProjectionService;
 use App\Services\Mandato\MandatePromiseLinkingService;
-use App\Services\Mandato\MandateRadarOpportunitySuggestionService;
 use App\Services\Mandato\MandateResolveAiEvidenceSuggestionService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -31,7 +30,6 @@ class MandatoController extends Controller
         private readonly MandateActionProgressService $actionProgress,
         private readonly MandateCommunicationSuggestionService $communicationSuggestions,
         private readonly MandateProjectionService $projection,
-        private readonly MandateRadarOpportunitySuggestionService $radarSuggestions,
         private readonly MandateResolveAiEvidenceSuggestionService $resolveAiSuggestions,
     ) {}
 
@@ -94,15 +92,13 @@ class MandatoController extends Controller
         $pendingWithoutActions = collect($pendingWithoutActionsByAxis)
             ->flatMap(fn (array $axisGroup) => $axisGroup['items'] ?? [])
             ->values();
-        $radarSuggestionsByPromise = $this->radarSuggestions
-            ->buildForPendingPromises($municipality, $pendingWithoutActions);
         $resolveAiSuggestionsByPromise = $this->resolveAiSuggestions
             ->buildForOpenPromises($municipality, $pendingWithoutActions);
         $pendingWithoutActionsByAxis = collect($pendingWithoutActionsByAxis)
-            ->map(function (array $axisGroup) use ($radarSuggestionsByPromise, $resolveAiSuggestionsByPromise) {
+            ->map(function (array $axisGroup) use ($resolveAiSuggestionsByPromise) {
                 $axisGroup['items'] = collect($axisGroup['items'] ?? [])
-                    ->map(function (array $promise) use ($radarSuggestionsByPromise, $resolveAiSuggestionsByPromise) {
-                        $promise['radar_suggestions'] = $radarSuggestionsByPromise[(int) $promise['id']] ?? [];
+                    ->map(function (array $promise) use ($resolveAiSuggestionsByPromise) {
+                        $promise['radar_suggestions'] = [];
                         $promise['resolve_ai_suggestions'] = $resolveAiSuggestionsByPromise[(int) $promise['id']] ?? [];
 
                         return $promise;

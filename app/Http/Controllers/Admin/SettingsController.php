@@ -3,10 +3,8 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
-use App\Mail\RadarSyncSnapshotMail;
 use App\Models\SystemSetting;
 use App\Models\User;
-use App\Services\Radar\RadarSyncSnapshotService;
 use App\Services\Support\MunicipalityConfigurationStatusService;
 use App\Services\Support\RadarOperationalSettingsService;
 use App\Services\Support\RuntimeMailConfigService;
@@ -18,7 +16,6 @@ class SettingsController extends Controller
 {
     public function __construct(
         private readonly RuntimeMailConfigService $runtimeMail,
-        private readonly RadarSyncSnapshotService $radarSyncSnapshot,
         private readonly RadarOperationalSettingsService $radarOperationalSettings,
         private readonly MunicipalityConfigurationStatusService $configurationStatus,
     ) {}
@@ -56,15 +53,6 @@ class SettingsController extends Controller
             'mail_runtime_test_recipient' => SystemSetting::get('mail_runtime_test_recipient', $defaults['mail_runtime_test_recipient']),
         ];
 
-        $radarOps = [
-            'radar_sync_snapshot_enabled' => (bool) SystemSetting::get('radar_sync_snapshot_enabled', $defaults['radar_sync_snapshot_enabled']),
-            'radar_sync_snapshot_daily_enabled' => (bool) SystemSetting::get('radar_sync_snapshot_daily_enabled', $defaults['radar_sync_snapshot_daily_enabled']),
-            'radar_sync_snapshot_weekly_enabled' => (bool) SystemSetting::get('radar_sync_snapshot_weekly_enabled', $defaults['radar_sync_snapshot_weekly_enabled']),
-            'radar_sync_snapshot_recipients' => implode(', ', SystemSetting::get('radar_sync_snapshot_recipients', $defaults['radar_sync_snapshot_recipients'])),
-            'radar_sync_snapshot_daily_time' => SystemSetting::get('radar_sync_snapshot_daily_time', $defaults['radar_sync_snapshot_daily_time']),
-            'radar_sync_snapshot_weekly_day' => (int) SystemSetting::get('radar_sync_snapshot_weekly_day', $defaults['radar_sync_snapshot_weekly_day']),
-            'radar_sync_snapshot_weekly_time' => SystemSetting::get('radar_sync_snapshot_weekly_time', $defaults['radar_sync_snapshot_weekly_time']),
-        ];
         $coverageOps = [
             'coverage_executive_mail_enabled' => (bool) SystemSetting::get('coverage_executive_mail_enabled', $defaults['coverage_executive_mail_enabled']),
             'coverage_executive_mail_daily_enabled' => (bool) SystemSetting::get('coverage_executive_mail_daily_enabled', $defaults['coverage_executive_mail_daily_enabled']),
@@ -152,7 +140,6 @@ class SettingsController extends Controller
         return view('admin.settings.index', compact(
             'ai',
             'mail',
-            'radarOps',
             'coverageOps',
             'coverageOwnerSlaUsers',
             'mailRuntimeStatus',
@@ -220,13 +207,6 @@ class SettingsController extends Controller
             'mail_runtime_ehlo_domain' => 'nullable|string|max:255',
             'mail_runtime_timeout' => 'required|integer|min:5|max:120',
             'mail_runtime_test_recipient' => 'nullable|email',
-            'radar_sync_snapshot_enabled' => 'nullable|boolean',
-            'radar_sync_snapshot_daily_enabled' => 'nullable|boolean',
-            'radar_sync_snapshot_weekly_enabled' => 'nullable|boolean',
-            'radar_sync_snapshot_recipients' => 'nullable|string',
-            'radar_sync_snapshot_daily_time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
-            'radar_sync_snapshot_weekly_day' => 'required|integer|min:0|max:6',
-            'radar_sync_snapshot_weekly_time' => ['required', 'regex:/^\d{2}:\d{2}$/'],
             'coverage_executive_mail_enabled' => 'nullable|boolean',
             'coverage_executive_mail_daily_enabled' => 'nullable|boolean',
             'coverage_executive_mail_weekly_enabled' => 'nullable|boolean',
@@ -273,22 +253,12 @@ class SettingsController extends Controller
             'coverage_owner_sla_overrides.*.default' => 'nullable|integer|min:0|max:240',
         ]);
 
-        $recipientList = collect(explode(',', (string) ($validated['radar_sync_snapshot_recipients'] ?? '')))
-            ->map(fn (string $email) => trim($email))
-            ->filter()
-            ->values()
-            ->all();
         $coverageRecipientList = collect(explode(',', (string) ($validated['coverage_executive_mail_recipients'] ?? '')))
             ->map(fn (string $email) => trim($email))
             ->filter()
             ->values()
             ->all();
 
-        foreach ($recipientList as $email) {
-            if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
-                return back()->withErrors(["Destinatário inválido no Radar: {$email}"])->withInput();
-            }
-        }
         foreach ($coverageRecipientList as $email) {
             if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
                 return back()->withErrors(["Destinatário inválido no mailing executivo: {$email}"])->withInput();
@@ -299,10 +269,6 @@ class SettingsController extends Controller
         $after = $this->radarOperationalSettings->normalizePayload([
             ...$validated,
             'mail_runtime_enabled' => $request->boolean('mail_runtime_enabled'),
-            'radar_sync_snapshot_enabled' => $request->boolean('radar_sync_snapshot_enabled'),
-            'radar_sync_snapshot_daily_enabled' => $request->boolean('radar_sync_snapshot_daily_enabled'),
-            'radar_sync_snapshot_weekly_enabled' => $request->boolean('radar_sync_snapshot_weekly_enabled'),
-            'radar_sync_snapshot_recipients' => implode(',', $recipientList),
         ], $before);
 
         $this->radarOperationalSettings->applySnapshot($after);
@@ -373,7 +339,7 @@ class SettingsController extends Controller
             $user->update(['preferences' => $preferences]);
         }
 
-        return back()->with('success', 'Configurações operacionais de SMTP, Radar e cobertura executiva salvas com sucesso.');
+        return back()->with('success', 'Configurações operacionais de SMTP e cobertura executiva salvas com sucesso.');
     }
 
     public function rollbackOperational(Activity $activity, Request $request)
@@ -381,7 +347,7 @@ class SettingsController extends Controller
         if (!$this->radarOperationalSettings->isAuditActivity($activity)) {
             return response()->json([
                 'ok' => false,
-                'message' => 'Registro de auditoria do Radar não  encontrado.',
+                'message' => 'Registro de auditoria operacional não encontrado.',
             ], 404);
         }
 
@@ -396,7 +362,7 @@ class SettingsController extends Controller
 
         return response()->json([
             'ok' => true,
-            'message' => 'Configuração operacional do Radar restaurada com sucesso.',
+            'message' => 'Configuração operacional restaurada com sucesso.',
             'rollback_activity_id' => $rolledBack->id,
         ]);
     }
@@ -444,43 +410,6 @@ class SettingsController extends Controller
                 'success' => true,
                 'mailer' => $this->runtimeMail->activeMailerName(),
                 'recipient' => $recipient,
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'success' => false,
-                'error' => $e->getMessage(),
-            ], 500);
-        }
-    }
-
-    public function testRadarSnapshot(Request $request)
-    {
-        $recipient = trim((string) $request->input('recipient', SystemSetting::get('mail_runtime_test_recipient', '')));
-        $period = strtolower((string) $request->input('period', 'daily'));
-
-        if (!in_array($period, ['daily', 'weekly'], true)) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Período inválido para teste do snapshot.',
-            ], 422);
-        }
-
-        if (!filter_var($recipient, FILTER_VALIDATE_EMAIL)) {
-            return response()->json([
-                'success' => false,
-                'error' => 'Informe um destinatário de teste válido para o snapshot.',
-            ], 422);
-        }
-
-        try {
-            $snapshot = $this->radarSyncSnapshot->buildSnapshot($period);
-            $this->runtimeMail->send([$recipient], new RadarSyncSnapshotMail($snapshot));
-
-            return response()->json([
-                'success' => true,
-                'recipient' => $recipient,
-                'period' => $period,
-                'summary' => $snapshot['summary'],
             ]);
         } catch (\Throwable $e) {
             return response()->json([

@@ -31,30 +31,9 @@ class ScheduleRegistrar
                 \Log::error('Falha na sincronização do Radar de Recursos.');
             });
 
-        $dailyRadarSnapshotTime = (string) SystemSetting::get('radar_sync_snapshot_daily_time', config('radar.sync_snapshot.daily_time', '08:10'));
-        $weeklyRadarSnapshotDay = (int) SystemSetting::get('radar_sync_snapshot_weekly_day', config('radar.sync_snapshot.weekly_day', 1));
-        $weeklyRadarSnapshotTime = (string) SystemSetting::get('radar_sync_snapshot_weekly_time', config('radar.sync_snapshot.weekly_time', '08:30'));
         $dailyCoverageMailTime = (string) SystemSetting::get('coverage_executive_mail_daily_time', SystemSetting::defaults()['coverage_executive_mail_daily_time']);
         $weeklyCoverageMailDay = (int) SystemSetting::get('coverage_executive_mail_weekly_day', SystemSetting::defaults()['coverage_executive_mail_weekly_day']);
         $weeklyCoverageMailTime = (string) SystemSetting::get('coverage_executive_mail_weekly_time', SystemSetting::defaults()['coverage_executive_mail_weekly_time']);
-
-        $schedule->command('marqueteiro:send-radar-sync-snapshot daily')
-            ->dailyAt($dailyRadarSnapshotTime)
-            ->timezone('America/Sao_Paulo')
-            ->withoutOverlapping()
-            ->runInBackground()
-            ->onFailure(function () {
-                \Log::error('Falha no envio do snapshot diario do Radar.');
-            });
-
-        $schedule->command('marqueteiro:send-radar-sync-snapshot weekly')
-            ->weeklyOn($weeklyRadarSnapshotDay, $weeklyRadarSnapshotTime)
-            ->timezone('America/Sao_Paulo')
-            ->withoutOverlapping()
-            ->runInBackground()
-            ->onFailure(function () {
-                \Log::error('Falha no envio do snapshot semanal do Radar.');
-            });
 
         // ── Sincronização de Dados Públicos ──────────────────────────────
         $schedule->command('marqueteiro:ingest')

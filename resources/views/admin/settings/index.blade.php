@@ -341,7 +341,7 @@
                     <div>
                         <h3 style="font-size:.95rem;font-weight:600">SMTP operacional do sistema</h3>
                         <p style="font-size:.8rem;color:#6b7280;margin-top:.2rem">
-                            Configura o envio real de e-mails do Radar sem depender exclusivamente de `MAIL_*` no `.env`.
+                            Configura o envio real de e-mails do sistema sem depender exclusivamente de `MAIL_*` no `.env`.
                         </p>
                     </div>
                     <div style="text-align:right">
@@ -461,86 +461,6 @@
                     </button>
                 </div>
                 <div id="test-mail-runtime"
-                    style="display:none;margin-top:.75rem;padding:.75rem;border-radius:8px;font-size:.82rem"></div>
-            </div>
-
-            <div style="background:#fff;padding:1.5rem;border-radius:12px;border:1px solid #e5e7eb;margin-bottom:1.5rem">
-                <div
-                    style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #f3f4f6">
-                    <div>
-                        <h3 style="font-size:.95rem;font-weight:600">Operação do Radar de Recursos</h3>
-                        <p style="font-size:.8rem;color:#6b7280;margin-top:.2rem">
-                            Define para quem vão os snapshots diários e semanais, além dos horários operacionais.
-                        </p>
-                    </div>
-                </div>
-
-                <label
-                    style="display:flex;align-items:center;gap:.5rem;margin-bottom:.75rem;font-size:.85rem;color:#111827">
-                    <input type="checkbox" name="radar_sync_snapshot_enabled" value="1"
-                        {{ $radarOps['radar_sync_snapshot_enabled'] ? 'checked' : '' }}>
-                    Ativar snapshots do Radar por e-mail
-                </label>
-
-                <div style="display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:.75rem">
-                    <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:#111827">
-                        <input type="checkbox" name="radar_sync_snapshot_daily_enabled" value="1"
-                            {{ $radarOps['radar_sync_snapshot_daily_enabled'] ? 'checked' : '' }}>
-                        Snapshot diário
-                    </label>
-                    <label style="display:flex;align-items:center;gap:.5rem;font-size:.82rem;color:#111827">
-                        <input type="checkbox" name="radar_sync_snapshot_weekly_enabled" value="1"
-                            {{ $radarOps['radar_sync_snapshot_weekly_enabled'] ? 'checked' : '' }}>
-                        Snapshot semanal
-                    </label>
-                    <div style="grid-column:1/-1">
-                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Destinatários
-                            internos</label>
-                        <textarea name="radar_sync_snapshot_recipients" rows="3" placeholder="ops@empresa.com, gestao@empresa.com"
-                            style="width:100%;padding:.7rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">{{ $radarOps['radar_sync_snapshot_recipients'] }}</textarea>
-                        <div style="font-size:.74rem;color:#6b7280;margin-top:.3rem">
-                            Separe múltiplos e-mails com vírgula.
-                        </div>
-                    </div>
-                    <div>
-                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Horário
-                            diário</label>
-                        <input type="time" name="radar_sync_snapshot_daily_time"
-                            value="{{ $radarOps['radar_sync_snapshot_daily_time'] }}"
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
-                    </div>
-                    <div>
-                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Horário
-                            semanal</label>
-                        <input type="time" name="radar_sync_snapshot_weekly_time"
-                            value="{{ $radarOps['radar_sync_snapshot_weekly_time'] }}"
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem;box-sizing:border-box">
-                    </div>
-                    <div>
-                        <label style="display:block;font-size:.82rem;font-weight:600;margin-bottom:.3rem">Dia
-                            semanal</label>
-                        <select name="radar_sync_snapshot_weekly_day"
-                            style="width:100%;padding:.6rem .8rem;border:1px solid #d1d5db;border-radius:8px;font-size:.88rem">
-                            @foreach ([0 => 'Domingo', 1 => 'Segunda-feira', 2 => 'Terça-feira', 3 => 'Quarta-feira', 4 => 'Quinta-feira', 5 => 'Sexta-feira', 6 => 'Sábado'] as $value => $label)
-                                <option value="{{ $value }}"
-                                    {{ (int) $radarOps['radar_sync_snapshot_weekly_day'] === (int) $value ? 'selected' : '' }}>
-                                    {{ $label }}</option>
-                            @endforeach
-                        </select>
-                    </div>
-                </div>
-
-                <div style="display:flex;gap:.65rem;flex-wrap:wrap;margin-top:1rem">
-                    <button type="button" onclick="testRadarSnapshot('daily')"
-                        style="padding:.5rem .95rem;background:#ecfdf5;color:#047857;border:1px solid #a7f3d0;border-radius:8px;font-size:.82rem;cursor:pointer">
-                        Testar snapshot diário
-                    </button>
-                    <button type="button" onclick="testRadarSnapshot('weekly')"
-                        style="padding:.5rem .95rem;background:#eff6ff;color:#1d4ed8;border:1px solid #bfdbfe;border-radius:8px;font-size:.82rem;cursor:pointer">
-                        Testar snapshot semanal
-                    </button>
-                </div>
-                <div id="test-radar-snapshot"
                     style="display:none;margin-top:.75rem;padding:.75rem;border-radius:8px;font-size:.82rem"></div>
             </div>
 
@@ -818,7 +738,7 @@
             <div style="display:flex;justify-content:flex-end;margin-top:.5rem">
                 <button type="submit"
                     style="padding:.7rem 2rem;background:#0f1117;color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:600;cursor:pointer">
-                    Salvar SMTP, Radar e Cobertura
+                    Salvar SMTP e Cobertura
                 </button>
             </div>
         </form>
@@ -827,10 +747,9 @@
             <div
                 style="display:flex;justify-content:space-between;align-items:flex-start;gap:1rem;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid #f3f4f6">
                 <div>
-                    <h3 style="font-size:.95rem;font-weight:600">Auditoria operacional do Radar</h3>
+                    <h3 style="font-size:.95rem;font-weight:600">Auditoria operacional</h3>
                     <p style="font-size:.8rem;color:#6b7280;margin-top:.2rem">
-                        Histórico de alterações em SMTP, destinatários e horários do Radar, com rollback seguro por
-                        snapshot.
+                        Histórico de alterações em SMTP e cobertura executiva, com rollback seguro do snapshot operacional.
                     </p>
                 </div>
             </div>
@@ -912,7 +831,7 @@
                 @empty
                     <div
                         style="padding:1rem;border:1px dashed #d1d5db;border-radius:10px;text-align:center;font-size:.82rem;color:#9ca3af">
-                        Ainda não há alterações auditadas para SMTP e operação do Radar.
+                        Ainda não há alterações auditadas para SMTP e cobertura executiva.
                     </div>
                 @endforelse
             </div>
@@ -1000,50 +919,10 @@
             }
         }
 
-        async function testRadarSnapshot(period) {
-            const CSRF = document.querySelector('meta[name="csrf-token"]').content;
-            const el = document.getElementById('test-radar-snapshot');
-            const recipient = document.getElementById('mail-runtime-test-recipient').value;
-
-            el.style.display = 'block';
-            el.style.background = '#f3f4f6';
-            el.style.color = '#374151';
-            el.textContent = `Testando snapshot ${period === 'weekly' ? 'semanal' : 'diário'}...`;
-
-            try {
-                const res = await fetch('{{ route('admin.settings.radar-snapshot.test') }}', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': CSRF
-                    },
-                    body: JSON.stringify({
-                        recipient,
-                        period
-                    })
-                });
-                const data = await res.json();
-                if (data.success) {
-                    el.style.background = '#d1fae5';
-                    el.style.color = '#065f46';
-                    el.textContent =
-                        `✓ Snapshot ${period} enviado para ${data.recipient}. Falhas: ${data.summary.failed}, stale: ${data.summary.stale}, retries: ${data.summary.retried}`;
-                } else {
-                    el.style.background = '#fee2e2';
-                    el.style.color = '#991b1b';
-                    el.textContent = `✗ Erro: ${data.error}`;
-                }
-            } catch (e) {
-                el.style.background = '#fee2e2';
-                el.style.color = '#991b1b';
-                el.textContent = `✗ Erro: ${e.message}`;
-            }
-        }
-
         async function rollbackRadarOperational(activityId) {
             const CSRF = document.querySelector('meta[name="csrf-token"]').content;
 
-            if (!confirm('Restaurar este snapshot operacional do Radar e do SMTP?')) return;
+            if (!confirm('Restaurar este snapshot operacional de SMTP e cobertura?')) return;
 
             try {
                 const res = await fetch(`{{ url('/admin/settings/operational') }}/${activityId}/rollback`, {

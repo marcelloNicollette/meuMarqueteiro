@@ -25,7 +25,7 @@ class HybridRadarReadService
         $legacyPrograms = $this->legacyMunicipalityPrograms($municipality, $visibleOnly);
 
         if ($legacyPrograms->isNotEmpty()) {
-            return $this->overlayCanonicalData($legacyPrograms);
+            return $this->attachExistingCanonicalReferences($legacyPrograms);
         }
 
         if (!$this->canonicalEnabled()) {
@@ -324,8 +324,7 @@ class HybridRadarReadService
                 ->find($legacyProgramId);
 
             if ($legacy instanceof FederalProgramAlert) {
-                $canonical = $this->findCanonicalEntitiesForLegacy($legacy, $municipality)
-                    ?? $this->syncLegacyIntoCanonical($legacy, $municipality);
+                $canonical = $this->findCanonicalEntitiesForLegacy($legacy, $municipality);
 
                 if ($canonical !== null) {
                     return $canonical;
@@ -343,26 +342,28 @@ class HybridRadarReadService
         ?int $canonicalOpportunityId = null,
         ?User $user = null,
     ): ?array {
-        try {
-            $resolved = $this->resolveCanonicalEntitiesForMunicipality(
-                municipality: $municipality,
-                legacyProgramId: $legacyProgramId,
-                canonicalCycleId: $canonicalCycleId,
-                canonicalOpportunityId: $canonicalOpportunityId,
-            );
-        } catch (\Throwable $e) {
-            $resolved = null;
-        }
-
-        if (!is_array($resolved) && $legacyProgramId) {
+        if ($legacyProgramId) {
             $legacyProgram = FederalProgramAlert::query()
                 ->with(['resourceSource:id,key,name,capture_method,refresh_frequency'])
                 ->where('municipality_id', $municipality->id)
                 ->find($legacyProgramId);
 
             if ($legacyProgram instanceof FederalProgramAlert) {
-                return $this->legacyDetailPayload($legacyProgram);
+                $legacyProgram = $this->attachExistingCanonicalReferences(collect([$legacyProgram]))->first() ?? $legacyProgram;
+
+                return $this->legacyDetailPayload($legacyProgram, $user);
             }
+        }
+
+        try {
+            $resolved = $this->resolveCanonicalEntitiesForMunicipality(
+                municipality: $municipality,
+                legacyProgramId: null,
+                canonicalCycleId: $canonicalCycleId,
+                canonicalOpportunityId: $canonicalOpportunityId,
+            );
+        } catch (\Throwable $e) {
+            $resolved = null;
         }
 
         if (!is_array($resolved)) {
@@ -452,15 +453,36 @@ class HybridRadarReadService
         ];
     }
 
-    private function legacyDetailPayload(FederalProgramAlert $program): array
+    private function legacyDetailPayload(FederalProgramAlert $program, ?User $user = null): array
     {
         $source = $program->resourceSource;
         $status = ResourceOpportunityStatus::normalize($program->status, $program->deadline);
+        $opportunityId = (int) ($program->canonical_opportunity_id ?? 0);
+        $cycleId = (int) ($program->canonical_cycle_id ?? 0);
+        $supportsCanonicalActions = $opportunityId > 0 && $cycleId > 0;
+        $isSaved = false;
+        $isReopenNotifying = false;
+
+        if ($user instanceof User && $opportunityId > 0) {
+            $isSaved = ResourceUserSave::query()
+                ->where('user_id', $user->id)
+                ->where('municipality_id', $user->municipality_id)
+                ->where('resource_opportunity_id', $opportunityId)
+                ->exists();
+
+            $isReopenNotifying = ResourceReopenNotification::query()
+                ->where('user_id', $user->id)
+                ->where('municipality_id', $user->municipality_id)
+                ->where('resource_opportunity_id', $opportunityId)
+                ->whereNull('cancelled_at')
+                ->where('status', 'active')
+                ->exists();
+        }
 
         return [
             'legacy_program_id' => $program->id,
-            'canonical_opportunity_id' => null,
-            'canonical_cycle_id' => null,
+            'canonical_opportunity_id' => $supportsCanonicalActions ? $opportunityId : null,
+            'canonical_cycle_id' => $supportsCanonicalActions ? $cycleId : null,
             'title' => $program->program_name,
             'short_title' => $program->short_title,
             'official_title' => $program->program_name,
@@ -501,11 +523,17 @@ class HybridRadarReadService
             'viability_factors' => $program->viability_factors ?? [],
             'thematic_tags' => array_values(array_filter([$program->area, $program->funding_type, $program->resource_scope])),
             'source_metadata' => $program->source_metadata ?? [],
+            'projects_compatible' => [],
+            'reference_municipalities' => $this->normalizeList(data_get($program->source_metadata, 'reference_municipalities')),
             'read_mode' => 'legacy',
-            'is_saved' => false,
-            'is_reopen_notifying' => false,
-            'can_subscribe_reopen' => false,
-            'supports_canonical_actions' => false,
+            'is_saved' => $isSaved,
+            'is_reopen_notifying' => $isReopenNotifying,
+            'can_subscribe_reopen' => $supportsCanonicalActions && in_array($status, [
+                ResourceOpportunityStatus::ClosedRecently->value,
+                ResourceOpportunityStatus::Archived->value,
+                ResourceOpportunityStatus::Reopened->value,
+            ], true),
+            'supports_canonical_actions' => $supportsCanonicalActions,
         ];
     }
 
@@ -524,10 +552,10 @@ class HybridRadarReadService
         return $query->get();
     }
 
-    private function overlayCanonicalData(Collection $legacyPrograms): Collection
+    private function attachExistingCanonicalReferences(Collection $legacyPrograms): Collection
     {
         if (!$this->canonicalEnabled() || $legacyPrograms->isEmpty()) {
-            return $legacyPrograms;
+            return $legacyPrograms->map(fn (FederalProgramAlert $alert) => $this->decorateLegacyProgram($alert));
         }
 
         $opportunitiesByKey = ResourceOpportunity::query()
@@ -537,10 +565,10 @@ class HybridRadarReadService
             ->keyBy('canonical_key');
 
         return $legacyPrograms->map(function (FederalProgramAlert $alert) use ($opportunitiesByKey) {
+            $this->decorateLegacyProgram($alert);
             $canonical = $opportunitiesByKey->get($this->canonicalSync->canonicalKeyForAlert($alert));
 
             if (!$canonical instanceof ResourceOpportunity) {
-                $alert->setAttribute('read_mode', 'legacy');
                 return $alert;
             }
 
@@ -552,20 +580,27 @@ class HybridRadarReadService
                 $alert->setRelation('resourceSource', $canonical->resourceSource);
             }
 
-            $alert->setAttribute('source_name', $canonical->resourceSource?->name ?? $alert->source_key ?? $alert->source_platform);
+            $alert->setAttribute('source_name', $canonical->resourceSource?->name ?? $alert->source_name ?? $alert->source_key ?? $alert->source_platform);
             $alert->setAttribute('canonical_opportunity_id', $canonical->id);
             $alert->setAttribute('canonical_cycle_id', $cycle?->id);
-            $alert->setAttribute('read_mode', 'hybrid');
-
-            if ($cycle !== null) {
-                $alert->status = $cycle->status ?: $alert->status;
-                $alert->deadline = $cycle->deadline_at ?: $alert->deadline;
-                $alert->closed_at = $cycle->closed_at ?: $alert->closed_at;
-                $alert->closed_visibility_until = $cycle->closed_visibility_until ?: $alert->closed_visibility_until;
-            }
 
             return $alert;
         });
+    }
+
+    private function decorateLegacyProgram(FederalProgramAlert $alert): FederalProgramAlert
+    {
+        $alert->setAttribute('read_mode', 'legacy');
+        $alert->setAttribute(
+            'source_name',
+            $alert->resourceSource?->name
+                ?? $alert->source_name
+                ?? $alert->source_key
+                ?? $alert->source_platform
+                ?? 'Fonte não informada'
+        );
+
+        return $alert;
     }
 
     private function findCanonicalEntitiesForLegacy(FederalProgramAlert $alert, Municipality $municipality): ?array
@@ -594,30 +629,6 @@ class HybridRadarReadService
         if (!$cycle instanceof ResourceOpportunityCycle) {
             return null;
         }
-
-        return [
-            'opportunity' => $opportunity,
-            'cycle' => $cycle,
-            'program' => $this->synthesizeLegacyAlert($municipality, $cycle),
-        ];
-    }
-
-    private function syncLegacyIntoCanonical(FederalProgramAlert $alert, Municipality $municipality): ?array
-    {
-        $synced = $this->canonicalSync->syncFromAlert($alert);
-
-        if (!is_array($synced)) {
-            return null;
-        }
-
-        $opportunity = $synced['opportunity'] ?? null;
-        $cycle = $synced['cycle'] ?? null;
-
-        if (!$opportunity instanceof ResourceOpportunity || !$cycle instanceof ResourceOpportunityCycle) {
-            return null;
-        }
-
-        $opportunity->loadMissing('resourceSource');
 
         return [
             'opportunity' => $opportunity,
@@ -712,5 +723,20 @@ class HybridRadarReadService
     private function legacyExists(): bool
     {
         return Schema::hasTable('federal_program_alerts') && FederalProgramAlert::query()->exists();
+    }
+
+    private function normalizeList(mixed $value): array
+    {
+        if (is_array($value)) {
+            return collect($value)
+                ->map(fn ($item) => trim((string) $item))
+                ->filter()
+                ->values()
+                ->all();
+        }
+
+        $string = trim((string) ($value ?? ''));
+
+        return $string === '' ? [] : [$string];
     }
 }

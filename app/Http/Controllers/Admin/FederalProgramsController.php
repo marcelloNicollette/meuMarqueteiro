@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Enums\ResourceOpportunityStatus;
 use App\Http\Controllers\Controller;
 use App\Jobs\SyncFederalProgramsJob;
-use App\Mail\RadarSyncSnapshotMail;
 use App\Models\ApiSyncLog;
 use App\Models\FederalProgramAlert;
 use App\Models\Municipality;
@@ -18,8 +17,6 @@ use App\Services\FederalPrograms\DiaryMonitorRadarFetcher;
 use App\Services\FederalPrograms\StructuredScrapingRadarFetcher;
 use App\Services\Radar\HybridRadarReadService;
 use App\Services\Radar\RadarSyncExportService;
-use App\Services\Radar\RadarSyncSnapshotService;
-use App\Services\Support\RuntimeMailConfigService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
@@ -35,8 +32,6 @@ class FederalProgramsController extends Controller
     public function __construct(
         private readonly HybridRadarReadService $radarRead,
         private readonly RadarSyncExportService $radarSyncExport,
-        private readonly RadarSyncSnapshotService $radarSyncSnapshot,
-        private readonly RuntimeMailConfigService $runtimeMail,
         private readonly DiaryMonitorRadarFetcher $diaryMonitorFetcher,
         private readonly StructuredScrapingRadarFetcher $structuredScrapingFetcher,
     ) {}
@@ -49,12 +44,22 @@ class FederalProgramsController extends Controller
 
         $filters = $this->normalizedHistoryFilters($request);
         $curationFilters = $this->normalizedCurationFilters($request);
-        $curationAuditFilters = $this->normalizedCurationAuditFilters($request);
 
         $municipalities = Municipality::where('subscription_active', true)
             ->withCount(['federalPrograms'])
             ->orderBy('name')
-            ->get();
+            ->get()
+            ->map(function (Municipality $municipality) {
+                return [
+                    'id' => $municipality->id,
+                    'name' => $municipality->name,
+                    'state_code' => $municipality->state_code,
+                    'federal_programs_count' => (int) $municipality->federal_programs_count,
+                    'data_last_synced_at_iso' => $municipality->data_last_synced_at?->toIso8601String(),
+                    'data_last_synced_at_human' => $municipality->data_last_synced_at?->diffForHumans(),
+                ];
+            })
+            ->values();
         $reviewers = User::query()
             ->admins()
             ->active()
@@ -65,17 +70,9 @@ class FederalProgramsController extends Controller
         $programStats = $this->radarRead->municipalityProgramStats();
         $historyQuery = $this->buildHistoryQuery($filters);
         $curationQueueQuery = $this->buildCurationQueueQuery($curationFilters);
-        $curationAuditQuery = $this->buildCurationAuditQuery($curationAuditFilters);
         $sourceRunStats = $this->latestSourceRunStats();
-        $sourceRunHistory = $this->latestSourceRunHistory();
         $sourceCatalog = $this->buildSourceCatalog($sourceRunStats);
         $sourceCatalogSummary = $this->buildSourceCatalogSummary($sourceCatalog);
-        $sourceRunSummary = $this->buildSourceRunSummary($sourceRunStats, $sourceRunHistory);
-        $groupBOperationalSummary = $this->buildPipelineOperationalSummary($sourceCatalog, 'group_b_scraping');
-        $groupCOperationalSummary = $this->buildPipelineOperationalSummary($sourceCatalog, 'group_c_diary_monitor');
-
-        $summaryQuery = clone $historyQuery;
-        $curationSummaryQuery = clone $curationQueueQuery;
 
         $syncExecutions = ApiSyncLog::query()
             ->radarFederalPrograms()
@@ -91,56 +88,14 @@ class FederalProgramsController extends Controller
             ->keys()
             ->values();
         $history = $historyQuery
-            ->paginate(12)
+            ->paginate(10)
             ->withQueryString()
             ->through(fn (ApiSyncLog $log) => $this->historyRowPayload($log));
-        $municipalitySummary = $this->buildMunicipalitySummary($summaryQuery->get());
         $curationQueue = $curationQueueQuery
             ->paginate(12, ['*'], 'curation_page')
             ->withQueryString()
             ->through(fn (ResourceCurationQueue $entry) => $this->serializeCurationQueueEntry($entry));
-        $curationSummary = $this->buildCurationQueueSummary($curationSummaryQuery->get());
-        $curationKpis = $this->buildCurationOperationalKpis($curationAuditFilters);
-        $curationOperatorSummary = $this->buildCurationOperatorSummary($curationAuditFilters);
-        $currentOperator = auth()->user();
-        $currentOperatorCurationSummary = $this->buildCurrentOperatorCurationSummary($currentOperator);
-        $curationLoadBalancing = $this->buildCurationLoadBalancingPayload($reviewers);
-        $curationCapacityLimits = $this->buildCurationCapacityLimitsPayload($curationLoadBalancing);
-        $curationOperatorComparison = $this->buildCurationOperatorComparisonPayload($reviewers, $curationLoadBalancing);
-        $curationSuggestedAssignments = $this->buildSuggestedCurationAssignments($reviewers, $curationLoadBalancing);
-        $curationOperatorGoals = $this->buildCurationOperatorGoalsPayload(
-            $curationOperatorComparison,
-            $curationLoadBalancing,
-            $curationKpis
-        );
-        $curationDistributionPolicies = $this->buildCurationDistributionPoliciesPayload(
-            $curationSummary,
-            $curationKpis,
-            $curationLoadBalancing,
-            $curationCapacityLimits
-        );
-        $curationExecutiveTeam = $this->buildCurationExecutiveTeamPayload(
-            $curationSummary,
-            $curationKpis,
-            $curationLoadBalancing,
-            $curationCapacityLimits,
-            $curationOperatorComparison
-        );
-        $curationExceptionsSummary = $this->buildCurationExceptionsSummary();
-        $curationExceptionRows = $this->buildCurationExceptionRows();
-        $curationAuditHistory = $curationAuditQuery
-            ->limit(12)
-            ->get()
-            ->map(fn (Activity $activity) => $this->serializeCurationAuditActivity($activity));
-        $queueHealth = $this->queueHealthPayload();
-        $snapshotMailConfig = [
-            'enabled' => $this->radarSyncSnapshot->snapshotEnabled(),
-            'daily_enabled' => $this->radarSyncSnapshot->dailyEnabled(),
-            'weekly_enabled' => $this->radarSyncSnapshot->weeklyEnabled(),
-            'recipients' => $this->radarSyncSnapshot->recipientsFromSettings(),
-            'mailer' => $this->runtimeMail->activeMailerName(),
-            'smtp_runtime_enabled' => $this->runtimeMail->shouldUseRuntimeSmtp(),
-        ];
+        $curationSummary = $this->buildCurationQueueSummary((clone $curationQueueQuery)->get());
 
         return view('admin.federal-programs.index', compact(
             'municipalities',
@@ -149,35 +104,13 @@ class FederalProgramsController extends Controller
             'syncExecutions',
             'busyMunicipalityIds',
             'history',
-            'municipalitySummary',
             'curationQueue',
             'curationSummary',
             'curationFilters',
-            'curationAuditFilters',
-            'curationAuditHistory',
-            'curationKpis',
-            'curationOperatorSummary',
-            'currentOperator',
-            'currentOperatorCurationSummary',
-            'curationLoadBalancing',
-            'curationCapacityLimits',
-            'curationOperatorComparison',
-            'curationOperatorGoals',
-            'curationSuggestedAssignments',
-            'curationDistributionPolicies',
-            'curationExecutiveTeam',
-            'curationExceptionsSummary',
-            'curationExceptionRows',
             'reviewers',
-            'queueHealth',
             'filters',
-            'snapshotMailConfig',
             'sourceCatalog',
             'sourceCatalogSummary',
-            'sourceRunHistory',
-            'sourceRunSummary',
-            'groupBOperationalSummary',
-            'groupCOperationalSummary',
         ));
     }
 
@@ -918,46 +851,6 @@ class FederalProgramsController extends Controller
                 ],
             ],
         );
-    }
-
-    public function sendSnapshotEmail(Request $request)
-    {
-        $period = strtolower((string) $request->input('period', 'daily'));
-
-        if (!in_array($period, ['daily', 'weekly'], true)) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Periodo invalido para o snapshot do Radar.',
-            ], 422);
-        }
-
-        $recipients = $this->radarSyncSnapshot->recipientsFromSettings();
-
-        if ($recipients === []) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Nenhum destinatario do snapshot do Radar esta configurado.',
-            ], 409);
-        }
-
-        $snapshot = $this->radarSyncSnapshot->buildSnapshot($period);
-
-        try {
-            $this->runtimeMail->send($recipients, new RadarSyncSnapshotMail($snapshot));
-
-            return response()->json([
-                'ok' => true,
-                'message' => 'Snapshot operacional do Radar enviado para o time interno.',
-                'period' => $period,
-                'recipients' => $recipients,
-                'summary' => $snapshot['summary'],
-            ]);
-        } catch (\Throwable $e) {
-            return response()->json([
-                'ok' => false,
-                'message' => 'Falha ao enviar o snapshot do Radar: ' . $e->getMessage(),
-            ], 500);
-        }
     }
 
     // ── Sync de um município via AJAX ────────────────────────────────────

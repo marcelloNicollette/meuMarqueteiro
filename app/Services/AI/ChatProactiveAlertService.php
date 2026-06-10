@@ -2,16 +2,13 @@
 
 namespace App\Services\AI;
 
-use App\Enums\ResourceOpportunityStatus;
 use App\Models\Conversation;
 use App\Models\Demand;
-use App\Models\FederalProgramAlert;
 use App\Models\MorningBriefing;
 use App\Models\Municipality;
 use App\Models\SocialMention;
 use App\Models\User;
 use App\Services\Mandato\MandateProjectionService;
-use App\Services\Radar\HybridRadarReadService;
 use Illuminate\Support\Str;
 
 class ChatProactiveAlertService
@@ -23,7 +20,6 @@ class ChatProactiveAlertService
         $alerts = collect()
             ->push($this->buildDemandAlert($municipality))
             ->push($this->buildCommitmentRiskAlert($municipality))
-            ->push($this->buildFederalOpportunityAlert($municipality))
             ->push($this->buildMentionAlert($municipality))
             ->push($this->buildMorningBriefingAlert($municipality))
             ->filter()
@@ -114,38 +110,6 @@ class ChatProactiveAlertService
             'action_type' => 'prefill_new',
             'action_value' => 'No ritmo atual do mandato, quais eixos estao mais atrasados e quais acoes devo priorizar agora para reduzir esse desvio?',
             'weight' => 92,
-        ];
-    }
-
-    private function buildFederalOpportunityAlert(Municipality $municipality): ?array
-    {
-        $program = app(HybridRadarReadService::class)
-            ->municipalityRadarPrograms($municipality, visibleOnly: false)
-            ->filter(fn (FederalProgramAlert $item) => in_array($item->status, ResourceOpportunityStatus::activeForRadar(), true))
-            ->filter(fn (FederalProgramAlert $item) => (float) ($item->match_score ?? 0) >= 0.8)
-            ->sortBy(fn (FederalProgramAlert $item) => $item->deadline ? 0 : 1)
-            ->sortBy(fn (FederalProgramAlert $item) => $item->deadline?->timestamp ?? PHP_INT_MAX)
-            ->sortByDesc(fn (FederalProgramAlert $item) => (float) ($item->match_score ?? 0))
-            ->first();
-
-        if (!$program) {
-            return null;
-        }
-
-        $deadlineLabel = $program->deadline
-            ? 'Prazo: ' . $program->deadline->format('d/m/Y')
-            : 'Prazo não informado';
-
-        return [
-            'key' => 'federal_program',
-            'severity' => $program->deadline && $program->deadline->isBefore(today()->copy()->addDays(10)) ? 'medium' : 'low',
-            'title' => 'Oportunidade no radar de recursos',
-            'summary' => "{$program->program_name} | {$program->area} | Match " . round($program->match_score * 100) . "% | {$deadlineLabel}",
-            'topic_tags' => ['captação', 'recursos', 'radar_recursos'],
-            'action_label' => 'Abrir estrategia',
-            'action_type' => 'prefill_new',
-            'action_value' => "Me explique como aproveitar a oportunidade {$program->program_name} do radar de recursos e qual deve ser nosso proximo passo.",
-            'weight' => 60,
         ];
     }
 

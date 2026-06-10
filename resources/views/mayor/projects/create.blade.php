@@ -212,6 +212,9 @@
                     @if ($sourceThesis)
                         A tese ja entrou como contexto inicial. Revise os campos abaixo e siga para o fluxo normal do módulo
                         Projetos sem precisar reescrever a idéia do zero.
+                    @elseif(request()->filled('initial_idea') || request()->filled('title'))
+                        O Radar de Recursos preencheu o contexto inicial deste projeto. Revise os campos abaixo e siga para
+                        a estruturação completa no módulo Projetos.
                     @else
                         Esta primeira etapa cria a base do projeto na plataforma, reserva as 15 seções obrigatórias e
                         prepara o
@@ -247,7 +250,7 @@
                     <div class="field full">
                         <label for="title">Nome do projeto</label>
                         <input id="title" name="title" type="text" maxlength="160"
-                            value="{{ old('title', $sourceThesis?->title) }}"
+                            value="{{ old('title', $sourceThesis?->title ?? request('title')) }}"
                             placeholder="Ex.: Revitalizacao da Praca do Jardim America">
                         <div class="field-help">Use um nome claro e administrativo. Ele sera a base da identificação do
                             documento.</div>
@@ -258,7 +261,7 @@
                         <select id="project_type" name="project_type">
                             <option value="">A definir</option>
                             @foreach ($projectTypes as $value => $label)
-                                <option value="{{ $value }}" @selected(old('project_type', \Illuminate\Support\Str::lower($sourceThesis?->category ?? '')) === $value)>{{ $label }}
+                                <option value="{{ $value }}" @selected(old('project_type', \Illuminate\Support\Str::lower($sourceThesis?->category ?? request('project_type', ''))) === $value)>{{ $label }}
                                 </option>
                             @endforeach
                         </select>
@@ -277,7 +280,8 @@
                     <div class="field full">
                         <label for="responsible_secretariat">Secretaria responsável</label>
                         <input id="responsible_secretariat" name="responsible_secretariat" type="text" maxlength="120"
-                            value="{{ old('responsible_secretariat') }}" placeholder="Ex.: Secretaria de Infraestrutura">
+                            value="{{ old('responsible_secretariat', request('responsible_secretariat')) }}"
+                            placeholder="Ex.: Secretaria de Infraestrutura">
                     </div>
 
                     <div class="field full">
@@ -295,6 +299,7 @@
                                             $sourceThesis?->government_alignment
                                                 ? 'Alinhamento com programa de governo: ' . $sourceThesis->government_alignment
                                                 : null,
+                                            request('initial_idea'),
                                         ]),
                                     ),
                                 ),

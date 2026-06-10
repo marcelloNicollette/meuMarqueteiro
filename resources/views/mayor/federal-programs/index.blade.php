@@ -7,7 +7,7 @@
     <style>
         .programs-layout {
             padding: 1.75rem 2rem;
-            max-width: 1100px;
+            max-width: 100%;
         }
 
         /* ── Header ─── */
@@ -102,121 +102,71 @@
             background: var(--gold-lt);
         }
 
-        /* ── Tabs por área ─── */
-        .area-tabs {
-            display: flex;
-            gap: .4rem;
-            flex-wrap: wrap;
-            margin-bottom: 1.25rem;
-        }
-
-        .scope-tabs {
-            display: flex;
-            gap: .5rem;
-            flex-wrap: wrap;
-            margin-bottom: .85rem;
-        }
-
-        .scope-tab {
-            display: inline-flex;
-            align-items: center;
-            gap: .4rem;
-            padding: .5rem .95rem;
-            border-radius: 999px;
-            border: 1.5px solid var(--border);
-            background: #fff;
-            color: var(--ink-muted);
-            cursor: pointer;
-            font-family: "Inter", sans-serif;
-            font-size: .79rem;
-            font-weight: 600;
-            transition: all .15s;
-        }
-
-        .scope-tab.active {
-            border-color: var(--ink);
-            background: var(--ink);
-            color: #fff;
-        }
-
-        .scope-tab-count {
-            font-size: .68rem;
-            padding: .1rem .38rem;
-            border-radius: 8px;
-            background: rgba(255, 255, 255, .15);
-        }
-
-        .scope-tab:not(.active) .scope-tab-count {
-            background: var(--surface);
-        }
-
-        .saved-summary {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            background: #fffdf5;
-            border: 1px solid #f0e2b6;
-            border-radius: 12px;
-            padding: .95rem 1.1rem;
-            margin-bottom: 1rem;
-        }
-
-        .summary-stack {
+        .summary-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
             gap: .85rem;
             margin-bottom: 1rem;
         }
 
-        .saved-summary strong {
+        .summary-card {
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            padding: 1rem 1.05rem;
+        }
+
+        .summary-card strong {
             display: block;
             color: var(--ink);
-            font-size: .9rem;
-            margin-bottom: .15rem;
+            font-size: 1.2rem;
+            margin-bottom: .25rem;
+            font-family: "Outfit", sans-serif;
         }
 
-        .saved-summary span {
+        .summary-card span {
+            display: block;
+            font-size: .74rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: .35rem;
+        }
+
+        .summary-card p {
             font-size: .8rem;
             color: var(--ink-muted);
+            line-height: 1.55;
         }
 
-        .saved-summary button {
-            flex-shrink: 0;
+        .filters-panel {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+            gap: .85rem;
+            margin-bottom: 1rem;
+            padding: 1rem 1.05rem;
+            background: #fff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
         }
 
-        .area-tab {
-            padding: .45rem .9rem;
-            border-radius: 20px;
-            border: 1.5px solid var(--border);
-            background: none;
-            cursor: pointer;
-            font-family: "Inter", sans-serif;
-            font-size: .8rem;
-            font-weight: 500;
-            color: var(--ink-muted);
-            transition: all .15s;
-            display: flex;
-            align-items: center;
-            gap: .35rem;
+        .filter-field label {
+            display: block;
+            font-size: .68rem;
+            letter-spacing: .06em;
+            text-transform: uppercase;
+            color: var(--ink-soft);
+            margin-bottom: .35rem;
         }
 
-        .area-tab.active {
-            border-color: var(--ink);
-            background: var(--ink);
-            color: #fff;
-        }
-
-        .area-tab-count {
-            background: rgba(255, 255, 255, .15);
-            color: inherit;
-            font-size: .65rem;
-            padding: .1rem .35rem;
-            border-radius: 8px;
-        }
-
-        .area-tab:not(.active) .area-tab-count {
+        .filter-field select {
+            width: 100%;
+            border: 1px solid var(--border);
+            border-radius: 10px;
             background: var(--surface);
+            color: var(--ink);
+            font-size: .82rem;
+            padding: .65rem .75rem;
         }
 
         /* ── Grid de programas ─── */
@@ -329,36 +279,67 @@
         .prog-ministry {
             font-size: .76rem;
             color: var(--ink-muted);
+            margin-bottom: .5rem;
+        }
+
+        .prog-source {
+            font-size: .76rem;
+            color: var(--ink-muted);
+            line-height: 1.5;
             margin-bottom: .85rem;
         }
 
-        .prog-info-row {
+        .compact-badges {
             display: flex;
-            gap: 1.2rem;
+            flex-wrap: wrap;
+            gap: .4rem;
+            margin-bottom: .8rem;
         }
 
-        .prog-info-item {
-            font-size: .75rem;
-        }
-
-        .prog-info-label {
+        .compact-badge {
+            display: inline-flex;
+            align-items: center;
+            padding: .26rem .58rem;
+            border-radius: 999px;
+            background: var(--surface);
+            border: 1px solid var(--border-lt);
             color: var(--ink-muted);
-            margin-bottom: .1rem;
-            font-size: .68rem;
+            font-size: .71rem;
+            font-weight: 600;
+        }
+
+        .prog-metric-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: .7rem;
+        }
+
+        .prog-metric {
+            min-width: 0;
+        }
+
+        .prog-metric strong {
+            display: block;
+            margin-bottom: .15rem;
+            font-size: .67rem;
             letter-spacing: .05em;
             text-transform: uppercase;
+            color: var(--ink-soft);
         }
 
-        .prog-info-value {
+        .prog-metric span {
+            display: block;
+            font-size: .8rem;
             color: var(--ink);
-            font-weight: 500;
+            font-weight: 600;
+            line-height: 1.4;
         }
 
-        .prog-info-value.urgent {
+        .prog-metric span.urgent {
             color: var(--red);
         }
 
-        .prog-info-value.soon {
+        .prog-metric span.soon {
             color: #e65100;
         }
 
@@ -457,12 +438,11 @@
         }
 
         .prog-actions {
-            margin-left: auto;
             display: flex;
             align-items: center;
             gap: .5rem;
             flex-wrap: wrap;
-            justify-content: flex-end;
+            width: 100%;
         }
 
         .prog-action-btn {
@@ -577,6 +557,12 @@
 
         .programs-empty.hidden {
             display: none;
+        }
+
+        .programs-empty.filtered {
+            background: #fff;
+            border: 1px dashed var(--border);
+            border-radius: 14px;
         }
 
         /* ── Toast ─── */
@@ -774,6 +760,10 @@
                 width: 100%;
                 text-align: center;
             }
+
+            .prog-metric-grid {
+                grid-template-columns: 1fr;
+            }
         }
     </style>
 @endpush
@@ -810,30 +800,7 @@
             </button>
         </div>
 
-        <div class="summary-stack">
-            <div class="saved-summary">
-                <div>
-                    <strong>{{ $savedTotal }} oportunidade(s) salva(s)</strong>
-                    <span>Use a visão de salvos para reencontrar rápidamente o que você marcou para acompanhar.</span>
-                </div>
-                <button class="highlight-cta" type="button" onclick="setScopeFilter('saved')">
-                    Ver salvas
-                </button>
-            </div>
-            <div class="saved-summary">
-                <div>
-                    <strong>{{ $reopenActiveTotal }} reabertura(s) ativa(s)</strong>
-                    <span>Veja as oportunidades encerradas que estão com monitoramento de reabertura ligado.</span>
-                </div>
-                <button class="highlight-cta" type="button" onclick="setScopeFilter('reopen')">
-                    Ver reaberturas
-                </button>
-            </div>
-        </div>
-
-        {{-- ── Tabs por área ────────────────────────────────────────── --}}
         @php
-            $areas = $programs->groupBy('area');
             $areaLabels = [
                 'saude' => 'Saúde',
                 'educacao' => 'Educação',
@@ -843,39 +810,112 @@
                 'social' => 'Social',
                 'outros' => 'Outros',
             ];
+            $fundingTypeLabels = [
+                'convenio' => 'Convênio',
+                'emenda' => 'Emenda parlamentar',
+                'transferencia' => 'Transferência especial',
+                'fundo' => 'Fundo a fundo',
+                'credito' => 'Financiamento reembolsável',
+            ];
+            $sizeLabels = [
+                'small' => 'Pequeno porte',
+                'medium' => 'Médio porte',
+                'large' => 'Grande porte',
+            ];
+            $eligibleTotal = $programs
+                ->whereIn('status', \App\Enums\ResourceOpportunityStatus::activeForRadar())
+                ->count();
+            $closingSoonTotal = $programs
+                ->filter(
+                    fn($program) => $program->deadline &&
+                        now()->diffInDays($program->deadline, false) >= 0 &&
+                        now()->diffInDays($program->deadline, false) <= 30,
+                )
+                ->count();
+            $closedRecentTotal = $programs
+                ->filter(
+                    fn($program) => \App\Enums\ResourceOpportunityStatus::normalize(
+                        $program->status,
+                        $program->deadline,
+                    ) === \App\Enums\ResourceOpportunityStatus::ClosedRecently->value,
+                )
+                ->count();
         @endphp
 
-        <div class="scope-tabs">
-            <button class="scope-tab active" data-scope="all" onclick="setScopeFilter('all', this)">
-                Todas
-                <span class="scope-tab-count">{{ $programs->count() }}</span>
-            </button>
-            <button class="scope-tab" data-scope="saved" onclick="setScopeFilter('saved', this)">
-                Salvas
-                <span class="scope-tab-count">{{ $savedTotal }}</span>
-            </button>
-            <button class="scope-tab" data-scope="reopen" onclick="setScopeFilter('reopen', this)">
-                Reabertura ativa
-                <span class="scope-tab-count">{{ $reopenActiveTotal }}</span>
-            </button>
+        <div class="summary-grid">
+            <div class="summary-card">
+                <span>Total elegível</span>
+                <strong>{{ $eligibleTotal }}</strong>
+                <p>Oportunidades ativas e aderentes ao município agora.</p>
+            </div>
+            <div class="summary-card">
+                <span>Prazo em 30 dias</span>
+                <strong>{{ $closingSoonTotal }}</strong>
+                <p>Editais que pedem priorização por estarem próximos do encerramento.</p>
+            </div>
+            <div class="summary-card">
+                <span>Encerrados em exposição</span>
+                <strong>{{ $closedRecentTotal }}</strong>
+                <p>Oportunidades encerradas recentemente e ainda visíveis no radar.</p>
+            </div>
+            <div class="summary-card">
+                <span>Itens salvos</span>
+                <strong>{{ $savedTotal }}</strong>
+                <p>Cards que sua equipe marcou para acompanhamento mais próximo.</p>
+            </div>
         </div>
 
-        <div class="area-tabs">
-            <button class="area-tab active" data-area="todos" onclick="filterArea(this)">
-                Todos <span class="area-tab-count">{{ $programs->count() }}</span>
-            </button>
-            @foreach ($areas as $area => $areaPrograms)
-                <button class="area-tab" data-area="{{ $area }}" onclick="filterArea(this)">
-                    {{ $areaLabels[$area] ?? ucfirst($area) }}
-                    <span class="area-tab-count">{{ $areaPrograms->count() }}</span>
-                </button>
-            @endforeach
+        <div class="filters-panel">
+            <div class="filter-field">
+                <label for="typeFilter">Tipo de recurso</label>
+                <select id="typeFilter" onchange="applyProgramFilters()">
+                    <option value="all">Todos os tipos</option>
+                    @foreach ($fundingTypeLabels as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="deadlineFilter">Prazo</label>
+                <select id="deadlineFilter" onchange="applyProgramFilters()">
+                    <option value="all">Todos</option>
+                    <option value="active">Abertos agora</option>
+                    <option value="next_30">Encerrando em até 30 dias</option>
+                    <option value="closed_recently">Encerrados recentemente</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="sizeFilter">Porte</label>
+                <select id="sizeFilter" onchange="applyProgramFilters()">
+                    <option value="all">Todos os portes</option>
+                    @foreach ($sizeLabels as $key => $label)
+                        <option value="{{ $key }}">{{ $label }}</option>
+                    @endforeach
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="viabilityFilter">Viabilidade</label>
+                <select id="viabilityFilter" onchange="applyProgramFilters()">
+                    <option value="all">Todas</option>
+                    <option value="alto">Alta</option>
+                    <option value="medio">Média</option>
+                    <option value="baixo">Baixa</option>
+                </select>
+            </div>
+            <div class="filter-field">
+                <label for="sortFilter">Ordenação</label>
+                <select id="sortFilter" onchange="applyProgramFilters()">
+                    <option value="match_desc">Maior compatibilidade</option>
+                    <option value="deadline_asc">Prazo mais próximo</option>
+                    <option value="value_desc">Maior valor estimado</option>
+                </select>
+            </div>
         </div>
 
         {{-- ── Grid de programas ──────────────────────────────────── --}}
         <div class="programs-grid" id="programsGrid">
 
-            @forelse($programs->sortByDesc('match_score') as $program)
+            @forelse($programs as $program)
                 @php
                     $isHighMatch = ($program->match_score ?? 0) >= 0.85;
                     $deadline = $program->deadline;
@@ -885,11 +925,66 @@
 
                     $normalizedStatus = \App\Enums\ResourceOpportunityStatus::normalize($program->status, $deadline);
                     $statusLabel = \App\Enums\ResourceOpportunityStatus::labelFor($program->status, $deadline);
+                    $sourceName =
+                        $program->source_name ??
+                        ($program->resourceSource?->name ??
+                            ($program->source_key ??
+                                ($program->source_platform ?? ($program->ministry ?? 'Fonte não informada'))));
+                    $sizeKey = $program->estimated_size ?: 'medium';
+                    $sizeLabel = $sizeLabels[$sizeKey] ?? 'Porte não informado';
+                    $fundingTypeKey = $program->funding_type ?: 'convenio';
+                    $fundingTypeLabel = $fundingTypeLabels[$fundingTypeKey] ?? ucfirst($fundingTypeKey);
+                    $viabilityKey = \Illuminate\Support\Str::of((string) ($program->viability_level ?? ''))
+                        ->lower()
+                        ->ascii()
+                        ->value();
+                    $viabilityLabel = match ($viabilityKey) {
+                        'alto', 'high' => 'Alta',
+                        'medio', 'media', 'medium' => 'Média',
+                        'baixo', 'low' => 'Baixa',
+                        default => 'Não informada',
+                    };
+                    $projectType = match ($program->area) {
+                        'infraestrutura', 'saneamento', 'habitacao' => 'infraestrutura',
+                        'social', 'saude', 'educacao' => 'social',
+                        default => 'institucional',
+                    };
+                    $projectCreateUrl = route('mayor.projects.create', [
+                        'title' => $program->program_name,
+                        'initial_idea' => trim(
+                            implode(
+                                "\n\n",
+                                array_filter([
+                                    $program->description,
+                                    $program->match_reason ? 'Compatibilidade: ' . $program->match_reason : null,
+                                    $program->viability_reason ? 'Viabilidade: ' . $program->viability_reason : null,
+                                    $program->source_url ? 'Edital: ' . $program->source_url : null,
+                                ]),
+                            ),
+                        ),
+                        'project_type' => $projectType,
+                        'responsible_secretariat' => $program->ministry,
+                    ]);
+                    $supportsSavedActions =
+                        filled($program->canonical_opportunity_id) && filled($program->canonical_cycle_id);
+                    $statusGroup = in_array(
+                        $normalizedStatus,
+                        \App\Enums\ResourceOpportunityStatus::activeForRadar(),
+                        true,
+                    )
+                        ? 'active'
+                        : ($normalizedStatus === \App\Enums\ResourceOpportunityStatus::ClosedRecently->value
+                            ? 'closed_recently'
+                            : 'other');
                 @endphp
 
                 <div class="program-card {{ $isHighMatch ? 'high-match' : '' }}" data-area="{{ $program->area }}"
-                    data-saved="{{ $program->is_saved ? '1' : '0' }}"
-                    data-reopen="{{ $program->is_reopen_notifying ? '1' : '0' }}">
+                    data-type="{{ $fundingTypeKey }}" data-size="{{ $sizeKey }}"
+                    data-viability="{{ $viabilityKey }}" data-status-group="{{ $statusGroup }}"
+                    data-expiring="{{ $daysLeft !== null && $daysLeft >= 0 && $daysLeft <= 30 ? '1' : '0' }}"
+                    data-match-score="{{ (float) ($program->match_score ?? 0) }}"
+                    data-value="{{ (float) ($program->max_value ?? 0) }}"
+                    data-deadline-sort="{{ $deadline?->timestamp ?? 9999999999 }}">
                     <div class="program-card-head">
                         <div class="prog-head-row">
                             <span class="prog-area-tag area-{{ $program->area }}">
@@ -908,73 +1003,42 @@
                         </div>
 
                         <div class="prog-title">{{ $program->program_name }}</div>
-
-                        @if ($program->ministry)
-                            <div class="prog-ministry">{{ $program->ministry }}</div>
-                        @endif
-
-                        <div class="prog-info-row">
-                            @if ($program->max_value)
-                                <div class="prog-info-item">
-                                    <div class="prog-info-label">Valor máximo</div>
-                                    <div class="prog-info-value">
-                                        R$ {{ number_format($program->max_value, 0, ',', '.') }}
-                                    </div>
-                                </div>
-                            @endif
-
-                            @if ($deadline)
-                                <div class="prog-info-item">
-                                    <div class="prog-info-label">Prazo</div>
-                                    <div class="prog-info-value {{ $deadlineClass }}">
-                                        @if ($daysLeft !== null && $daysLeft <= 0)
-                                            Encerrado
-                                        @elseif($daysLeft !== null && $daysLeft <= 7)
-                                            {{ $daysLeft }}d restantes ⚠️
-                                        @elseif($daysLeft !== null && $daysLeft <= 30)
-                                            {{ $daysLeft }} dias
-                                        @else
-                                            {{ $deadline->format('d/m/Y') }}
-                                        @endif
-                                    </div>
-                                </div>
-                            @endif
+                        <div class="prog-source">{{ $sourceName }}</div>
+                        <div class="compact-badges">
+                            <span class="compact-badge">{{ $fundingTypeLabel }}</span>
+                            <span class="compact-badge">{{ $sizeLabel }}</span>
+                            <span class="compact-badge">Viabilidade {{ $viabilityLabel }}</span>
+                        </div>
+                        <div class="prog-metric-grid">
+                            <div class="prog-metric">
+                                <strong>Compatibilidade</strong>
+                                <span>{{ $program->match_score ? round($program->match_score * 100) . '%' : 'Não informada' }}</span>
+                            </div>
+                            <div class="prog-metric">
+                                <strong>Prazo</strong>
+                                <span class="{{ $deadlineClass }}">
+                                    @if (!$deadline)
+                                        Vigente
+                                    @elseif($daysLeft !== null && $daysLeft < 0)
+                                        Encerrado
+                                    @elseif($daysLeft !== null && $daysLeft <= 7)
+                                        {{ $daysLeft }}d restantes
+                                    @elseif($daysLeft !== null && $daysLeft <= 30)
+                                        {{ $daysLeft }} dias
+                                    @else
+                                        {{ $deadline->format('d/m/Y') }}
+                                    @endif
+                                </span>
+                            </div>
+                            <div class="prog-metric">
+                                <strong>Valor total</strong>
+                                <span>{{ $program->max_value ? 'R$ ' . number_format($program->max_value, 0, ',', '.') : 'Não informado' }}</span>
+                            </div>
                         </div>
                     </div>
 
                     <div class="program-card-footer">
-
-                        @if ($program->source_url)
-                            <a href="{{ $program->source_url }}" target="_blank" class="prog-link">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path
-                                        d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
-                                </svg>
-                                Edital
-                            </a>
-                        @endif
-
                         <div class="prog-actions">
-                            <form method="POST" action="{{ route('mayor.mandato.federal-programs.save') }}">
-                                @csrf
-                                @if ($program->exists)
-                                    <input type="hidden" name="program_id" value="{{ $program->id }}">
-                                @endif
-                                @if (filled($program->canonical_cycle_id))
-                                    <input type="hidden" name="canonical_cycle_id"
-                                        value="{{ $program->canonical_cycle_id }}">
-                                @endif
-                                @if (filled($program->canonical_opportunity_id))
-                                    <input type="hidden" name="canonical_opportunity_id"
-                                        value="{{ $program->canonical_opportunity_id }}">
-                                @endif
-                                <button class="prog-meta-btn {{ $program->is_saved ? 'is-active' : '' }}" type="submit">
-                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                        <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
-                                    </svg>
-                                    {{ $program->is_saved ? 'Salvo' : 'Salvar' }}
-                                </button>
-                            </form>
                             <button class="prog-detail-btn" type="button"
                                 data-program-id="{{ $program->exists ? $program->id : '' }}"
                                 data-canonical-cycle-id="{{ $program->canonical_cycle_id ?? '' }}"
@@ -986,6 +1050,35 @@
                                 </svg>
                                 Ver detalhes
                             </button>
+                            <a class="prog-action-btn" href="{{ $projectCreateUrl }}">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
+                                </svg>
+                                Gerar projeto
+                            </a>
+                            @if ($supportsSavedActions)
+                                <form method="POST" action="{{ route('mayor.mandato.federal-programs.save') }}">
+                                    @csrf
+                                    @if ($program->exists)
+                                        <input type="hidden" name="program_id" value="{{ $program->id }}">
+                                    @endif
+                                    @if (filled($program->canonical_cycle_id))
+                                        <input type="hidden" name="canonical_cycle_id"
+                                            value="{{ $program->canonical_cycle_id }}">
+                                    @endif
+                                    @if (filled($program->canonical_opportunity_id))
+                                        <input type="hidden" name="canonical_opportunity_id"
+                                            value="{{ $program->canonical_opportunity_id }}">
+                                    @endif
+                                    <button class="prog-meta-btn {{ $program->is_saved ? 'is-active' : '' }}"
+                                        type="submit">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
+                                        </svg>
+                                        {{ $program->is_saved ? 'Salvo' : 'Salvar' }}
+                                    </button>
+                                </form>
+                            @endif
                             @if ($program->can_subscribe_reopen)
                                 <form method="POST"
                                     action="{{ route('mayor.mandato.federal-programs.reopen-notification') }}">
@@ -1012,21 +1105,6 @@
                                     </button>
                                 </form>
                             @endif
-                            <a class="prog-action-btn"
-                                href="{{ route('mayor.mandato.acao.create', [
-                                    'title' => 'Ação a partir do programa: ' . $program->program_name,
-                                    'description' => trim(
-                                        ($program->description ? $program->description . "\n\n" : '') . 'Origem: ' . ($program->source_url ?? ''),
-                                    ),
-                                    'funding_source' => $program->funding_type ? ucfirst($program->funding_type) : 'Federal',
-                                    'end_date' => optional($program->deadline)->format('Y-m-d'),
-                                    'program_area' => $program->area,
-                                ]) }}">
-                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
-                                </svg>
-                                Criar ação
-                            </a>
                             <form method="POST" action="{{ route('mayor.mandato.federal-programs.ask.payload') }}">
                                 @csrf
                                 @if ($program->exists)
@@ -1047,6 +1125,15 @@
                                     Perguntar ao assistente
                                 </button>
                             </form>
+                            @if ($program->source_url)
+                                <a href="{{ $program->source_url }}" target="_blank" class="prog-link">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M19 19H5V5h7V3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2v-7h-2v7zM14 3v2h3.59l-9.83 9.83 1.41 1.41L19 6.41V10h2V3h-7z" />
+                                    </svg>
+                                    Edital
+                                </a>
+                            @endif
                         </div>
                     </div>
                 </div>
@@ -1056,25 +1143,20 @@
                         <path
                             d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                     </svg>
-                    <p>Nenhuma oportunidade identificada ainda.<br>Os dados serão sincronizados automaticamente.</p>
+                    <p>Nenhuma oportunidade identificada ainda.<br>As fontes monitoradas e a curadoria alimentarão esta
+                        vitrine conforme novos editais forem publicados.</p>
                 </div>
             @endforelse
 
         </div>
         @if ($programs->isNotEmpty())
-            <div class="programs-empty hidden" id="savedEmptyState">
+            <div class="programs-empty filtered hidden" id="filterEmptyState">
                 <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
+                    <path
+                        d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z" />
                 </svg>
-                <p>Nenhuma oportunidade salva neste filtro.<br>Use o botão <strong>Salvar</strong> nos cards para montar sua
-                    shortlist.</p>
-            </div>
-            <div class="programs-empty hidden" id="reopenEmptyState">
-                <svg viewBox="0 0 24 24" fill="currentColor">
-                    <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
-                </svg>
-                <p>Nenhuma reabertura ativa neste filtro.<br>Ative <strong>Notificar reabertura</strong> em oportunidades
-                    encerradas para acompanhar novas janelas.</p>
+                <p>Nenhuma oportunidade corresponde aos filtros atuais.<br>Ajuste tema, tipo, prazo, porte ou viabilidade
+                    para ampliar a vitrine.</p>
             </div>
         @endif
     </div>
@@ -1087,7 +1169,7 @@
             <div class="detail-head">
                 <div>
                     <h3 id="programDetailTitle">Detalhes da oportunidade</h3>
-                    <p id="programDetailSubtitle">Carregando dados canônicos da oportunidade.</p>
+                    <p id="programDetailSubtitle">Carregando detalhe expandido da oportunidade.</p>
                 </div>
                 <button class="detail-close" type="button" onclick="closeProgramDetail()">&times;</button>
             </div>
@@ -1101,82 +1183,62 @@
 
 @push('scripts')
     <script>
-        let currentAreaFilter = 'todos';
-        let currentScopeFilter = 'all';
         const detailRoute = '{{ route('mayor.mandato.federal-programs.detail') }}';
         const saveRoute = '{{ route('mayor.mandato.federal-programs.save') }}';
         const reopenRoute = '{{ route('mayor.mandato.federal-programs.reopen-notification') }}';
         const askRoute = '{{ route('mayor.mandato.federal-programs.ask.payload') }}';
-        const actionCreateRoute = '{{ route('mayor.mandato.acao.create') }}';
+        const projectCreateRoute = '{{ route('mayor.projects.create') }}';
         const csrfToken = @json(csrf_token());
         const highlightProgram = @json($highlightProgram ?? null);
 
-        // ── Filtro por área ───────────────────────────────────────
-        function filterArea(btn) {
-            document.querySelectorAll('.area-tab').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentAreaFilter = btn.dataset.area;
-            applyProgramFilters();
-        }
-
-        function setScopeFilter(scope, btn = null) {
-            currentScopeFilter = scope;
-            document.querySelectorAll('.scope-tab').forEach(tab => {
-                tab.classList.toggle('active', tab.dataset.scope === scope);
-            });
-
-            if (btn) {
-                btn.classList.add('active');
-            }
-
-            applyProgramFilters();
-        }
-
         function applyProgramFilters() {
+            const typeFilter = document.getElementById('typeFilter')?.value || 'all';
+            const deadlineFilter = document.getElementById('deadlineFilter')?.value || 'all';
+            const sizeFilter = document.getElementById('sizeFilter')?.value || 'all';
+            const viabilityFilter = document.getElementById('viabilityFilter')?.value || 'all';
+            const sortFilter = document.getElementById('sortFilter')?.value || 'match_desc';
+            const grid = document.getElementById('programsGrid');
+            const cards = Array.from(document.querySelectorAll('.program-card'));
+
             let visibleCount = 0;
-            document.querySelectorAll('.program-card').forEach(card => {
-                const matchesArea = currentAreaFilter === 'todos' || card.dataset.area === currentAreaFilter;
-                const matchesScope =
-                    currentScopeFilter === 'all' ||
-                    (currentScopeFilter === 'saved' && card.dataset.saved === '1') ||
-                    (currentScopeFilter === 'reopen' && card.dataset.reopen === '1');
-                const visible = matchesArea && matchesScope;
+
+            cards.forEach(card => {
+                const matchesType = typeFilter === 'all' || card.dataset.type === typeFilter;
+                const matchesSize = sizeFilter === 'all' || card.dataset.size === sizeFilter;
+                const matchesViability = viabilityFilter === 'all' || card.dataset.viability === viabilityFilter;
+                const matchesDeadline =
+                    deadlineFilter === 'all' ||
+                    (deadlineFilter === 'active' && card.dataset.statusGroup === 'active') ||
+                    (deadlineFilter === 'next_30' && card.dataset.expiring === '1') ||
+                    (deadlineFilter === 'closed_recently' && card.dataset.statusGroup === 'closed_recently');
+                const visible = matchesType && matchesSize && matchesViability && matchesDeadline;
 
                 card.style.display = visible ? 'flex' : 'none';
-                if (visible) visibleCount += 1;
+                card.dataset.visible = visible ? '1' : '0';
+                if (visible) {
+                    visibleCount += 1;
+                }
             });
 
-            const savedEmptyState = document.getElementById('savedEmptyState');
-            const reopenEmptyState = document.getElementById('reopenEmptyState');
-            if (savedEmptyState) {
-                savedEmptyState.classList.toggle('hidden', visibleCount > 0 || currentScopeFilter !== 'saved');
-            }
-            if (reopenEmptyState) {
-                reopenEmptyState.classList.toggle('hidden', visibleCount > 0 || currentScopeFilter !== 'reopen');
+            cards
+                .sort((left, right) => {
+                    if (sortFilter === 'deadline_asc') {
+                        return Number(left.dataset.deadlineSort || 0) - Number(right.dataset.deadlineSort || 0);
+                    }
+
+                    if (sortFilter === 'value_desc') {
+                        return Number(right.dataset.value || 0) - Number(left.dataset.value || 0);
+                    }
+
+                    return Number(right.dataset.matchScore || 0) - Number(left.dataset.matchScore || 0);
+                })
+                .forEach(card => grid.appendChild(card));
+
+            const filterEmptyState = document.getElementById('filterEmptyState');
+            if (filterEmptyState) {
+                filterEmptyState.classList.toggle('hidden', visibleCount > 0);
             }
         }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            if (!highlightProgram) {
-                return;
-            }
-
-            const trigger = document.querySelector(
-                `.prog-detail-btn[data-program-id="${highlightProgram.program_id ?? ''}"][data-canonical-cycle-id="${highlightProgram.canonical_cycle_id ?? ''}"][data-canonical-opportunity-id="${highlightProgram.canonical_opportunity_id ?? ''}"]`
-            ) || document.querySelector(
-                `.prog-detail-btn[data-program-id="${highlightProgram.program_id ?? ''}"]`
-            ) || document.querySelector(
-                `.prog-detail-btn[data-canonical-cycle-id="${highlightProgram.canonical_cycle_id ?? ''}"][data-canonical-opportunity-id="${highlightProgram.canonical_opportunity_id ?? ''}"]`
-            );
-
-            if (trigger) {
-                openProgramDetail(trigger);
-                trigger.closest('.program-card')?.scrollIntoView({
-                    behavior: 'smooth',
-                    block: 'center'
-                });
-            }
-        });
 
         // ── Perguntar sobre programa específico ───────────────────
         function askAboutProgram(programName) {
@@ -1211,9 +1273,9 @@
                 .replace(/'/g, '&#039;');
         }
 
-        function renderDetailList(items) {
+        function renderDetailList(items, emptyMessage = 'Nenhuma informação registrada.') {
             if (!Array.isArray(items) || items.length === 0) {
-                return '<p>Nenhuma informação registrada.</p>';
+                return `<p>${escapeHtml(emptyMessage)}</p>`;
             }
 
             const rows = items.map(item => {
@@ -1260,18 +1322,30 @@
             `;
         }
 
-        function buildCreateActionUrl(detail) {
+        function mapProjectType(area) {
+            const normalized = String(area || '').toLowerCase();
+
+            if (['infraestrutura', 'saneamento', 'habitacao'].includes(normalized)) {
+                return 'infraestrutura';
+            }
+
+            if (['social', 'saude', 'educacao'].includes(normalized)) {
+                return 'social';
+            }
+
+            return 'institucional';
+        }
+
+        function buildProjectCreateUrl(detail) {
             const params = new URLSearchParams({
-                title: `Ação a partir do programa: ${detail.title || 'Oportunidade do Radar de Recursos'}`,
-                description: `${detail.description || ''}${detail.source_url ? `\n\nOrigem: ${detail.source_url}` : ''}`
+                title: detail.title || 'Projeto a partir do Radar de Recursos',
+                initial_idea: `${detail.description || detail.summary || ''}${detail.match_reason ? `\n\nCompatibilidade: ${detail.match_reason}` : ''}${detail.viability_reason ? `\n\nViabilidade: ${detail.viability_reason}` : ''}${detail.source_url ? `\n\nEdital: ${detail.source_url}` : ''}`
                     .trim(),
-                funding_source: detail.funding_type ? String(detail.funding_type).charAt(0).toUpperCase() + String(
-                    detail.funding_type).slice(1) : 'Federal',
-                end_date: detail.deadline_at || '',
-                program_area: detail.area || '',
+                project_type: mapProjectType(detail.area),
+                responsible_secretariat: detail.ministry || detail.issuing_body || '',
             });
 
-            return `${actionCreateRoute}?${params.toString()}`;
+            return `${projectCreateRoute}?${params.toString()}`;
         }
 
         function renderDetailActions(detail) {
@@ -1298,34 +1372,34 @@
             return `
                 <div class="detail-actions">
                     ${supportsCanonicalActions ? `
-                                                <form method="POST" action="${saveRoute}">
-                                                    <input type="hidden" name="_token" value="${csrfToken}">
-                                                    ${hiddenIdentifiers}
-                                                    <button class="prog-meta-btn ${detail.is_saved ? 'is-active' : ''}" type="submit">
-                                                        <svg viewBox="0 0 24 24" fill="currentColor">
-                                                            <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
-                                                        </svg>
-                                                        ${detail.is_saved ? 'Salvo' : 'Salvar'}
-                                                    </button>
-                                                </form>
-                                            ` : ''}
+                                                                                        <form method="POST" action="${saveRoute}">
+                                                                                            <input type="hidden" name="_token" value="${csrfToken}">
+                                                                                            ${hiddenIdentifiers}
+                                                                                            <button class="prog-meta-btn ${detail.is_saved ? 'is-active' : ''}" type="submit">
+                                                                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                                                                    <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
+                                                                                                </svg>
+                                                                                                ${detail.is_saved ? 'Salvo' : 'Salvar'}
+                                                                                            </button>
+                                                                                        </form>
+                                                                                    ` : ''}
                     ${supportsCanonicalActions && detail.can_subscribe_reopen ? `
-                                                            <form method="POST" action="${reopenRoute}">
-                                                                <input type="hidden" name="_token" value="${csrfToken}">
-                                                                ${hiddenIdentifiers}
-                                                                <button class="prog-meta-btn ${detail.is_reopen_notifying ? 'is-notify is-active' : 'is-notify'}" type="submit">
-                                                                    <svg viewBox="0 0 24 24" fill="currentColor">
-                                                                        <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
-                                                                    </svg>
-                                                                    ${detail.is_reopen_notifying ? 'Reabertura ativa' : 'Notificar reabertura'}
-                                                                </button>
-                                                            </form>
-                                                        ` : ''}
-                    <a class="prog-action-btn" href="${escapeHtml(buildCreateActionUrl(detail))}">
+                                                                                                    <form method="POST" action="${reopenRoute}">
+                                                                                                        <input type="hidden" name="_token" value="${csrfToken}">
+                                                                                                        ${hiddenIdentifiers}
+                                                                                                        <button class="prog-meta-btn ${detail.is_reopen_notifying ? 'is-notify is-active' : 'is-notify'}" type="submit">
+                                                                                                            <svg viewBox="0 0 24 24" fill="currentColor">
+                                                                                                                <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
+                                                                                                            </svg>
+                                                                                                            ${detail.is_reopen_notifying ? 'Reabertura ativa' : 'Notificar reabertura'}
+                                                                                                        </button>
+                                                                                                    </form>
+                                                                                                ` : ''}
+                    <a class="prog-action-btn" href="${escapeHtml(buildProjectCreateUrl(detail))}">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />
                         </svg>
-                        Criar ação
+                        Gerar projeto
                     </a>
                     <form method="POST" action="${askRoute}">
                         <input type="hidden" name="_token" value="${csrfToken}">
@@ -1352,7 +1426,7 @@
             modal.classList.add('open');
             body.innerHTML = '<div class="detail-loading">Carregando detalhe expandido...</div>';
             title.textContent = 'Detalhes da oportunidade';
-            subtitle.textContent = 'Carregando dados canônicos da oportunidade.';
+            subtitle.textContent = 'Carregando dados da oportunidade.';
 
             const payload = {
                 program_id: trigger.dataset.programId || null,
@@ -1378,7 +1452,7 @@
                 .then(detail => {
                     title.textContent = detail.title || 'Detalhes da oportunidade';
                     subtitle.textContent =
-                        `${detail.status_label || 'Status não informado'} • ${detail.source_name || 'Fonte não informada'} • leitura ${detail.read_mode || 'hibrida'}`;
+                        `${detail.source_name || 'Fonte não informada'} • ${detail.status_label || 'Status não informado'}${detail.deadline_at ? ` • prazo ${formatDate(detail.deadline_at)}` : ''}`;
 
                     body.innerHTML = `
                         ${renderDetailActions(detail)}
@@ -1386,7 +1460,8 @@
                             <div class="detail-stat"><strong>Status</strong><span>${escapeHtml(detail.status_label || 'Nao informado')}</span></div>
                             <div class="detail-stat"><strong>Compatibilidade</strong><span>${detail.match_percentage !== null ? `${escapeHtml(detail.match_percentage)}%` : 'Nao informado'}</span></div>
                             <div class="detail-stat"><strong>Viabilidade</strong><span>${escapeHtml(detail.viability_level || 'Nao informado')}</span></div>
-                            <div class="detail-stat"><strong>Valor total</strong><span>${formatMoney(detail.total_value)}</span></div>
+                            <div class="detail-stat"><strong>Tipo de recurso</strong><span>${escapeHtml(detail.funding_type || 'Nao informado')}</span></div>
+                            <div class="detail-stat"><strong>Porte estimado</strong><span>${escapeHtml(detail.estimated_size || 'Nao informado')}</span></div>
                             <div class="detail-stat"><strong>Prazo</strong><span>${formatDate(detail.deadline_at)}</span></div>
                             <div class="detail-stat"><strong>Contrapartida</strong><span>${detail.counterpart_percentage !== null ? `${escapeHtml(detail.counterpart_percentage)}%` : 'Nao informado'}</span></div>
                         </div>
@@ -1409,16 +1484,26 @@
                         <div class="detail-grid">
                             <div class="detail-section">
                                 <h4>Elegibilidade</h4>
-                                ${renderDetailList(detail.eligibility_rules)}
+                                ${renderDetailList(detail.eligibility_rules, 'Sem regras de elegibilidade detalhadas.')}
                             </div>
                             <div class="detail-section">
                                 <h4>Documentação exigida</h4>
-                                ${renderDetailList(detail.documentation_requirements)}
+                                ${renderDetailList(detail.documentation_requirements, 'Nenhuma documentação principal foi registrada.')}
                             </div>
                         </div>
                         <div class="detail-grid">
                             <div class="detail-section">
-                                <h4>Dados do ciclo</h4>
+                                <h4>Projetos compatíveis no município</h4>
+                                ${renderDetailList(detail.projects_compatible, 'Ainda não há projetos vinculados a esta oportunidade no município.')}
+                            </div>
+                            <div class="detail-section">
+                                <h4>Municípios de referência</h4>
+                                ${renderDetailList(detail.reference_municipalities, 'Nenhum município de referência foi registrado para esta oportunidade.')}
+                            </div>
+                        </div>
+                        <div class="detail-grid">
+                            <div class="detail-section">
+                                <h4>Ciclo do edital</h4>
                                 <ul class="detail-list">
                                     <li><strong>Publicação:</strong> ${formatDate(detail.published_at)}</li>
                                     <li><strong>Abertura:</strong> ${formatDate(detail.opens_at)}</li>
@@ -1428,13 +1513,13 @@
                                 </ul>
                             </div>
                             <div class="detail-section">
-                                <h4>Origem e indexação</h4>
+                                <h4>Fonte e acesso</h4>
                                 <ul class="detail-list">
                                     <li><strong>Fonte:</strong> ${escapeHtml(detail.source_name || 'Nao informada')}</li>
-                                    <li><strong>Chave:</strong> ${escapeHtml(detail.source_key || 'Nao informada')}</li>
-                                    <li><strong>Captura:</strong> ${escapeHtml(detail.capture_method || 'Nao informada')}</li>
-                                    <li><strong>Frequência:</strong> ${escapeHtml(detail.refresh_frequency || 'Nao informada')}</li>
+                                    <li><strong>Órgão concedente:</strong> ${escapeHtml(detail.issuing_body || detail.ministry || 'Nao informado')}</li>
                                     <li><strong>Escopo:</strong> ${escapeHtml(detail.resource_scope || 'Nao informado')}</li>
+                                    <li><strong>Link do edital:</strong> ${detail.source_url ? `<a href="${escapeHtml(detail.source_url)}" target="_blank">Abrir edital</a>` : 'Nao informado'}</li>
+                                    <li><strong>Canal de inscrição:</strong> ${detail.application_url ? `<a href="${escapeHtml(detail.application_url)}" target="_blank">Abrir inscrição</a>` : 'Nao informado'}</li>
                                 </ul>
                             </div>
                         </div>
@@ -1463,6 +1548,24 @@
             const prefill = sessionStorage.getItem('chatPrefill');
             if (prefill) sessionStorage.removeItem('chatPrefill');
             applyProgramFilters();
+
+            if (highlightProgram) {
+                const trigger = document.querySelector(
+                    `.prog-detail-btn[data-program-id="${highlightProgram.program_id ?? ''}"][data-canonical-cycle-id="${highlightProgram.canonical_cycle_id ?? ''}"][data-canonical-opportunity-id="${highlightProgram.canonical_opportunity_id ?? ''}"]`
+                ) || document.querySelector(
+                    `.prog-detail-btn[data-program-id="${highlightProgram.program_id ?? ''}"]`
+                ) || document.querySelector(
+                    `.prog-detail-btn[data-canonical-cycle-id="${highlightProgram.canonical_cycle_id ?? ''}"][data-canonical-opportunity-id="${highlightProgram.canonical_opportunity_id ?? ''}"]`
+                );
+
+                if (trigger) {
+                    openProgramDetail(trigger);
+                    trigger.closest('.program-card')?.scrollIntoView({
+                        behavior: 'smooth',
+                        block: 'center'
+                    });
+                }
+            }
 
             @if (session('success'))
                 showToast(@json(session('success')));

@@ -77,18 +77,6 @@ class SystemSetting extends Model
             'mail_runtime_timeout'   => 15,
             'mail_runtime_test_recipient' => '',
 
-            // Radar snapshots
-            'radar_sync_snapshot_enabled' => (bool) env('RADAR_SYNC_SNAPSHOT_ENABLED', false),
-            'radar_sync_snapshot_daily_enabled' => (bool) env('RADAR_SYNC_SNAPSHOT_DAILY_ENABLED', true),
-            'radar_sync_snapshot_weekly_enabled' => (bool) env('RADAR_SYNC_SNAPSHOT_WEEKLY_ENABLED', true),
-            'radar_sync_snapshot_recipients' => array_values(array_filter(array_map(
-                static fn (string $email) => trim($email),
-                explode(',', (string) env('RADAR_SYNC_SNAPSHOT_RECIPIENTS', ''))
-            ))),
-            'radar_sync_snapshot_daily_time' => env('RADAR_SYNC_SNAPSHOT_DAILY_TIME', '08:10'),
-            'radar_sync_snapshot_weekly_day' => (int) env('RADAR_SYNC_SNAPSHOT_WEEKLY_DAY', 1),
-            'radar_sync_snapshot_weekly_time' => env('RADAR_SYNC_SNAPSHOT_WEEKLY_TIME', '08:30'),
-
             // Cobertura municipal - mailing executivo
             'coverage_executive_mail_enabled' => (bool) env('COVERAGE_EXECUTIVE_MAIL_ENABLED', false),
             'coverage_executive_mail_daily_enabled' => (bool) env('COVERAGE_EXECUTIVE_MAIL_DAILY_ENABLED', true),

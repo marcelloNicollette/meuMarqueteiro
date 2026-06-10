@@ -28,13 +28,6 @@ class RadarOperationalSettingsService
             'mail_runtime_ehlo_domain' => (string) SystemSetting::get('mail_runtime_ehlo_domain', $defaults['mail_runtime_ehlo_domain']),
             'mail_runtime_timeout' => (int) SystemSetting::get('mail_runtime_timeout', $defaults['mail_runtime_timeout']),
             'mail_runtime_test_recipient' => (string) SystemSetting::get('mail_runtime_test_recipient', $defaults['mail_runtime_test_recipient']),
-            'radar_sync_snapshot_enabled' => (bool) SystemSetting::get('radar_sync_snapshot_enabled', $defaults['radar_sync_snapshot_enabled']),
-            'radar_sync_snapshot_daily_enabled' => (bool) SystemSetting::get('radar_sync_snapshot_daily_enabled', $defaults['radar_sync_snapshot_daily_enabled']),
-            'radar_sync_snapshot_weekly_enabled' => (bool) SystemSetting::get('radar_sync_snapshot_weekly_enabled', $defaults['radar_sync_snapshot_weekly_enabled']),
-            'radar_sync_snapshot_recipients' => array_values(SystemSetting::get('radar_sync_snapshot_recipients', $defaults['radar_sync_snapshot_recipients'])),
-            'radar_sync_snapshot_daily_time' => (string) SystemSetting::get('radar_sync_snapshot_daily_time', $defaults['radar_sync_snapshot_daily_time']),
-            'radar_sync_snapshot_weekly_day' => (int) SystemSetting::get('radar_sync_snapshot_weekly_day', $defaults['radar_sync_snapshot_weekly_day']),
-            'radar_sync_snapshot_weekly_time' => (string) SystemSetting::get('radar_sync_snapshot_weekly_time', $defaults['radar_sync_snapshot_weekly_time']),
         ];
     }
 
@@ -48,12 +41,6 @@ class RadarOperationalSettingsService
 
     public function normalizePayload(array $validated, array $currentSnapshot, bool $keepStoredSecretWhenBlank = true): array
     {
-        $recipientList = collect(explode(',', (string) ($validated['radar_sync_snapshot_recipients'] ?? '')))
-            ->map(fn (string $email) => trim($email))
-            ->filter()
-            ->values()
-            ->all();
-
         return [
             'mail_runtime_enabled' => (bool) ($validated['mail_runtime_enabled'] ?? false),
             'mail_runtime_host' => (string) ($validated['mail_runtime_host'] ?? ''),
@@ -68,13 +55,6 @@ class RadarOperationalSettingsService
             'mail_runtime_ehlo_domain' => (string) ($validated['mail_runtime_ehlo_domain'] ?? ''),
             'mail_runtime_timeout' => (int) ($validated['mail_runtime_timeout'] ?? 15),
             'mail_runtime_test_recipient' => (string) ($validated['mail_runtime_test_recipient'] ?? ''),
-            'radar_sync_snapshot_enabled' => (bool) ($validated['radar_sync_snapshot_enabled'] ?? false),
-            'radar_sync_snapshot_daily_enabled' => (bool) ($validated['radar_sync_snapshot_daily_enabled'] ?? false),
-            'radar_sync_snapshot_weekly_enabled' => (bool) ($validated['radar_sync_snapshot_weekly_enabled'] ?? false),
-            'radar_sync_snapshot_recipients' => $recipientList,
-            'radar_sync_snapshot_daily_time' => (string) ($validated['radar_sync_snapshot_daily_time'] ?? '08:10'),
-            'radar_sync_snapshot_weekly_day' => (int) ($validated['radar_sync_snapshot_weekly_day'] ?? 1),
-            'radar_sync_snapshot_weekly_time' => (string) ($validated['radar_sync_snapshot_weekly_time'] ?? '08:30'),
         ];
     }
 
@@ -95,8 +75,8 @@ class RadarOperationalSettingsService
             ], $extra))
             ->event($event)
             ->log(match ($event) {
-                'rollback' => 'Rollback das configuracoes operacionais do Radar',
-                default => 'Configuracoes operacionais do Radar atualizadas',
+                'rollback' => 'Rollback das configuracoes operacionais',
+                default => 'Configuracoes operacionais atualizadas',
             });
     }
 
@@ -161,10 +141,6 @@ class RadarOperationalSettingsService
             $masked['mail_runtime_password'] = $masked['mail_runtime_password'] !== '' ? '********' : '';
         }
 
-        if (array_key_exists('radar_sync_snapshot_recipients', $masked)) {
-            $masked['radar_sync_snapshot_recipients'] = implode(', ', (array) $masked['radar_sync_snapshot_recipients']);
-        }
-
         return $masked;
     }
 
@@ -208,13 +184,6 @@ class RadarOperationalSettingsService
             'mail_runtime_ehlo_domain' => ['type' => 'string', 'group' => 'mail', 'label' => 'EHLO SMTP', 'default' => $defaults['mail_runtime_ehlo_domain']],
             'mail_runtime_timeout' => ['type' => 'string', 'group' => 'mail', 'label' => 'Timeout SMTP', 'default' => $defaults['mail_runtime_timeout']],
             'mail_runtime_test_recipient' => ['type' => 'string', 'group' => 'mail', 'label' => 'Destinatário de teste SMTP', 'default' => $defaults['mail_runtime_test_recipient']],
-            'radar_sync_snapshot_enabled' => ['type' => 'boolean', 'group' => 'radar_operations', 'label' => 'Snapshot Radar ativo', 'default' => $defaults['radar_sync_snapshot_enabled']],
-            'radar_sync_snapshot_daily_enabled' => ['type' => 'boolean', 'group' => 'radar_operations', 'label' => 'Snapshot diário ativo', 'default' => $defaults['radar_sync_snapshot_daily_enabled']],
-            'radar_sync_snapshot_weekly_enabled' => ['type' => 'boolean', 'group' => 'radar_operations', 'label' => 'Snapshot semanal ativo', 'default' => $defaults['radar_sync_snapshot_weekly_enabled']],
-            'radar_sync_snapshot_recipients' => ['type' => 'json', 'group' => 'radar_operations', 'label' => 'Destinatários do Radar', 'default' => $defaults['radar_sync_snapshot_recipients']],
-            'radar_sync_snapshot_daily_time' => ['type' => 'string', 'group' => 'radar_operations', 'label' => 'Horário diário do Radar', 'default' => $defaults['radar_sync_snapshot_daily_time']],
-            'radar_sync_snapshot_weekly_day' => ['type' => 'string', 'group' => 'radar_operations', 'label' => 'Dia semanal do Radar', 'default' => $defaults['radar_sync_snapshot_weekly_day']],
-            'radar_sync_snapshot_weekly_time' => ['type' => 'string', 'group' => 'radar_operations', 'label' => 'Horário semanal do Radar', 'default' => $defaults['radar_sync_snapshot_weekly_time']],
         ];
     }
 

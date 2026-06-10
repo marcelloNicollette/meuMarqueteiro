@@ -114,7 +114,6 @@ Route::middleware(['auth', 'role:admin'])
             Route::get('/exports/curation-audit.xlsx',  [Admin\FederalProgramsController::class, 'exportCurationAuditXlsx'])->name('exports.curation-audit.xlsx');
             Route::get('/exports/curation-queue.csv',   [Admin\FederalProgramsController::class, 'exportCurationQueueCsv'])->name('exports.curation-queue.csv');
             Route::get('/exports/curation-queue.xlsx',  [Admin\FederalProgramsController::class, 'exportCurationQueueXlsx'])->name('exports.curation-queue.xlsx');
-            Route::post('/snapshots/send',             [Admin\FederalProgramsController::class, 'sendSnapshotEmail'])->name('snapshots.send');
             Route::post('/sync-all',                     [Admin\FederalProgramsController::class, 'syncAll'])->name('sync-all');
             Route::post('/backfill-sources',             [Admin\FederalProgramsController::class, 'backfillSources'])->name('backfill-sources');
             Route::post('/sources/{source}/config',      [Admin\FederalProgramsController::class, 'updateSourceConfig'])->name('sources.config');
@@ -203,7 +202,6 @@ Route::middleware(['auth', 'role:admin'])
             Route::post('/operational',    [Admin\SettingsController::class, 'saveOperational'])->name('operational');
             Route::post('/operational/{activity}/rollback', [Admin\SettingsController::class, 'rollbackOperational'])->name('operational.rollback');
             Route::post('/mail/test',      [Admin\SettingsController::class, 'testMailRuntime'])->name('mail.test');
-            Route::post('/radar-snapshot/test', [Admin\SettingsController::class, 'testRadarSnapshot'])->name('radar-snapshot.test');
             Route::get('/integrations',    [Admin\SettingsController::class, 'integrations'])->name('integrations');
             Route::post('/integrations',   [Admin\SettingsController::class, 'saveIntegrations'])->name('integrations.save');
         });

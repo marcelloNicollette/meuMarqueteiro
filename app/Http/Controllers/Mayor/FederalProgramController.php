@@ -26,10 +26,13 @@ class FederalProgramController extends Controller
         $user = Auth::user();
         if (!$user instanceof User) abort(401);
         $municipality = $user->municipality;
-        $programs     = $this->radarRead->enrichProgramsForUser(
+        $programs = $this->radarRead->enrichProgramsForUser(
             $this->radarRead->municipalityRadarPrograms($municipality),
             $user,
         );
+        $programs = $programs
+            ->sortByDesc(fn (FederalProgramAlert $program) => (float) ($program->match_score ?? 0))
+            ->values();
 
         $total = $programs->count();
         $savedTotal = $programs->where('is_saved', true)->count();
