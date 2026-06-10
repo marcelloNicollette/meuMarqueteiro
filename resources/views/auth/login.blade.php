@@ -104,14 +104,11 @@
         }
 
         .brand-logo-icon {
-            width: 84px;
-            height: 84px;
+            width: 50%;
             border-radius: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: rgba(255, 255, 255, 1);
-            border: 1px solid rgba(255, 255, 255, 0.08);
             backdrop-filter: blur(14px);
         }
 
@@ -443,7 +440,7 @@
 
             <div class="brand-logo">
                 <div class="brand-logo-icon">
-                    <img width="100%" src="/images/icon.svg" alt="">
+                    <img width="100%" src="/images/logo-qu4tro.ai-white.svg" alt="">
                 </div>
                 <!--<span class="brand-logo-name">Meu Assistente</span>-->
             </div>
