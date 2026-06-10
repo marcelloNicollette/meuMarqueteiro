@@ -448,8 +448,8 @@
             <div class="brand-hero">
                 <h2 class="brand-hero-title">Mandatos Inteligentes.</h2>
                 <p class="brand-hero-body">
-                    A plataforma que coloca o prefeito no controle do mandato, com clareza sobre o que já foi entregue e
-                    o que ainda falta.
+                    A plataforma que coloca o prefeito no controle do mandato e nos dados que orientam políticas
+                    públicas e decisões estratégicas ao longo dos quatro anos.
                 </p>
             </div>
 
