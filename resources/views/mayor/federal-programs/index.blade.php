@@ -1307,17 +1307,17 @@
                         </button>
                     </form>
                     ${detail.can_subscribe_reopen ? `
-                                                    <form method="POST" action="${reopenRoute}">
-                                                        <input type="hidden" name="_token" value="${csrfToken}">
-                                                        ${hiddenIdentifiers}
-                                                        <button class="prog-meta-btn ${detail.is_reopen_notifying ? 'is-notify is-active' : 'is-notify'}" type="submit">
-                                                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                                                <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
-                                                            </svg>
-                                                            ${detail.is_reopen_notifying ? 'Reabertura ativa' : 'Notificar reabertura'}
-                                                        </button>
-                                                    </form>
-                                                ` : ''}
+                                                        <form method="POST" action="${reopenRoute}">
+                                                            <input type="hidden" name="_token" value="${csrfToken}">
+                                                            ${hiddenIdentifiers}
+                                                            <button class="prog-meta-btn ${detail.is_reopen_notifying ? 'is-notify is-active' : 'is-notify'}" type="submit">
+                                                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                                                    <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
+                                                                </svg>
+                                                                ${detail.is_reopen_notifying ? 'Reabertura ativa' : 'Notificar reabertura'}
+                                                            </button>
+                                                        </form>
+                                                    ` : ''}
                     <a class="prog-action-btn" href="${escapeHtml(buildCreateActionUrl(detail))}">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />

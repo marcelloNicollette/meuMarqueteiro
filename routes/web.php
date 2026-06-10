@@ -390,7 +390,7 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
 
             // Radar de programas federais
             Route::get('/federal-programs',           [Mayor\FederalProgramController::class, 'index'])->name('federal-programs');
-            Route::post('/federal-programs/detail',   [Mayor\FederalProgramController::class, 'detail'])->name('federal-programs.detail');
+            Route::match(['GET', 'POST'], '/federal-programs/detail', [Mayor\FederalProgramController::class, 'detail'])->name('federal-programs.detail');
             Route::post('/federal-programs/ask',      [Mayor\FederalProgramController::class, 'askAssistant'])->name('federal-programs.ask.payload');
             Route::post('/federal-programs/save',     [Mayor\FederalProgramController::class, 'toggleSave'])->name('federal-programs.save');
             Route::post('/federal-programs/reopen-notification', [Mayor\FederalProgramController::class, 'toggleReopenNotification'])->name('federal-programs.reopen-notification');
