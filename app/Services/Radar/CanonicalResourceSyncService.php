@@ -5,6 +5,7 @@ namespace App\Services\Radar;
 use App\Models\FederalProgramAlert;
 use App\Models\ResourceOpportunity;
 use App\Models\ResourceOpportunityCycle;
+use App\Models\ResourceSource;
 use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Str;
 
@@ -18,13 +19,14 @@ class CanonicalResourceSyncService
 
         $canonicalKey = $this->canonicalKeyForAlert($alert);
         $fingerprint = $this->sourceFingerprintForAlert($alert);
+        $resourceSourceId = $this->resolveResourceSourceId($alert);
 
         $opportunity = ResourceOpportunity::query()->firstOrNew([
             'canonical_key' => $canonicalKey,
         ]);
 
         $opportunity->fill([
-            'resource_source_id' => $alert->resource_source_id,
+            'resource_source_id' => $resourceSourceId,
             'source_fingerprint' => $opportunity->source_fingerprint ?: $fingerprint,
             'title' => $alert->program_name,
             'short_title' => $alert->short_title,
@@ -184,6 +186,52 @@ class CanonicalResourceSyncService
             'credito' => 'credit',
             'emenda' => 'emenda',
             default => null,
+        };
+    }
+
+    private function resolveResourceSourceId(FederalProgramAlert $alert): int
+    {
+        if ((int) $alert->resource_source_id > 0) {
+            return (int) $alert->resource_source_id;
+        }
+
+        $sourceKey = $this->normalizeSourceKey(
+            $alert->source_key ?: $alert->source_platform
+        );
+
+        $resourceSourceId = ResourceSource::query()
+            ->where('key', $sourceKey)
+            ->value('id');
+
+        if ($resourceSourceId) {
+            return (int) $resourceSourceId;
+        }
+
+        $fallbackId = ResourceSource::query()
+            ->where('key', 'portal_transparencia')
+            ->value('id');
+
+        if ($fallbackId) {
+            return (int) $fallbackId;
+        }
+
+        throw new \RuntimeException('Nenhuma fonte de recurso cadastrada para espelhar a oportunidade canônica.');
+    }
+
+    private function normalizeSourceKey(?string $value): string
+    {
+        $normalized = Str::of((string) ($value ?? ''))
+            ->lower()
+            ->ascii()
+            ->replaceMatches('/[^a-z0-9]+/', '_')
+            ->trim('_')
+            ->value();
+
+        return match ($normalized) {
+            '', 'portal', 'transparencia', 'portal_da_transparencia', 'portal_transparencia_federal', 'transparencia_convenio' => 'portal_transparencia',
+            'transparencia_emenda', 'emenda_parlamentar', 'emendas', 'emendas_parlamentar' => 'emendas_parlamentares',
+            'diario_oficial', 'dou' => 'diario_oficial_uniao',
+            default => $normalized ?: 'portal_transparencia',
         };
     }
 }
