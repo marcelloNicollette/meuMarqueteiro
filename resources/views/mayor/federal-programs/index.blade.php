@@ -1276,6 +1276,7 @@
 
         function renderDetailActions(detail) {
             const hiddenIdentifiers = renderHiddenIdentifiers(detail);
+            const supportsCanonicalActions = detail.supports_canonical_actions !== false;
             const editalLink = detail.source_url ? `
                 <a href="${escapeHtml(detail.source_url)}" target="_blank" class="prog-link">
                     <svg viewBox="0 0 24 24" fill="currentColor">
@@ -1296,28 +1297,30 @@
 
             return `
                 <div class="detail-actions">
-                    <form method="POST" action="${saveRoute}">
-                        <input type="hidden" name="_token" value="${csrfToken}">
-                        ${hiddenIdentifiers}
-                        <button class="prog-meta-btn ${detail.is_saved ? 'is-active' : ''}" type="submit">
-                            <svg viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
-                            </svg>
-                            ${detail.is_saved ? 'Salvo' : 'Salvar'}
-                        </button>
-                    </form>
-                    ${detail.can_subscribe_reopen ? `
-                                                        <form method="POST" action="${reopenRoute}">
-                                                            <input type="hidden" name="_token" value="${csrfToken}">
-                                                            ${hiddenIdentifiers}
-                                                            <button class="prog-meta-btn ${detail.is_reopen_notifying ? 'is-notify is-active' : 'is-notify'}" type="submit">
-                                                                <svg viewBox="0 0 24 24" fill="currentColor">
-                                                                    <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
-                                                                </svg>
-                                                                ${detail.is_reopen_notifying ? 'Reabertura ativa' : 'Notificar reabertura'}
-                                                            </button>
-                                                        </form>
-                                                    ` : ''}
+                    ${supportsCanonicalActions ? `
+                                                <form method="POST" action="${saveRoute}">
+                                                    <input type="hidden" name="_token" value="${csrfToken}">
+                                                    ${hiddenIdentifiers}
+                                                    <button class="prog-meta-btn ${detail.is_saved ? 'is-active' : ''}" type="submit">
+                                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                                            <path d="M17 3H5a2 2 0 0 0-2 2v16l8-3.5L19 21V5a2 2 0 0 0-2-2z" />
+                                                        </svg>
+                                                        ${detail.is_saved ? 'Salvo' : 'Salvar'}
+                                                    </button>
+                                                </form>
+                                            ` : ''}
+                    ${supportsCanonicalActions && detail.can_subscribe_reopen ? `
+                                                            <form method="POST" action="${reopenRoute}">
+                                                                <input type="hidden" name="_token" value="${csrfToken}">
+                                                                ${hiddenIdentifiers}
+                                                                <button class="prog-meta-btn ${detail.is_reopen_notifying ? 'is-notify is-active' : 'is-notify'}" type="submit">
+                                                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                                                        <path d="M12 6V3L8 7l4 4V8c2.76 0 5 2.24 5 5a5 5 0 0 1-8.66 3.46l-1.42 1.42A7 7 0 1 0 12 6z" />
+                                                                    </svg>
+                                                                    ${detail.is_reopen_notifying ? 'Reabertura ativa' : 'Notificar reabertura'}
+                                                                </button>
+                                                            </form>
+                                                        ` : ''}
                     <a class="prog-action-btn" href="${escapeHtml(buildCreateActionUrl(detail))}">
                         <svg viewBox="0 0 24 24" fill="currentColor">
                             <path d="M19 13H13V19H11V13H5V11H11V5H13V11H19V13Z" />

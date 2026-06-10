@@ -23,3 +23,14 @@
 
 ## Status
 - Sessão de debug iniciada
+
+## Evidence Update
+- A rota `detail` estava restrita a `POST`; isso gerava `405` quando a requisição chegava por `GET`.
+- Após abrir a rota para `GET` e `POST`, o backend passou a falhar ao tentar espelhar um alerta legado para a camada canônica.
+- O erro confirmado foi `Nenhuma fonte de recurso cadastrada para espelhar a oportunidade canônica.`, originado em `CanonicalResourceSyncService`.
+- Isso indica ambiente sem catálogo `resource_sources` consistente para alguns registros legados do radar.
+
+## Fix Applied
+- A rota de detalhe passou a aceitar `GET` e `POST`.
+- O payload do detalhe agora faz fallback para dados legados quando o espelhamento canônico falha.
+- O modal oculta ações dependentes da camada canônica nesse modo legado para evitar novas quebras.

@@ -343,12 +343,27 @@ class HybridRadarReadService
         ?int $canonicalOpportunityId = null,
         ?User $user = null,
     ): ?array {
-        $resolved = $this->resolveCanonicalEntitiesForMunicipality(
-            municipality: $municipality,
-            legacyProgramId: $legacyProgramId,
-            canonicalCycleId: $canonicalCycleId,
-            canonicalOpportunityId: $canonicalOpportunityId,
-        );
+        try {
+            $resolved = $this->resolveCanonicalEntitiesForMunicipality(
+                municipality: $municipality,
+                legacyProgramId: $legacyProgramId,
+                canonicalCycleId: $canonicalCycleId,
+                canonicalOpportunityId: $canonicalOpportunityId,
+            );
+        } catch (\Throwable $e) {
+            $resolved = null;
+        }
+
+        if (!is_array($resolved) && $legacyProgramId) {
+            $legacyProgram = FederalProgramAlert::query()
+                ->with(['resourceSource:id,key,name,capture_method,refresh_frequency'])
+                ->where('municipality_id', $municipality->id)
+                ->find($legacyProgramId);
+
+            if ($legacyProgram instanceof FederalProgramAlert) {
+                return $this->legacyDetailPayload($legacyProgram);
+            }
+        }
 
         if (!is_array($resolved)) {
             return null;
@@ -433,6 +448,64 @@ class HybridRadarReadService
                 ResourceOpportunityStatus::Archived->value,
                 ResourceOpportunityStatus::Reopened->value,
             ], true),
+            'supports_canonical_actions' => true,
+        ];
+    }
+
+    private function legacyDetailPayload(FederalProgramAlert $program): array
+    {
+        $source = $program->resourceSource;
+        $status = ResourceOpportunityStatus::normalize($program->status, $program->deadline);
+
+        return [
+            'legacy_program_id' => $program->id,
+            'canonical_opportunity_id' => null,
+            'canonical_cycle_id' => null,
+            'title' => $program->program_name,
+            'short_title' => $program->short_title,
+            'official_title' => $program->program_name,
+            'status' => $status,
+            'status_label' => ResourceOpportunityStatus::labelFor($program->status, $program->deadline),
+            'match_score' => $program->match_score,
+            'match_percentage' => $program->match_score !== null ? (int) round(((float) $program->match_score) * 100) : null,
+            'match_reason' => $program->match_reason,
+            'viability_level' => $program->viability_level,
+            'viability_reason' => $program->viability_reason,
+            'funding_type' => $program->funding_type,
+            'resource_scope' => $program->resource_scope,
+            'resource_type' => null,
+            'estimated_size' => $program->estimated_size,
+            'counterpart_percentage' => $program->counterpart_percentage,
+            'total_value' => $program->max_value,
+            'min_value' => $program->min_value,
+            'area' => $program->area,
+            'ministry' => $program->ministry,
+            'issuing_body' => $program->ministry,
+            'source_name' => $source?->name ?? $program->source_key ?? $program->source_platform,
+            'source_key' => $source?->key ?? $program->source_key ?? $program->source_platform,
+            'capture_method' => $source?->capture_method ?? $program->capture_method,
+            'refresh_frequency' => $source?->refresh_frequency,
+            'source_url' => $program->source_url,
+            'application_url' => $program->source_url,
+            'publication_reference' => $program->program_code,
+            'published_at' => $program->published_at?->toDateString(),
+            'opens_at' => $program->open_date?->toDateString(),
+            'deadline_at' => $program->deadline?->toDateString(),
+            'closed_at' => $program->closed_at?->toDateString(),
+            'closed_visibility_until' => $program->closed_visibility_until?->toDateString(),
+            'description' => $program->description,
+            'summary' => $program->description,
+            'eligibility_rules' => $program->eligibility_criteria ?? [],
+            'documentation_requirements' => $program->documentation_requirements ?? [],
+            'compatibility_factors' => $program->compatibility_factors ?? [],
+            'viability_factors' => $program->viability_factors ?? [],
+            'thematic_tags' => array_values(array_filter([$program->area, $program->funding_type, $program->resource_scope])),
+            'source_metadata' => $program->source_metadata ?? [],
+            'read_mode' => 'legacy',
+            'is_saved' => false,
+            'is_reopen_notifying' => false,
+            'can_subscribe_reopen' => false,
+            'supports_canonical_actions' => false,
         ];
     }
 
