@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meu Assistente</title>
+    <title>Qu4tro.ai</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/icon.svg">
@@ -446,7 +446,6 @@
             </div>
 
             <div class="brand-hero">
-                <p class="brand-hero-eyebrow">Qu4tro.ai</p>
                 <h2 class="brand-hero-title">Mandatos Inteligentes.</h2>
                 <p class="brand-hero-body">
                     A plataforma que coloca o prefeito no controle do mandato, com clareza sobre o que já foi entregue e
