@@ -567,7 +567,7 @@
                                                     <input type="checkbox" name="promises[{{ $promise->id }}][id]"
                                                         value="{{ $promise->id }}" id="chk_{{ $promise->id }}"
                                                         onclick="event.stopPropagation();"
-                                                        onchange="togglePromise({{ $promise->id }})">
+                                                        onchange="syncPromiseSelection({{ $promise->id }}, this.checked)">
                                                     <span class="promise-pick-text">{{ $promise->text }}</span>
                                                 </div>
                                                 <div class="promise-pick-level">
@@ -671,11 +671,17 @@
 
 @push('scripts')
     <script>
-        function togglePromise(id) {
+        function syncPromiseSelection(id, checked) {
             const item = document.getElementById('pp_' + id);
+            if (!item) return;
+            item.classList.toggle('selected', checked);
+        }
+
+        function togglePromise(id) {
             const chk = document.getElementById('chk_' + id);
+            if (!chk) return;
             chk.checked = !chk.checked;
-            item.classList.toggle('selected', chk.checked);
+            syncPromiseSelection(id, chk.checked);
         }
 
         function setLevel(promiseId, level, btn) {
