@@ -15,6 +15,7 @@ use App\Services\Projects\ProjectDocxExportService;
 use App\Services\Projects\ProjectDocumentGenerationService;
 use App\Services\Projects\ProjectExportService;
 use App\Services\Projects\ProjectFundingMatchService;
+use App\Services\Projects\ProjectQuestionAutofillService;
 use App\Services\Projects\ProjectOverlapAnalysisService;
 use App\Services\Projects\ProjectQuestionFlowService;
 use App\Services\Projects\ProjectRevisionService;
@@ -37,6 +38,7 @@ class ProjectController extends Controller
         private ProjectRevisionService $revisionService,
         private ProjectOverlapAnalysisService $overlapAnalysis,
         private ProjectFundingMatchService $fundingMatch,
+        private ProjectQuestionAutofillService $questionAutofill,
     ) {}
 
     public function index(Request $request): View
@@ -507,7 +509,7 @@ class ProjectController extends Controller
             $redirect->with('warning', 'O documento foi gerado, mas ainda não foram encontrados programas compatíveis relevantes para financiamento.');
         }
 
-        return $redirect->with('success', 'Documento do projeto gerado com as 15 seções obrigatórias.');
+        return $redirect->with('success', 'Documento do projeto gerado com IA usando o questionario respondido e preenchendo as 15 seções obrigatórias.');
     }
 
     public function analyzeFunding(Project $project): RedirectResponse
@@ -543,6 +545,40 @@ class ProjectController extends Controller
             ->with('success', 'Perguntas dinâmicas regeneradas com base no contexto atual do projeto.');
     }
 
+    public function autoAnswerQuestionnaire(Project $project): RedirectResponse
+    {
+        $this->authorizeProjectAccess($project);
+        $this->authorizeProjectEdit($project, 'save_questionnaire_answers');
+
+        $user = Auth::user();
+        $project->loadMissing(['municipality', 'intakeQuestions']);
+
+        $result = $this->questionAutofill->generateAnswers($project, $user);
+        $changes = $this->persistQuestionnaireAnswers(
+            $project,
+            $result['answers'] ?? [],
+            $user,
+            $result['source'] ?? 'ai',
+            $result['context_summary'] ?? null
+        );
+
+        $project->refresh();
+        $this->questionFlow->syncAnsweredCount($project);
+        $this->updateQuestionnaireAutomationMetadata(
+            $project,
+            $result['source'] ?? 'ai',
+            $result['context_summary'] ?? null
+        );
+
+        if ($changes === 0) {
+            return $this->redirectToProjectShow($project)
+                ->with('warning', 'A IA analisou o contexto do municipio, mas nao encontrou novas respostas para atualizar.');
+        }
+
+        return $this->redirectToProjectShow($project)
+            ->with('success', 'Questionario preenchido com IA usando o contexto do municipio, base de conteudo e dados internos do sistema.');
+    }
+
     public function saveQuestionnaireAnswers(Request $request, Project $project): RedirectResponse
     {
         $this->authorizeProjectAccess($project);
@@ -557,41 +593,7 @@ class ProjectController extends Controller
         $data = $request->validate($rules);
         $answers = $data['answers'] ?? [];
         $user = Auth::user();
-
-        DB::transaction(function () use ($project, $answers, $user) {
-            $project->loadMissing('intakeQuestions');
-
-            foreach ($project->intakeQuestions as $question) {
-                $newAnswer = trim((string) ($answers[$question->id] ?? ''));
-                $previousAnswer = trim((string) ($question->answer ?? ''));
-
-                if ($newAnswer === $previousAnswer) {
-                    continue;
-                }
-
-                $question->forceFill([
-                    'answer' => $newAnswer !== '' ? $newAnswer : null,
-                    'answered_at' => $newAnswer !== '' ? now() : null,
-                ])->save();
-
-                $project->editHistory()->create([
-                    'user_id' => $user->id,
-                    'project_section_id' => null,
-                    'action' => 'project_question_answered',
-                    'field_name' => $question->question_key,
-                    'previous_content' => $previousAnswer !== '' ? $previousAnswer : null,
-                    'new_content' => $newAnswer !== '' ? $newAnswer : null,
-                    'metadata' => [
-                        'question_text' => $question->question_text,
-                    ],
-                ]);
-            }
-
-            $project->forceFill([
-                'last_edited_by_user_id' => $user->id,
-                'last_edited_at' => now(),
-            ])->save();
-        });
+        $this->persistQuestionnaireAnswers($project, $answers, $user, 'manual');
 
         $project->refresh();
         $this->questionFlow->syncAnsweredCount($project);
@@ -1407,6 +1409,92 @@ class ProjectController extends Controller
                 'actual_role' => $this->projectAccessRole($project, $user),
             ],
         ]);
+    }
+
+    private function persistQuestionnaireAnswers(
+        Project $project,
+        array $answers,
+        User $user,
+        string $answerSource = 'manual',
+        ?string $contextSummary = null
+    ): int {
+        $changes = 0;
+
+        DB::transaction(function () use ($project, $answers, $user, $answerSource, $contextSummary, &$changes) {
+            $project->loadMissing('intakeQuestions');
+
+            foreach ($project->intakeQuestions as $question) {
+                $newAnswer = trim((string) ($answers[$question->id] ?? ''));
+                $previousAnswer = trim((string) ($question->answer ?? ''));
+
+                if ($newAnswer === $previousAnswer) {
+                    continue;
+                }
+
+                $questionMetadata = is_array($question->metadata) ? $question->metadata : [];
+                $questionMetadata['answer_source'] = $answerSource;
+                $questionMetadata['last_answered_by_user_id'] = $user->id;
+                $questionMetadata['last_answered_at'] = now()->toIso8601String();
+
+                if ($contextSummary) {
+                    $questionMetadata['answer_context_summary'] = $contextSummary;
+                }
+
+                $question->forceFill([
+                    'answer' => $newAnswer !== '' ? $newAnswer : null,
+                    'answered_at' => $newAnswer !== '' ? now() : null,
+                    'metadata' => $questionMetadata,
+                ])->save();
+
+                $project->editHistory()->create([
+                    'user_id' => $user->id,
+                    'project_section_id' => null,
+                    'action' => 'project_question_answered',
+                    'field_name' => $question->question_key,
+                    'previous_content' => $previousAnswer !== '' ? $previousAnswer : null,
+                    'new_content' => $newAnswer !== '' ? $newAnswer : null,
+                    'metadata' => [
+                        'question_text' => $question->question_text,
+                        'answer_source' => $answerSource,
+                        'context_summary' => $contextSummary,
+                    ],
+                ]);
+
+                $changes++;
+            }
+
+            if ($changes === 0) {
+                return;
+            }
+
+            $project->forceFill([
+                'last_edited_by_user_id' => $user->id,
+                'last_edited_at' => now(),
+            ])->save();
+        });
+
+        return $changes;
+    }
+
+    private function updateQuestionnaireAutomationMetadata(
+        Project $project,
+        string $answerSource,
+        ?string $contextSummary = null
+    ): void {
+        $metadata = is_array($project->metadata) ? $project->metadata : [];
+        $questionnaire = is_array($metadata['questionnaire'] ?? null) ? $metadata['questionnaire'] : [];
+        $questionnaire['last_answer_source'] = $answerSource;
+        $questionnaire['auto_answered_at'] = now()->toIso8601String();
+
+        if ($contextSummary) {
+            $questionnaire['last_answer_context_summary'] = $contextSummary;
+        }
+
+        $metadata['questionnaire'] = $questionnaire;
+
+        $project->forceFill([
+            'metadata' => $metadata,
+        ])->save();
     }
 
     private function authorizeRevisionManagement(Project $project, ?string $attemptedAction = null): void

@@ -73,6 +73,7 @@ class SocialMention extends Model
             'whatsapp' => '💬',
             'social'   => '📣',
             'manual'   => '📝',
+            'official' => '📜',
             default    => '🌐',
         };
     }
@@ -80,15 +81,17 @@ class SocialMention extends Model
     public function getSourceLabelAttribute(): string
     {
         return match ($this->source) {
-            'google_news' => 'Google News',
-            'nitter'      => 'Twitter/X',
-            'portal_rss'  => 'Portal local',
-            'rss'         => 'RSS',
+            'google_news'    => 'Google News',
+            'nitter'         => 'Twitter/X',
+            'youtube'        => 'YouTube',
+            'diario_oficial' => 'Diário Oficial da União',
+            'portal_rss'     => 'Portal local',
+            'rss'            => 'RSS',
             'manual_whatsapp' => 'WhatsApp manual',
-            'manual_news' => 'Portal manual',
-            'manual_social' => 'Rede social manual',
-            'manual_manual' => 'Manual',
-            default       => $this->source,
+            'manual_news'    => 'Portal manual',
+            'manual_social'  => 'Rede social manual',
+            'manual_manual'  => 'Manual',
+            default          => $this->source,
         };
     }
 

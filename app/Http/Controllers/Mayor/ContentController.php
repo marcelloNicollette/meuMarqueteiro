@@ -239,16 +239,36 @@ class ContentController extends Controller
             'unread' => SocialMention::where('municipality_id', $municipality->id)->where('is_read', false)->count(),
         ];
 
-        $sourceOptions = SocialMention::where('municipality_id', $municipality->id)
+        // Fontes fixas sempre presentes no filtro — independente de já haver menções no banco.
+        // O DOU e portais manuais aparecem sempre; YouTube só quando a chave estiver configurada.
+        $fixedSources = [
+            'google_news'     => 'Google News',
+            'nitter'          => 'Twitter/X',
+            'diario_oficial'  => 'Diário Oficial da União',
+            'portal_rss'      => 'Portal local',
+            'manual_whatsapp' => 'WhatsApp manual',
+            'manual_news'     => 'Portal manual',
+            'manual_social'   => 'Rede social manual',
+            'manual_manual'   => 'Manual',
+        ];
+
+        if (trim((string) env('YOUTUBE_API_KEY', '')) !== '') {
+            $fixedSources = array_merge(['youtube' => 'YouTube'], $fixedSources);
+        }
+
+        // Fontes que já existem no banco para este município/período mas não estão na lista fixa
+        $dbSources = SocialMention::where('municipality_id', $municipality->id)
             ->where('created_at', '>=', $since)
             ->select('source')
             ->distinct()
             ->pluck('source')
             ->filter()
-            ->map(fn (string $value) => [
-                'value' => $value,
-                'label' => $this->mapMentionSourceLabel($value),
-            ])
+            ->diff(array_keys($fixedSources))
+            ->mapWithKeys(fn (string $value) => [$value => $this->mapMentionSourceLabel($value)])
+            ->all();
+
+        $sourceOptions = collect(array_merge($fixedSources, $dbSources))
+            ->map(fn (string $label, string $value) => ['value' => $value, 'label' => $label])
             ->values()
             ->all();
 
@@ -814,15 +834,17 @@ class ContentController extends Controller
     private function mapMentionSourceLabel(string $source): string
     {
         return match ($source) {
-            'google_news' => 'Google News',
-            'nitter' => 'Twitter/X',
-            'portal_rss' => 'Portal local',
-            'rss' => 'RSS',
+            'google_news'     => 'Google News',
+            'nitter'          => 'Twitter/X',
+            'youtube'         => 'YouTube',
+            'diario_oficial'  => 'Diário Oficial da União',
+            'portal_rss'      => 'Portal local',
+            'rss'             => 'RSS',
             'manual_whatsapp' => 'WhatsApp manual',
-            'manual_news' => 'Portal manual',
-            'manual_social' => 'Rede social manual',
-            'manual_manual' => 'Manual',
-            default => Str::headline(str_replace('_', ' ', $source)),
+            'manual_news'     => 'Portal manual',
+            'manual_social'   => 'Rede social manual',
+            'manual_manual'   => 'Manual',
+            default           => Str::headline(str_replace('_', ' ', $source)),
         };
     }
 

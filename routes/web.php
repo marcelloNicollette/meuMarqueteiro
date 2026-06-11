@@ -293,6 +293,7 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
             Route::post('/{project}/overlap/analyze', [Mayor\ProjectController::class, 'analyzeOverlap'])->name('overlap.analyze');
             Route::post('/{project}/funding/analyze', [Mayor\ProjectController::class, 'analyzeFunding'])->name('funding.analyze');
             Route::post('/{project}/questionnaire/regenerate', [Mayor\ProjectController::class, 'regenerateQuestionnaire'])->name('questionnaire.regenerate');
+            Route::post('/{project}/questionnaire/auto-answer', [Mayor\ProjectController::class, 'autoAnswerQuestionnaire'])->name('questionnaire.auto-answer');
             Route::post('/{project}/questionnaire/answers', [Mayor\ProjectController::class, 'saveQuestionnaireAnswers'])->name('questionnaire.answers');
             Route::post('/{project}/document/generate', [Mayor\ProjectController::class, 'generateDocument'])->name('document.generate');
             Route::post('/{project}/revisions/open-draft', [Mayor\ProjectController::class, 'openWorkingDraft'])->name('revisions.open-draft');

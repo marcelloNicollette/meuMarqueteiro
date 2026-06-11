@@ -440,7 +440,8 @@
                 <h1>Menções</h1>
                 <p>Monitoramento de menções sobre {{ $municipality->name }} — atualizado automaticamente</p>
                 <p style="font-size:.78rem;color:var(--ink-muted);margin:.35rem 0 0;max-width:62ch">
-                    A busca consulta fontes públicas (Google News e Twitter/X via RSS) usando suas palavras‑chave, salva as
+                    A busca consulta fontes públicas — Google News, Twitter/X, YouTube e Diário Oficial da União (via RSS) —
+                    usando suas palavras‑chave, salva as
                     ocorrências no sistema e
                     aplica análise de sentimento automaticamente, incluindo leitura de urgência para acionar resposta de
                     crise.

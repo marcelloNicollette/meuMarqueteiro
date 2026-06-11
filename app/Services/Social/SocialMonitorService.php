@@ -101,6 +101,21 @@ class SocialMonitorService
                     Log::warning("SocialMonitor YouTube erro: " . $e->getMessage());
                 }
             }
+
+            // Diário Oficial da União (RSS público — sem API key)
+            try {
+                $mentions = $this->fetchDiarioOficial($term, $municipality);
+                foreach ($mentions as $mention) {
+                    $mention['keyword'] = $term;
+                    if ($this->saveMention($mention, $municipality)) {
+                        $new++;
+                    }
+                    $found++;
+                }
+            } catch (\Exception $e) {
+                $errors[] = "DOU ({$term}): " . $e->getMessage();
+                Log::warning("SocialMonitor DOU erro: " . $e->getMessage());
+            }
         }
 
         foreach ($this->configuredPortalUrls($municipality) as $portalUrl) {
@@ -164,6 +179,15 @@ class SocialMonitorService
                         'url'    => "https://www.googleapis.com/youtube/v3/search?part=snippet&q={$ytQuery}&type=video&regionCode=BR&relevanceLanguage=pt&maxResults=20&key=***",
                     ];
                 }
+            }
+
+            // DOU — RSS público por seção (sem API key)
+            $douQuery = urlencode('"' . $kw->keyword . '"');
+            foreach ([1, 2, 3] as $section) {
+                $targets[] = [
+                    'source' => "Diário Oficial da União — Seção {$section} (RSS)",
+                    'url'    => "https://www.in.gov.br/servicos/diario-oficial-da-uniao/rss?secao={$section}&q={$douQuery}",
+                ];
             }
 
             foreach ($configuredPortals as $portal) {
@@ -805,6 +829,110 @@ class SocialMonitorService
             return '@' . $m[1];
         }
         return null;
+    }
+
+    // ── Diário Oficial da União ──────────────────────────────────────
+
+    /**
+     * Buscar publicações no DOU que mencionem a keyword do município.
+     *
+     * Usa os feeds RSS públicos do DOU por seção (1, 2 e 3).
+     * Sem API key, sem OAuth — completamente gratuito.
+     *
+     * Feed base: https://www.in.gov.br/servicos/diario-oficial-da-uniao/rss
+     * Parâmetro "q" filtra por termo no título/ementa da publicação.
+     * Parâmetro "secao" filtra por seção (1=Atos normativos, 2=Atos de pessoal, 3=Contratos e outros).
+     */
+    private function fetchDiarioOficial(string $keyword, Municipality $municipality): array
+    {
+        $mentions = [];
+
+        foreach ($this->diarioOficialRssUrls($keyword) as [$rssUrl, $sectionLabel]) {
+            try {
+                $response = Http::timeout(15)
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; MeuMarqueteiro/1.0)'])
+                    ->get($rssUrl);
+
+                if (!$response->successful()) {
+                    continue;
+                }
+
+                $xml = simplexml_load_string($response->body());
+                if (!$xml) {
+                    continue;
+                }
+
+                $items = $xml->channel->item ?? [];
+                $count = 0;
+
+                foreach ($items as $item) {
+                    if ($count++ >= 10) {
+                        break;
+                    }
+
+                    $pubDate = isset($item->pubDate) ? strtotime((string) $item->pubDate) : null;
+
+                    // Só últimas 72h — DOU publica diariamente, não precisamos de janela maior
+                    if ($pubDate && (time() - $pubDate) > 86400 * 3) {
+                        continue;
+                    }
+
+                    $link  = $this->normalizeUrl((string) ($item->link ?? ''));
+                    $title = $this->cleanText((string) ($item->title ?? ''));
+                    $desc  = $this->cleanText(strip_tags((string) ($item->description ?? '')));
+
+                    // Confirmar que a keyword realmente aparece no item
+                    // (alguns feeds RSS do DOU retornam itens genéricos sem filtrar)
+                    $haystack = mb_strtolower($title . ' ' . $desc);
+                    if (!str_contains($haystack, mb_strtolower($keyword))) {
+                        continue;
+                    }
+
+                    if ($title === '' || $link === '') {
+                        continue;
+                    }
+
+                    $mentions[] = [
+                        'source'       => 'diario_oficial',
+                        'platform'     => 'official',
+                        'title'        => $title,
+                        'content'      => $desc !== '' ? $desc : null,
+                        'url'          => $link,
+                        'author'       => 'Diário Oficial da União — ' . $sectionLabel,
+                        'published_at' => $pubDate ? date('Y-m-d H:i:s', $pubDate) : null,
+                        'external_id'  => md5($link . $municipality->id),
+                    ];
+                }
+            } catch (\Exception $e) {
+                // Seção indisponível não é crítica — continua com as demais
+                Log::debug("SocialMonitor DOU seção {$sectionLabel} erro: " . $e->getMessage());
+                continue;
+            }
+        }
+
+        return $mentions;
+    }
+
+    /**
+     * URLs dos feeds RSS do DOU por seção para um dado termo de busca.
+     *
+     * Seção 1 — Atos normativos (decretos, portarias, resoluções)
+     * Seção 2 — Atos de pessoal (nomeações, exonerações — normalmente neutro para municípios)
+     * Seção 3 — Contratos, editais, avisos e outros atos
+     *
+     * @return array<int, array{0: string, 1: string}> [url, label]
+     */
+    private function diarioOficialRssUrls(string $keyword): array
+    {
+        $q = urlencode('"' . $keyword . '"');
+
+        return [
+            ["https://www.in.gov.br/servicos/diario-oficial-da-uniao/rss?secao=1&q={$q}", 'Seção 1'],
+            ["https://www.in.gov.br/servicos/diario-oficial-da-uniao/rss?secao=3&q={$q}", 'Seção 3'],
+            // Seção 2 (pessoal) omitida por padrão — gera muitos falsos positivos neutros.
+            // Adicionar aqui se quiser cobertura completa:
+            // ["https://www.in.gov.br/servicos/diario-oficial-da-uniao/rss?secao=2&q={$q}", 'Seção 2'],
+        ];
     }
 
     // ── YouTube ──────────────────────────────────────────────────────

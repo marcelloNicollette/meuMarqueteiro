@@ -25,6 +25,7 @@ use App\Services\Mandato\MandateProjectionService;
 use App\Services\Mandato\MandatePromiseExtractionService;
 use App\Services\Mandato\MandatePromiseLinkingService;
 use App\Services\Projects\ProjectBankLibraryService;
+use App\Services\Projects\ProjectContextDossierService;
 use App\Services\Projects\ProjectDocumentGenerationService;
 use App\Services\Projects\ProjectQuestionFlowService;
 use App\Services\Projects\ProjectSourceThesisContextService;
@@ -1291,7 +1292,8 @@ class MandatoSmokeTest extends TestCase
         $documentGeneration = new ProjectDocumentGenerationService(
             $ai,
             app(ProjectStructureService::class),
-            $sourceThesisContext
+            $sourceThesisContext,
+            app(ProjectContextDossierService::class)
         );
 
         $questionFlow->ensureGenerated($project, $mayor, true);

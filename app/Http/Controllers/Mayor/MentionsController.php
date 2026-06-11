@@ -251,14 +251,17 @@ class MentionsController extends Controller
     private function mapSourceLabel(string $source): string
     {
         return match ($source) {
-            'google_news' => 'Google News',
-            'nitter' => 'Twitter/X',
-            'rss' => 'RSS',
+            'google_news'     => 'Google News',
+            'nitter'          => 'Twitter/X',
+            'youtube'         => 'YouTube',
+            'diario_oficial'  => 'Diário Oficial da União',
+            'portal_rss'      => 'Portal local',
+            'rss'             => 'RSS',
             'manual_whatsapp' => 'WhatsApp manual',
-            'manual_news' => 'Portal manual',
-            'manual_social' => 'Rede social manual',
-            'manual_manual' => 'Manual',
-            default => Str::headline(str_replace('_', ' ', $source)),
+            'manual_news'     => 'Portal manual',
+            'manual_social'   => 'Rede social manual',
+            'manual_manual'   => 'Manual',
+            default           => Str::headline(str_replace('_', ' ', $source)),
         };
     }
 }

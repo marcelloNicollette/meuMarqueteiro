@@ -7,13 +7,19 @@ use App\Models\User;
 use App\Services\AI\AIProviderService;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Str;
 
 class ProjectDocumentGenerationService
 {
+    private const SECTION_BATCH_SIZE = 1;
+    private const ANSWERS_CONTEXT_LIMIT = 1200;
+    private const DOSSIER_CONTEXT_LIMIT = 1800;
+
     public function __construct(
         private AIProviderService $ai,
         private ProjectStructureService $structure,
         private ProjectSourceThesisContextService $sourceThesisContext,
+        private ProjectContextDossierService $contextDossier,
     ) {}
 
     public function generate(Project $project, ?User $user = null): void
@@ -88,6 +94,7 @@ class ProjectDocumentGenerationService
             Log::info('projects.document_generation.fallback', [
                 'project_id' => $project->id,
                 'error' => $exception->getMessage(),
+                'batch_size' => self::SECTION_BATCH_SIZE,
             ]);
         }
 
@@ -96,30 +103,25 @@ class ProjectDocumentGenerationService
 
     private function generateWithAI(Project $project): array
     {
-        $response = $this->ai->chat([
-            [
-                'role' => 'system',
-                'content' => $this->buildSystemPrompt($project),
-            ],
-            [
-                'role' => 'user',
-                'content' => $this->buildContextPrompt($project),
-            ],
-        ], [
-            'temperature' => 0.35,
-            'max_tokens' => 2200,
-        ]);
-
-        $data = $this->extractJson($response->content);
-        $sections = is_array($data['sections'] ?? null) ? $data['sections'] : [];
         $normalized = [];
+        $definitions = collect($this->structure->definitions());
+        $dossier = $this->contextDossier->build($project);
 
-        foreach ($this->structure->definitions() as $definition) {
-            $sectionKey = $definition['key'];
-            $sectionContent = trim((string) Arr::get($sections, $sectionKey, ''));
-            $normalized[$sectionKey] = $sectionContent !== ''
-                ? $sectionContent
-                : $this->fallbackSectionContent($project, $sectionKey, $definition['title'], $definition['description']);
+        foreach ($definitions->chunk(self::SECTION_BATCH_SIZE) as $batchIndex => $definitionChunk) {
+            $sections = $this->generateSectionBatchWithAI(
+                $project,
+                $definitionChunk->values()->all(),
+                $dossier,
+                $batchIndex + 1
+            );
+
+            foreach ($definitionChunk as $definition) {
+                $sectionKey = $definition['key'];
+                $sectionContent = trim((string) Arr::get($sections, $sectionKey, ''));
+                $normalized[$sectionKey] = $sectionContent !== ''
+                    ? $sectionContent
+                    : $this->fallbackSectionContent($project, $sectionKey, $definition['title'], $definition['description']);
+            }
         }
 
         $normalized['__meta'] = [
@@ -127,6 +129,66 @@ class ProjectDocumentGenerationService
         ];
 
         return $normalized;
+    }
+
+    private function generateSectionBatchWithAI(Project $project, array $definitions, array $dossier, int $batchNumber): array
+    {
+        $requestedSectionKeys = collect($definitions)->pluck('key')->values()->all();
+
+        try {
+            $response = $this->ai->chat([
+                [
+                    'role' => 'system',
+                    'content' => $this->buildSystemPrompt($project, $definitions),
+                ],
+                [
+                    'role' => 'user',
+                    'content' => $this->buildContextPrompt($project, $definitions, $dossier),
+                ],
+            ], [
+                'temperature' => 0.2,
+                'max_tokens' => 900,
+                'timeout' => 60,
+                'retry_attempts' => 2,
+            ]);
+        } catch (\Throwable $exception) {
+            Log::warning('projects.document_generation.batch_failed', [
+                'project_id' => $project->id,
+                'batch_number' => $batchNumber,
+                'requested_sections' => $requestedSectionKeys,
+                'finish_reason' => null,
+                'error' => $exception->getMessage(),
+            ]);
+
+            throw $exception;
+        }
+
+        if (in_array($response->finishReason, ['max_tokens', 'length'], true)) {
+            Log::warning('projects.document_generation.batch_failed', [
+                'project_id' => $project->id,
+                'batch_number' => $batchNumber,
+                'requested_sections' => $requestedSectionKeys,
+                'finish_reason' => $response->finishReason,
+                'error' => 'Resposta da IA foi truncada antes de concluir o JSON.',
+            ]);
+
+            throw new \RuntimeException('Resposta da IA foi truncada antes de concluir o JSON.');
+        }
+
+        $data = $this->extractJson($response->content);
+        $sections = is_array($data['sections'] ?? null)
+            ? $data['sections']
+            : (Arr::isAssoc($data) ? $data : []);
+
+        Log::info('projects.document_generation.batch_succeeded', [
+            'project_id' => $project->id,
+            'batch_number' => $batchNumber,
+            'requested_sections' => $requestedSectionKeys,
+            'returned_section_keys' => array_keys(is_array($sections) ? $sections : []),
+            'finish_reason' => $response->finishReason,
+        ]);
+
+        return is_array($sections) ? $sections : [];
     }
 
     private function fallbackDocument(Project $project): array
@@ -148,25 +210,30 @@ class ProjectDocumentGenerationService
         return $sections;
     }
 
-    private function buildSystemPrompt(Project $project): string
+    private function buildSystemPrompt(Project $project, array $definitions): string
     {
-        $sectionKeys = collect($this->structure->definitions())
-            ->pluck('key')
-            ->implode(', ');
+        $jsonSchemaExample = json_encode([
+            'sections' => collect($definitions)
+                ->mapWithKeys(fn (array $definition) => [$definition['key'] => 'conteudo da secao'])
+                ->all(),
+        ], JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES);
 
         $hiddenInstruction = $this->sourceThesisContext->hasSourceThesis($project)
             ? ' Se houver contexto oculto de tese de origem, use esse material para calibrar a narrativa, as prioridades e as fontes de financiamento, sem expor ao usuario que esse contexto veio do Banco de Projetos.'
             : '';
 
-        return "Voce elabora projetos municipais completos. Gere um documento com 15 seções obrigatórias, sem lacunas, em portugues do Brasil. "
-            . "Responda apenas JSON valido no formato {\"sections\":{\"{$sectionKeys}\":\"conteudo\"}}. "
-            . "Cada secao deve trazer texto util, objetivo e consistente com o contexto. Quando faltar dado exato, redija uma formulacao tecnica prudente, sem inventar numeros falsos."
+        return "Voce elabora projetos municipais completos. Gere apenas a secao solicitada nesta rodada, em portugues do Brasil. "
+            . "Responda apenas JSON valido no formato {$jsonSchemaExample}. "
+            . "A resposta deve ser objetiva, direta e suficiente para um documento institucional. "
+            . "Escreva entre 1 e 3 paragrafos curtos, sem listas longas, sem repetir o contexto de entrada e sem floreio. "
+            . "Quando faltar dado exato, use formulacao tecnica prudente, sem inventar numeros falsos."
             . $hiddenInstruction;
     }
 
-    private function buildContextPrompt(Project $project): string
+    private function buildContextPrompt(Project $project, array $definitions, array $dossier): string
     {
         $hiddenContext = $this->sourceThesisContext->hiddenPrompt($project);
+        $metadata = is_array($project->metadata) ? $project->metadata : [];
         $answers = $project->intakeQuestions
             ->map(function ($question) {
                 $answer = filled($question->answer) ? trim((string) $question->answer) : 'Nao informado';
@@ -180,10 +247,108 @@ class ProjectDocumentGenerationService
             "Tipo: " . ($project->type_label ?? 'A definir'),
             "Status: {$project->status_label}",
             "Secretaria responsável: " . ($project->responsible_secretariat ?: 'A definir'),
-            "Idéia inicial:\n{$project->initial_idea}",
-            "Perguntas e respostas:\n{$answers}",
+            "Idéia inicial:\n" . $this->limitBlock($project->initial_idea, 500),
+            "Seções desta rodada:\n" . $this->buildSectionChecklistPrompt($definitions),
+            "Metadados estruturados do projeto:\n" . $this->buildStructuredMetadataPrompt($metadata),
+            "Perguntas e respostas:\n" . $this->limitBlock($answers, self::ANSWERS_CONTEXT_LIMIT),
+            "Analises internas ja rodadas:\n" . $this->buildAnalysesPrompt($metadata),
+            "Contexto ampliado do municipio e do sistema:\n" . $this->limitBlock(
+                (string) ($dossier['compiled_context'] ?? 'Sem contexto ampliado'),
+                self::DOSSIER_CONTEXT_LIMIT
+            ),
             $hiddenContext ?: null,
         ]);
+    }
+
+    private function buildSectionChecklistPrompt(array $definitions): string
+    {
+        return collect($definitions)
+            ->map(function (array $definition, int $index) {
+                return sprintf(
+                    '%d. %s (%s): %s',
+                    $index + 1,
+                    $definition['title'],
+                    $definition['key'],
+                    $definition['description']
+                );
+            })
+            ->implode("\n");
+    }
+
+    private function limitBlock(string $content, int $maxLength): string
+    {
+        $content = trim(preg_replace('/\s+/', ' ', $content) ?? '');
+
+        if ($content === '') {
+            return 'Nao informado.';
+        }
+
+        return Str::limit($content, $maxLength);
+    }
+
+    private function buildStructuredMetadataPrompt(array $metadata): string
+    {
+        $fields = [
+            'executive_summary' => 'Resumo executivo',
+            'primary_goal' => 'Objetivo principal',
+            'target_audience' => 'Publico beneficiado',
+            'territorial_scope' => 'Abrangencia territorial',
+            'funding_strategy' => 'Estrategia de financiamento',
+            'implementation_notes' => 'Notas de implementacao',
+            'risk_notes' => 'Riscos e cuidados',
+            'priority' => 'Prioridade',
+            'expected_beneficiaries' => 'Beneficiarios estimados',
+            'estimated_budget' => 'Orcamento estimado',
+            'expected_start_date' => 'Previsao de inicio',
+            'expected_end_date' => 'Previsao de conclusao',
+        ];
+
+        $lines = [];
+
+        foreach ($fields as $field => $label) {
+            $value = data_get($metadata, $field);
+            if ($value === null || $value === '') {
+                continue;
+            }
+
+            $lines[] = "- {$label}: {$value}";
+        }
+
+        return empty($lines)
+            ? 'Nao ha metadados estruturados adicionais preenchidos.'
+            : $this->limitBlock(implode("\n", $lines), 700);
+    }
+
+    private function buildAnalysesPrompt(array $metadata): string
+    {
+        $lines = [];
+
+        $overlap = data_get($metadata, 'overlap_analysis');
+        if (is_array($overlap) && !empty($overlap)) {
+            $lines[] = '- Sobreposicao: status ' . data_get($overlap, 'status', 'nao informado')
+                . ' | maior score: ' . data_get($overlap, 'highest_score', 0)
+                . ' | matches: ' . data_get($overlap, 'match_count', 0);
+        }
+
+        $funding = data_get($metadata, 'funding_analysis');
+        if (is_array($funding) && !empty($funding)) {
+            $lines[] = '- Financiamento: status ' . data_get($funding, 'status', 'nao informado')
+                . ' | maior score: ' . data_get($funding, 'highest_score', 0)
+                . ' | matches: ' . data_get($funding, 'match_count', 0);
+
+            foreach (array_slice(data_get($funding, 'matches', []), 0, 4) as $match) {
+                $lines[] = sprintf(
+                    '  - Programa aderente: %s | tipo: %s | score: %s',
+                    $match['title'] ?? 'Nao informado',
+                    $match['source_type'] ?? 'nao informado',
+                    $match['score'] ?? 0
+                );
+            }
+        }
+
+        return empty($lines)
+            ? 'Nenhuma analise complementar registrada ate agora.'
+            : $this->limitBlock(implode("\n", $lines), 500);
     }
 
     private function fallbackSectionContent(Project $project, string $sectionKey, string $sectionTitle, string $sectionDescription): string
@@ -241,6 +406,7 @@ class ProjectDocumentGenerationService
     private function extractJson(string $content): array
     {
         $content = trim($content);
+        $content = preg_replace('/^```(?:json)?\s*|\s*```$/i', '', $content) ?? $content;
         $decoded = json_decode($content, true);
         if (is_array($decoded)) {
             return $decoded;

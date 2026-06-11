@@ -1789,6 +1789,11 @@
                             </span>
                             @if ($canEditProject)
                                 <form method="POST"
+                                    action="{{ route('mayor.projects.questionnaire.auto-answer', $project) }}">
+                                    @csrf
+                                    <button type="submit" class="btn btn-dark">Responder tudo com IA</button>
+                                </form>
+                                <form method="POST"
                                     action="{{ route('mayor.projects.questionnaire.regenerate', $project) }}">
                                     @csrf
                                     <button type="submit" class="btn btn-secondary">Regenerar perguntas</button>
@@ -1820,8 +1825,13 @@
                             <article class="project-question-item">
                                 <div class="project-question-item-top">
                                     <strong>{{ $question->question_order }}. {{ $question->question_text }}</strong>
-                                    <span
-                                        class="project-chip">{{ filled($question->answer) ? 'Respondida' : 'Pendente' }}</span>
+                                    <span class="project-chip">
+                                        {{ filled($question->answer) ? 'Respondida' : 'Pendente' }}
+                                        @if (filled(data_get($question->metadata, 'answer_source')) && filled($question->answer))
+                                            ·
+                                            {{ data_get($question->metadata, 'answer_source') === 'manual' ? 'Manual' : 'IA' }}
+                                        @endif
+                                    </span>
                                 </div>
                                 <p>{{ $question->help_text ?: 'Descreva as informacoes mais objetivas possiveis para melhorar a geração do projeto.' }}
                                 </p>
@@ -1837,7 +1847,14 @@
                                 @endif
 
                                 <div class="project-question-item-help">
-                                    {{ filled($question->answered_at) ? 'Atualizado em ' . $question->answered_at->format('d/m/Y H:i') : 'Resposta ainda não registrada.' }}
+                                    @if (filled($question->answered_at))
+                                        {{ 'Atualizado em ' . $question->answered_at->format('d/m/Y H:i') }}
+                                        @if (filled(data_get($question->metadata, 'answer_context_summary')))
+                                            {{ ' · Fontes usadas: ' . data_get($question->metadata, 'answer_context_summary') }}
+                                        @endif
+                                    @else
+                                        Resposta ainda não registrada.
+                                    @endif
                                 </div>
                             </article>
                         @endforeach
@@ -1847,7 +1864,8 @@
                                 @if ($canEditProject)
                                     As respostas salvas aqui alimentam a geração do documento do projeto. Quanto melhor o
                                     questionario estiver preenchido, mais consistente fica o texto das 15 seções
-                                    obrigatórias.
+                                    obrigatórias. O botao de IA tenta responder tudo usando os dados do municipio, base
+                                    de conteudo, projetos relacionados e documentos indexados no sistema.
                                 @else
                                     As respostas ficam visiveis para consulta, mas este perfil não pode alterar o
                                     questionario.
@@ -2022,19 +2040,39 @@
                     @endif
                 </section>
 
+                @php
+                    $documentGeneratedSource = data_get($project->metadata, 'generated_source');
+                    if (!filled($documentGeneratedSource)) {
+                        $documentGeneratedSource = $project->sections
+                            ->pluck('metadata')
+                            ->filter(fn($metadata) => is_array($metadata) && filled($metadata['source'] ?? null))
+                            ->pluck('source')
+                            ->countBy()
+                            ->sortDesc()
+                            ->keys()
+                            ->first();
+                    }
+                @endphp
+
                 <section class="project-sections-card" id="project-document" data-return-section>
                     <div class="project-sections-head">
                         <div>
                             <h2>Documento do projeto</h2>
                             <p>
-                                Gere ou regenere o documento consolidado com as 15 seções obrigatórias usando a idéia
-                                inicial e as respostas do questionario guiado.
+                                Gere ou regenere o documento consolidado com a IA usando a idéia inicial, todas as
+                                respostas salvas no questionario, os metadados do projeto e o contexto do municipio para
+                                preencher as 15 seções obrigatórias.
                             </p>
                         </div>
                         <div class="project-sections-actions">
                             <span class="project-chip">
                                 {{ data_get($project->metadata, 'generation_status', 'pending') === 'completed' ? 'Documento gerado' : 'Documento pendente' }}
                             </span>
+                            @if (data_get($project->metadata, 'generation_status', 'pending') === 'completed')
+                                <span class="project-chip">
+                                    {{ $documentGeneratedSource === 'fallback' ? 'Origem: fallback' : 'Origem: IA' }}
+                                </span>
+                            @endif
                             <span class="project-chip">Revisão {{ $latestRevision?->revision_number ?? 0 }}</span>
                             @if ($currentDraftRevision)
                                 <span class="project-chip">Rascunho {{ $currentDraftRevision->revision_number }}</span>
@@ -2090,14 +2128,22 @@
                         </div>
                     @endif
 
-                    @if (data_get($project->metadata, 'generation_status') === 'completed' &&
-                            data_get($project->metadata, 'generated_source') === 'fallback')
+                    @if (data_get($project->metadata, 'generation_status') === 'completed' && $documentGeneratedSource === 'fallback')
                         <div class="project-generation-notice">
                             <strong>Documento gerado por fallback</strong>
                             <span>
                                 A plataforma não recebeu uma resposta valida da IA dentro do fluxo esperado e preencheu as
                                 15 seções com a estrutura de seguranca do sistema. O projeto continua utilizavel, mas vale
                                 revisar o texto e, se desejar, tentar a regeneracao depois.
+                            </span>
+                        </div>
+                    @elseif(data_get($project->metadata, 'generation_status') === 'completed')
+                        <div class="project-generation-notice">
+                            <strong>Documento gerado com IA</strong>
+                            <span>
+                                A geração atual considerou o questionario respondido, os metadados estruturados, as
+                                analises internas e o contexto ampliado do municipio para preencher as 15 seções do
+                                projeto.
                             </span>
                         </div>
                     @endif
@@ -2108,8 +2154,13 @@
                                 data-return-section>
                                 <div class="project-section-item-top">
                                     <strong>{{ $section->section_order }}. {{ $section->title }}</strong>
-                                    <span
-                                        class="project-chip">{{ $section->needs_review ? 'A revisar' : 'Revisada' }}</span>
+                                    <span class="project-chip">
+                                        {{ $section->needs_review ? 'A revisar' : 'Revisada' }}
+                                        @if (filled(data_get($section->metadata, 'source')))
+                                            ·
+                                            {{ data_get($section->metadata, 'source') === 'fallback' ? 'fallback' : 'Elab. IA' }}
+                                        @endif
+                                    </span>
                                 </div>
                                 <p>{{ $section->description }}</p>
 

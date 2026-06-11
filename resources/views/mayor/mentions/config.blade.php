@@ -393,9 +393,10 @@
                 Fontes e URLs monitoradas
             </div>
             <div style="padding:.75rem 1.1rem;font-size:.8rem;color:var(--ink-muted);line-height:1.6">
-                Para cada palavra-chave ativa, o sistema consulta o RSS do Google News. Para tipos exceto "Tema", também
-                consulta RSS de
-                Twitter/X via instâncias públicas do Nitter.
+                Para cada palavra-chave ativa, o sistema consulta o <strong>Google News</strong> e o <strong>Diário Oficial
+                    da União</strong> (Seções 1 e 3) via RSS. Para tipos exceto
+                "Tema", também consulta o <strong>YouTube</strong> (quando configurado) e o <strong>Twitter/X</strong> via
+                instâncias públicas do Nitter.
             </div>
             @foreach ($keywords as $kw)
                 @php
