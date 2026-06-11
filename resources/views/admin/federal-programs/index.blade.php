@@ -559,9 +559,60 @@
                             atuais.</div>
                     @endforelse
                 </div>
-                @if (method_exists($history, 'links'))
-                    <div style="padding:0 1.1rem 1rem">
-                        {{ $history->links() }}
+                @if (method_exists($history, 'hasPages') && $history->hasPages())
+                    <div
+                        style="padding:1rem 1.1rem;border-top:1px solid #e5e7eb;display:flex;justify-content:space-between;align-items:center;gap:.85rem;flex-wrap:wrap;background:#fcfcfd">
+                        <div style="font-size:.8rem;color:#6b7280">
+                            Mostrando {{ $history->firstItem() }}-{{ $history->lastItem() }} de
+                            {{ $history->total() }} execucoes
+                        </div>
+                        <nav aria-label="Paginacao do historico recente"
+                            style="display:flex;align-items:center;gap:.45rem;flex-wrap:wrap">
+                            @if ($history->onFirstPage())
+                                <span
+                                    style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .8rem;border-radius:10px;border:1px solid #e5e7eb;background:#f9fafb;color:#9ca3af;font-size:.78rem;font-weight:700">
+                                    Anterior
+                                </span>
+                            @else
+                                <a href="{{ $history->previousPageUrl() }}"
+                                    style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .8rem;border-radius:10px;border:1px solid #d1d5db;background:#fff;color:#374151;text-decoration:none;font-size:.78rem;font-weight:700">
+                                    Anterior
+                                </a>
+                            @endif
+
+                            @foreach ($history->linkCollection() as $link)
+                                @continue(($link['label'] ?? '') === '&laquo; Previous' || ($link['label'] ?? '') === 'Next &raquo;')
+
+                                @if (($link['label'] ?? '') === '...')
+                                    <span
+                                        style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .7rem;border-radius:10px;border:1px dashed #d1d5db;background:#fff;color:#9ca3af;font-size:.78rem;font-weight:700">
+                                        ...
+                                    </span>
+                                @elseif ($link['active'])
+                                    <span
+                                        style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .7rem;border-radius:10px;border:1px solid #111827;background:#111827;color:#fff;font-size:.78rem;font-weight:700">
+                                        {{ $link['label'] }}
+                                    </span>
+                                @else
+                                    <a href="{{ $link['url'] }}"
+                                        style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .7rem;border-radius:10px;border:1px solid #d1d5db;background:#fff;color:#374151;text-decoration:none;font-size:.78rem;font-weight:700">
+                                        {{ $link['label'] }}
+                                    </a>
+                                @endif
+                            @endforeach
+
+                            @if ($history->hasMorePages())
+                                <a href="{{ $history->nextPageUrl() }}"
+                                    style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .8rem;border-radius:10px;border:1px solid #d1d5db;background:#fff;color:#374151;text-decoration:none;font-size:.78rem;font-weight:700">
+                                    Proxima
+                                </a>
+                            @else
+                                <span
+                                    style="display:inline-flex;align-items:center;justify-content:center;min-width:2.2rem;height:2.2rem;padding:0 .8rem;border-radius:10px;border:1px solid #e5e7eb;background:#f9fafb;color:#9ca3af;font-size:.78rem;font-weight:700">
+                                    Proxima
+                                </span>
+                            @endif
+                        </nav>
                     </div>
                 @endif
             </section>

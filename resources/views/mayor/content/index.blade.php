@@ -574,8 +574,8 @@
         }
 
         /* ═══════════════════════════════════════
-                                                                                                                                                                                                                                                                                                                                                                                           IMAGEM IA — estilos específicos
-                                                                                                                                                                                                                                                                                                                                                                                        ═══════════════════════════════════════ */
+                                                                                                                                                                                                                                                                                                                                                           IMAGEM IA — estilos específicos
+                                                                                                                                                                                                                                                                                                                                                        ═══════════════════════════════════════ */
         .image-info-box {
             background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
             border: 1.5px solid #ede9fe;
@@ -1046,21 +1046,8 @@
 
         .module-shell-tabs {
             display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: .75rem 1rem;
-            flex-wrap: wrap;
-        }
-
-        .module-shell-tab-group {
-            display: flex;
             gap: .55rem;
             flex-wrap: wrap;
-        }
-
-        .module-shell-tab-group.is-right {
-            margin-left: auto;
-            justify-content: flex-end;
         }
 
         .module-shell-tab {
@@ -2971,279 +2958,275 @@
     <div class="comm-page">
         <section class="module-shell-card">
             <div class="module-shell-tabs">
-                <div class="module-shell-tab-group">
-                    <a href="{{ route('mayor.content.index', ['area' => 'produce']) }}"
-                        class="module-shell-tab {{ $activeArea === 'produce' ? 'is-active' : '' }}">Produzir</a>
-                    <a href="{{ route('mayor.content.index', ['area' => 'mentions']) }}"
-                        class="module-shell-tab {{ $activeArea === 'mentions' ? 'is-active' : '' }}">O que estão falando</a>
-                </div>
-                <div class="module-shell-tab-group is-right">
-                    <a style="background: var(--gold)" href="{{ route('mayor.content.index', ['area' => 'operations']) }}"
-                        class="module-shell-tab {{ $activeArea === 'operations' ? 'is-active' : '' }} {{ $activeArea !== 'operations' ? 'is-soon' : '' }}">Núcleo
-                        de Operação</a>
-                    <a style="background: var(--gold)" href="{{ route('mayor.content.index', ['area' => 'archive']) }}"
-                        class="module-shell-tab {{ $activeArea === 'archive' ? 'is-active' : '' }}">Arquivo</a>
-                </div>
+                <a href="{{ route('mayor.content.index', ['area' => 'produce']) }}"
+                    class="module-shell-tab {{ $activeArea === 'produce' ? 'is-active' : '' }}">Produzir</a>
+                <a href="{{ route('mayor.content.index', ['area' => 'mentions']) }}"
+                    class="module-shell-tab {{ $activeArea === 'mentions' ? 'is-active' : '' }}">Menções</a>
+                <a href="{{ route('mayor.content.index', ['area' => 'operations']) }}"
+                    class="module-shell-tab {{ $activeArea === 'operations' ? 'is-active' : '' }} {{ $activeArea !== 'operations' ? 'is-soon' : '' }}">Núcleo
+                    de Operação</a>
+                <a href="{{ route('mayor.content.index', ['area' => 'archive']) }}"
+                    class="module-shell-tab {{ $activeArea === 'archive' ? 'is-active' : '' }}">Arquivo</a>
             </div>
         </section>
 
         @if ($activeArea === 'produce')
             <!--<section class="comm-hero">
-                                                                                    <div class="hero-card">
-                                                                                        <div class="hero-top">
-                                                                                            <div class="hero-title">
-                                                                                                <h1>Central de Comunicação</h1>
-                                                                                                <p>Crie, revise, agende e publique conteúdos do mandato em um workspace único, com fila
-                                                                                                    editorial e
-                                                                                                    visão semanal de execução.</p>
-                                                                                            </div>
-                                                                                            <div class="hero-badge">Operação editorial ativa</div>
-                                                                                        </div>
+                                        <div class="hero-card">
+                                            <div class="hero-top">
+                                                <div class="hero-title">
+                                                    <h1>Central de Comunicação</h1>
+                                                    <p>Crie, revise, agende e publique conteúdos do mandato em um workspace único, com fila
+                                                        editorial e
+                                                        visão semanal de execução.</p>
+                                                </div>
+                                                <div class="hero-badge">Operação editorial ativa</div>
+                                            </div>
 
-                                                                                        <div class="hero-summary-grid">
-                                                                                            @foreach ([['label' => 'Rascunhos', 'value' => $summary['draft'] ?? 0, 'meta' => 'Peças aguardando revisão ou acabamento final.'], ['label' => 'Aprovados', 'value' => $summary['approved'] ?? 0, 'meta' => 'Conteúdos prontos para virar publicação.'], ['label' => 'Agenda da semana', 'value' => $governance['scheduled_upcoming'] ?? 0, 'meta' => 'Conteúdos planejados para os próximos 7 dias.'], ['label' => 'Prontos para publicar', 'value' => $governance['ready_to_publish'] ?? 0, 'meta' => 'Fila quente para soltar no canal certo.'], ['label' => 'Publicados na semana', 'value' => $governance['published_this_week'] ?? 0, 'meta' => 'Entregas efetivamente publicadas nesta janela.']] as $card)
+                                            <div class="hero-summary-grid">
+                                                @foreach ([['label' => 'Rascunhos', 'value' => $summary['draft'] ?? 0, 'meta' => 'Peças aguardando revisão ou acabamento final.'], ['label' => 'Aprovados', 'value' => $summary['approved'] ?? 0, 'meta' => 'Conteúdos prontos para virar publicação.'], ['label' => 'Agenda da semana', 'value' => $governance['scheduled_upcoming'] ?? 0, 'meta' => 'Conteúdos planejados para os próximos 7 dias.'], ['label' => 'Prontos para publicar', 'value' => $governance['ready_to_publish'] ?? 0, 'meta' => 'Fila quente para soltar no canal certo.'], ['label' => 'Publicados na semana', 'value' => $governance['published_this_week'] ?? 0, 'meta' => 'Entregas efetivamente publicadas nesta janela.']] as $card)
     <div class="hero-summary-card">
-                                                                                                    <div class="label">{{ $card['label'] }}</div>
-                                                                                                    <div class="value">{{ $card['value'] }}</div>
-                                                                                                    <div class="meta">{{ $card['meta'] }}</div>
-                                                                                                </div>
+                                                        <div class="label">{{ $card['label'] }}</div>
+                                                        <div class="value">{{ $card['value'] }}</div>
+                                                        <div class="meta">{{ $card['meta'] }}</div>
+                                                    </div>
     @endforeach
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </section>-->
+                                            </div>
+                                        </div>
+                                    </section>
 
-            <!--<section class="comm-toolbar">
-                                                                                    <div class="toolbar-card">
-                                                                                        <form method="GET" action="{{ route('mayor.content.index') }}" class="toolbar-form">
-                                                                                            <div class="field" style="margin-bottom:0">
-                                                                                                <label>Status editorial</label>
-                                                                                                <select name="status">
-                                                                                                    @foreach (['all' => 'Todos', 'draft' => 'Rascunho', 'approved' => 'Aprovado', 'published' => 'Publicado', 'archived' => 'Arquivado'] as $value => $label)
+                                <section class="comm-toolbar">
+                                    <div class="toolbar-card">
+                                        <form method="GET" action="{{ route('mayor.content.index') }}" class="toolbar-form">
+                                            <div class="field" style="margin-bottom:0">
+                                                <label>Status editorial</label>
+                                                <select name="status">
+                                                    @foreach (['all' => 'Todos', 'draft' => 'Rascunho', 'approved' => 'Aprovado', 'published' => 'Publicado', 'archived' => 'Arquivado'] as $value => $label)
     <option value="{{ $value }}" @selected(($filters['status'] ?? 'all') === $value)>{{ $label }}
-                                                                                                        </option>
+                                                        </option>
     @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="field" style="margin-bottom:0">
-                                                                                                <label>Tipo</label>
-                                                                                                <select name="type">
-                                                                                                    @foreach (['all' => 'Todos', 'post' => 'Comunicação', 'image' => 'Imagem IA', 'interview' => 'Entrevista', 'crisis' => 'Crise'] as $value => $label)
+                                                </select>
+                                            </div>
+                                            <div class="field" style="margin-bottom:0">
+                                                <label>Tipo</label>
+                                                <select name="type">
+                                                    @foreach (['all' => 'Todos', 'post' => 'Comunicação', 'image' => 'Imagem IA', 'interview' => 'Entrevista', 'crisis' => 'Crise'] as $value => $label)
     <option value="{{ $value }}" @selected(($filters['type'] ?? 'all') === $value)>{{ $label }}
-                                                                                                        </option>
+                                                        </option>
     @endforeach
-                                                                                                </select>
-                                                                                            </div>
-                                                                                            <div class="field" style="margin-bottom:0">
-                                                                                                <label>Busca</label>
-                                                                                                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
-                                                                                                    placeholder="Tema, origem, tag, título ou contexto">
-                                                                                            </div>
-                                                                                            <div class="toolbar-actions">
-                                                                                                <button class="action-btn primary" type="submit">Filtrar</button>
-                                                                                                <a class="action-btn" href="{{ route('mayor.content.index') }}">Limpar</a>
-                                                                                            </div>
-                                                                                        </form>
-                                                                                    </div>
-                                                                                </section>-->
+                                                </select>
+                                            </div>
+                                            <div class="field" style="margin-bottom:0">
+                                                <label>Busca</label>
+                                                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
+                                                    placeholder="Tema, origem, tag, título ou contexto">
+                                            </div>
+                                            <div class="toolbar-actions">
+                                                <button class="action-btn primary" type="submit">Filtrar</button>
+                                                <a class="action-btn" href="{{ route('mayor.content.index') }}">Limpar</a>
+                                            </div>
+                                        </form>
+                                    </div>
+                                </section>
 
-            <!--<section class="sla-section">
-                                                                                <div class="results-card">
-                                                                                    <div class="results-card-head">
-                                                                                        <div>
-                                                                                            <h2 class="section-title">SLA Editorial por Etapa</h2>
-                                                                                            <p class="section-subtitle">Fecha a cadência entre revisão, colaboração, agenda e publicação com
-                                                                                                leitura de risco em tempo real.</p>
-                                                                                        </div>
-                                                                                        <div class="sla-config-badges">
-                                                                                            <span class="sla-config-chip">Revisão inicial:
-                                                                                                {{ $slaConfigData['draft_review_hours'] ?? 24 }}h</span>
-                                                                                            <span class="sla-config-chip">Aprovado para publicar:
-                                                                                                {{ $slaConfigData['approved_publish_hours'] ?? 24 }}h</span>
-                                                                                            <span class="sla-config-chip">Antecedência do agendado:
-                                                                                                {{ $slaConfigData['scheduled_lead_hours'] ?? 6 }}h</span>
-                                                                                        </div>
-                                                                                    </div>
+                                <section class="sla-section">
+                                    <div class="results-card">
+                                        <div class="results-card-head">
+                                            <div>
+                                                <h2 class="section-title">SLA Editorial por Etapa</h2>
+                                                <p class="section-subtitle">Fecha a cadência entre revisão, colaboração, agenda e publicação com
+                                                    leitura de risco em tempo real.</p>
+                                            </div>
+                                            <div class="sla-config-badges">
+                                                <span class="sla-config-chip">Revisão inicial:
+                                                    {{ $slaConfigData['draft_review_hours'] ?? 24 }}h</span>
+                                                <span class="sla-config-chip">Aprovado para publicar:
+                                                    {{ $slaConfigData['approved_publish_hours'] ?? 24 }}h</span>
+                                                <span class="sla-config-chip">Antecedência do agendado:
+                                                    {{ $slaConfigData['scheduled_lead_hours'] ?? 6 }}h</span>
+                                            </div>
+                                        </div>
 
-                                                                                    <div class="sla-summary-grid">
-                                                                                        <div class="sla-summary-card status-overdue">
-                                                                                            <div class="label">Vencidos agora</div>
-                                                                                            <div class="value">{{ $slaTotals['overdue_total'] ?? 0 }}</div>
-                                                                                            <div class="meta">Peças que já estouraram a etapa ativa e pedem ação imediata.</div>
-                                                                                        </div>
-                                                                                        <div class="sla-summary-card status-at_risk">
-                                                                                            <div class="label">Em risco</div>
-                                                                                            <div class="value">{{ $slaTotals['at_risk_total'] ?? 0 }}</div>
-                                                                                            <div class="meta">Peças próximas do vencimento e que precisam entrar na fila quente.</div>
-                                                                                        </div>
-                                                                                        <div class="sla-summary-card status-on_track">
-                                                                                            <div class="label">Dentro do SLA</div>
-                                                                                            <div class="value">{{ $slaTotals['on_track_total'] ?? 0 }}</div>
-                                                                                            <div class="meta">{{ $slaTotals['active_total'] ?? 0 }} peça(s) com SLA ativo no recorte
-                                                                                                atual.
-                                                                                            </div>
-                                                                                        </div>
-                                                                                        <div class="sla-summary-card status-complete">
-                                                                                            <div class="label">Publicação no prazo</div>
-                                                                                            <div class="value">
-                                                                                                {{ number_format($slaTotals['published_on_time_rate'] ?? 100, 1, ',', '.') }}%
-                                                                                            </div>
-                                                                                            <div class="meta">{{ $slaTotals['published_on_time_total'] ?? 0 }} de
-                                                                                                {{ $slaTotals['published_recent_total'] ?? 0 }} publicações recentes dentro do prazo.</div>
-                                                                                        </div>
-                                                                                    </div>
+                                        <div class="sla-summary-grid">
+                                            <div class="sla-summary-card status-overdue">
+                                                <div class="label">Vencidos agora</div>
+                                                <div class="value">{{ $slaTotals['overdue_total'] ?? 0 }}</div>
+                                                <div class="meta">Peças que já estouraram a etapa ativa e pedem ação imediata.</div>
+                                            </div>
+                                            <div class="sla-summary-card status-at_risk">
+                                                <div class="label">Em risco</div>
+                                                <div class="value">{{ $slaTotals['at_risk_total'] ?? 0 }}</div>
+                                                <div class="meta">Peças próximas do vencimento e que precisam entrar na fila quente.</div>
+                                            </div>
+                                            <div class="sla-summary-card status-on_track">
+                                                <div class="label">Dentro do SLA</div>
+                                                <div class="value">{{ $slaTotals['on_track_total'] ?? 0 }}</div>
+                                                <div class="meta">{{ $slaTotals['active_total'] ?? 0 }} peça(s) com SLA ativo no recorte
+                                                    atual.
+                                                </div>
+                                            </div>
+                                            <div class="sla-summary-card status-complete">
+                                                <div class="label">Publicação no prazo</div>
+                                                <div class="value">
+                                                    {{ number_format($slaTotals['published_on_time_rate'] ?? 100, 1, ',', '.') }}%
+                                                </div>
+                                                <div class="meta">{{ $slaTotals['published_on_time_total'] ?? 0 }} de
+                                                    {{ $slaTotals['published_recent_total'] ?? 0 }} publicações recentes dentro do prazo.</div>
+                                            </div>
+                                        </div>
 
-                                                                                    <div class="sla-stage-grid">
-                                                                                        @foreach ($slaStages as $stage)
+                                        <div class="sla-stage-grid">
+                                            @foreach ($slaStages as $stage)
     <div class="sla-stage-card status-{{ $stage['status_key'] ?? 'on_track' }}">
-                                                                                                <div class="sla-stage-top">
-                                                                                                    <div>
-                                                                                                        <h2 class="section-title" style="font-size:.98rem">{{ $stage['label'] }}</h2>
-                                                                                                        <p class="section-subtitle">{{ $stage['total'] }} peça(s) nesta etapa</p>
-                                                                                                    </div>
-                                                                                                    <span
-                                                                                                        class="sla-badge sla-status-{{ $stage['status_key'] ?? 'on_track' }}">{{ $stage['overdue_total'] ?? 0 }}
-                                                                                                        vencida(s)</span>
-                                                                                                </div>
+                                                    <div class="sla-stage-top">
+                                                        <div>
+                                                            <h2 class="section-title" style="font-size:.98rem">{{ $stage['label'] }}</h2>
+                                                            <p class="section-subtitle">{{ $stage['total'] }} peça(s) nesta etapa</p>
+                                                        </div>
+                                                        <span
+                                                            class="sla-badge sla-status-{{ $stage['status_key'] ?? 'on_track' }}">{{ $stage['overdue_total'] ?? 0 }}
+                                                            vencida(s)</span>
+                                                    </div>
 
-                                                                                                <div class="sla-stage-metrics">
-                                                                                                    <div class="sla-metric">
-                                                                                                        <div class="metric-label">Dentro</div>
-                                                                                                        <div class="metric-value">
-                                                                                                            {{ number_format($stage['within_sla_rate'] ?? 100, 1, ',', '.') }}%
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                    <div class="sla-metric">
-                                                                                                        <div class="metric-label">Em risco</div>
-                                                                                                        <div class="metric-value">{{ $stage['at_risk_total'] ?? 0 }}</div>
-                                                                                                    </div>
-                                                                                                    <div class="sla-metric">
-                                                                                                        <div class="metric-label">Média</div>
-                                                                                                        <div class="metric-value">
-                                                                                                            {{ number_format($stage['avg_elapsed_hours'] ?? 0, 1, ',', '.') }}h
-                                                                                                        </div>
-                                                                                                    </div>
-                                                                                                </div>
+                                                    <div class="sla-stage-metrics">
+                                                        <div class="sla-metric">
+                                                            <div class="metric-label">Dentro</div>
+                                                            <div class="metric-value">
+                                                                {{ number_format($stage['within_sla_rate'] ?? 100, 1, ',', '.') }}%
+                                                            </div>
+                                                        </div>
+                                                        <div class="sla-metric">
+                                                            <div class="metric-label">Em risco</div>
+                                                            <div class="metric-value">{{ $stage['at_risk_total'] ?? 0 }}</div>
+                                                        </div>
+                                                        <div class="sla-metric">
+                                                            <div class="metric-label">Média</div>
+                                                            <div class="metric-value">
+                                                                {{ number_format($stage['avg_elapsed_hours'] ?? 0, 1, ',', '.') }}h
+                                                            </div>
+                                                        </div>
+                                                    </div>
 
-                                                                                                <div class="sla-item-list">
-                                                                                                    @forelse ($stage['top_items'] ?? [] as $entry)
+                                                    <div class="sla-item-list">
+                                                        @forelse ($stage['top_items'] ?? [] as $entry)
     <div class="sla-item" onclick="loadContent({{ $entry['id'] }})">
-                                                                                                            <div class="sla-item-head">
-                                                                                                                <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}
-                                                                                                                </div>
-                                                                                                                <span
-                                                                                                                    class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
-                                                                                                            </div>
-                                                                                                            <div class="sla-item-meta">
-                                                                                                                <span>{{ $entry['type_label'] }} ·
-                                                                                                                    {{ $entry['channel'] ?: 'interno' }}</span>
-                                                                                                                <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
-                                                                                                            </div>
-                                                                                                            <div class="sla-item-meta">
-                                                                                                                <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
-                                                                                                                <span>{{ $entry['status_label'] }}</span>
-                                                                                                            </div>
-                                                                                                        </div>
+                                                                <div class="sla-item-head">
+                                                                    <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}
+                                                                    </div>
+                                                                    <span
+                                                                        class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
+                                                                </div>
+                                                                <div class="sla-item-meta">
+                                                                    <span>{{ $entry['type_label'] }} ·
+                                                                        {{ $entry['channel'] ?: 'interno' }}</span>
+                                                                    <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
+                                                                </div>
+                                                                <div class="sla-item-meta">
+                                                                    <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
+                                                                    <span>{{ $entry['status_label'] }}</span>
+                                                                </div>
+                                                            </div>
                                     @empty
-                                                                                                        <div class="queue-empty">Sem peças abertas nesta etapa agora.</div>
+                                                            <div class="queue-empty">Sem peças abertas nesta etapa agora.</div>
     @endforelse
-                                                                                                </div>
-                                                                                            </div>
+                                                    </div>
+                                                </div>
     @endforeach
-                                                                                    </div>
+                                        </div>
 
-                                                                                    <div class="sla-critical-shell">
-                                                                                        <div class="queue-card-head" style="margin-bottom:.8rem">
-                                                                                            <div>
-                                                                                                <h2 class="section-title">Fila Crítica de Vencimento</h2>
-                                                                                                <p class="section-subtitle">
-                                                                                                    {{ $slaBoard['window_label'] ?? 'Leitura operacional do SLA atual.' }}
-                                                                                                </p>
-                                                                                            </div>
-                                                                                        </div>
+                                        <div class="sla-critical-shell">
+                                            <div class="queue-card-head" style="margin-bottom:.8rem">
+                                                <div>
+                                                    <h2 class="section-title">Fila Crítica de Vencimento</h2>
+                                                    <p class="section-subtitle">
+                                                        {{ $slaBoard['window_label'] ?? 'Leitura operacional do SLA atual.' }}
+                                                    </p>
+                                                </div>
+                                            </div>
 
-                                                                                        <div class="sla-critical-grid">
-                                                                                            @forelse ($slaCriticalItems as $entry)
+                                            <div class="sla-critical-grid">
+                                                @forelse ($slaCriticalItems as $entry)
     <div class="sla-critical-item {{ ($entry['sla']['status_key'] ?? '') === 'overdue' ? 'is-overdue' : 'is-at-risk' }}"
-                                                                                                    onclick="loadContent({{ $entry['id'] }})">
-                                                                                                    <div class="sla-item-head">
-                                                                                                        <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
-                                                                                                        <span
-                                                                                                            class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'at_risk' }}">{{ $entry['sla']['status_label'] ?? 'SLA em risco' }}</span>
-                                                                                                    </div>
-                                                                                                    <div class="sla-item-meta">
-                                                                                                        <span>{{ $entry['sla']['stage_label'] ?? 'Etapa atual' }}</span>
-                                                                                                        <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
-                                                                                                    </div>
-                                                                                                    <div class="sla-item-meta">
-                                                                                                        <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
-                                                                                                        <span>{{ $entry['type_label'] }} · {{ $entry['channel'] ?: 'interno' }}</span>
-                                                                                                    </div>
-                                                                                                </div>
+                                                        onclick="loadContent({{ $entry['id'] }})">
+                                                        <div class="sla-item-head">
+                                                            <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
+                                                            <span
+                                                                class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'at_risk' }}">{{ $entry['sla']['status_label'] ?? 'SLA em risco' }}</span>
+                                                        </div>
+                                                        <div class="sla-item-meta">
+                                                            <span>{{ $entry['sla']['stage_label'] ?? 'Etapa atual' }}</span>
+                                                            <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
+                                                        </div>
+                                                        <div class="sla-item-meta">
+                                                            <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
+                                                            <span>{{ $entry['type_label'] }} · {{ $entry['channel'] ?: 'interno' }}</span>
+                                                        </div>
+                                                    </div>
                             @empty
-                                                                                                <div class="queue-empty" style="grid-column:1 / -1">Nenhuma peça crítica agora. A operação
-                                                                                                    está
-                                                                                                    respirando dentro do SLA.</div>
+                                                    <div class="queue-empty" style="grid-column:1 / -1">Nenhuma peça crítica agora. A operação
+                                                        está
+                                                        respirando dentro do SLA.</div>
     @endforelse
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </div>
-                                                                            </section>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </section>
 
-                                                                            <section class="playbooks-shell">
-                                                                                <div class="results-card">
-                                                                                    <div class="results-card-head">
-                                                                                        <div>
-                                                                                            <h2 class="section-title">Playbooks Editoriais por Situação</h2>
-                                                                                            <p class="section-subtitle">Acione um roteiro pronto por contexto operacional e leve esse guia
-                                                                                                até
-                                                                                                a geração, revisão, SLA e publicação.</p>
-                                                                                        </div>
-                                                                                    </div>
+                                <section class="playbooks-shell">
+                                    <div class="results-card">
+                                        <div class="results-card-head">
+                                            <div>
+                                                <h2 class="section-title">Playbooks Editoriais por Situação</h2>
+                                                <p class="section-subtitle">Acione um roteiro pronto por contexto operacional e leve esse guia
+                                                    até
+                                                    a geração, revisão, SLA e publicação.</p>
+                                            </div>
+                                        </div>
 
-                                                                                    <div class="playbook-grid">
-                                                                                        @foreach ($editorialPlaybooks ?? [] as $playbook)
+                                        <div class="playbook-grid">
+                                            @foreach ($editorialPlaybooks ?? [] as $playbook)
     <div class="playbook-card">
-                                                                                                <div class="playbook-card-top">
-                                                                                                    <div>
-                                                                                                        <div class="playbook-card-title">{{ $playbook['name'] }}</div>
-                                                                                                        <div class="playbook-card-meta">{{ $playbook['situation_label'] }}</div>
-                                                                                                    </div>
-                                                                                                    <span class="playbook-chip">{{ $playbook['target_tab_label'] }}</span>
-                                                                                                </div>
+                                                    <div class="playbook-card-top">
+                                                        <div>
+                                                            <div class="playbook-card-title">{{ $playbook['name'] }}</div>
+                                                            <div class="playbook-card-meta">{{ $playbook['situation_label'] }}</div>
+                                                        </div>
+                                                        <span class="playbook-chip">{{ $playbook['target_tab_label'] }}</span>
+                                                    </div>
 
-                                                                                                <div class="playbook-card-desc">{{ $playbook['description'] }}</div>
+                                                    <div class="playbook-card-desc">{{ $playbook['description'] }}</div>
 
-                                                                                                <div class="playbook-chip-row">
-                                                                                                    @if (!empty($playbook['suggested_channel']))
+                                                    <div class="playbook-chip-row">
+                                                        @if (!empty($playbook['suggested_channel']))
     <span class="playbook-chip">Canal: {{ $playbook['suggested_channel'] }}</span>
     @endif
-                                                                                                    @if (!empty($playbook['suggested_format']))
+                                                        @if (!empty($playbook['suggested_format']))
     <span class="playbook-chip">Formato: {{ $playbook['suggested_format'] }}</span>
     @endif
-                                                                                                </div>
+                                                    </div>
 
-                                                                                                <div class="playbook-checklist">
-                                                                                                    @foreach (collect($playbook['checklist'] ?? [])->take(3) as $item)
+                                                    <div class="playbook-checklist">
+                                                        @foreach (collect($playbook['checklist'] ?? [])->take(3) as $item)
     <span>{{ $item }}</span>
     @endforeach
-                                                                                                </div>
+                                                    </div>
 
-                                                                                                <div class="playbook-actions">
-                                                                                                    <button type="button" class="action-btn"
-                                                                                                        onclick="applyPlaybookFromLibrary('{{ $playbook['id'] }}')">Aplicar
-                                                                                                        playbook</button>
-                                                                                                </div>
-                                                                                            </div>
+                                                    <div class="playbook-actions">
+                                                        <button type="button" class="action-btn"
+                                                            onclick="applyPlaybookFromLibrary('{{ $playbook['id'] }}')">Aplicar
+                                                            playbook</button>
+                                                    </div>
+                                                </div>
     @endforeach
-                                                                                    </div>
-                                                                                </div>
-                                                                            </section>-->
+                                        </div>
+                                    </div>
+                                </section>-->
 
             <section class="workspace-grid">
                 <div class="workspace-card">
                     <div class="workspace-card-head">
                         <div>
-                            <h2 class="section-title">Gerador</h2>
+                            <h2 class="section-title">Gerador e Oficina</h2>
                             <p class="section-subtitle">Monte a peça, refine o tom e puxe do histórico recente sem sair da
                                 mesma
                                 área.</p>
@@ -3282,38 +3265,38 @@
                     </div>
 
                     <div id="tab-post">
-                        <!--<div class="field">
-                                                                                            <label>Playbook por situação</label>
-                                                                                            <select id="post-playbook-select" onchange="applyPlaybookSelection('post')">
-                                                                                                <option value="">Sem playbook fixo</option>
-                                                                                                @foreach ($postPlaybooks as $playbook)
-    <option value="{{ $playbook['id'] }}">{{ $playbook['name'] }}</option>
-    @endforeach
-                                                                                            </select>
-                                                                                            <div class="template-select-meta" id="post-playbook-meta">Escolha um playbook para orientar o
-                                                                                                contexto da peça, o foco editorial e a execução operacional.</div>
-                                                                                        </div>-->
+                        <div class="field">
+                            <label>Playbook por situação</label>
+                            <select id="post-playbook-select" onchange="applyPlaybookSelection('post')">
+                                <option value="">Sem playbook fixo</option>
+                                @foreach ($postPlaybooks as $playbook)
+                                    <option value="{{ $playbook['id'] }}">{{ $playbook['name'] }}</option>
+                                @endforeach
+                            </select>
+                            <div class="template-select-meta" id="post-playbook-meta">Escolha um playbook para orientar o
+                                contexto da peça, o foco editorial e a execução operacional.</div>
+                        </div>
                         <div class="field">
                             <label>Tema / ação de governo</label>
                             <textarea id="post-theme"
                                 placeholder="Ex: entrega do novo posto de saúde, mutirão de limpeza, pavimentação concluída..." rows="4"></textarea>
                         </div>
-                        <!--<div class="field">
-                                                                                            <label>Template editorial</label>
-                                                                                            <select id="post-template-select" onchange="applyTemplateSelection('post')">
-                                                                                                <option value="">Sem template fixo</option>
-                                                                                                @foreach ($postTemplates as $template)
-    <option value="{{ $template['id'] }}">{{ $template['name'] }}
-                                                                                                        @if (!empty($template['format']))
-    · {{ $template['format'] }}
-    @endif
-                                                                                                    </option>
-    @endforeach
-                                                                                            </select>
-                                                                                            <div class="template-select-meta" id="post-template-meta">Escolha um template para reaplicar
-                                                                                                canal,
-                                                                                                formato editorial e orientação de texto na geração.</div>
-                                                                                        </div>-->
+                        <div class="field">
+                            <label>Template editorial</label>
+                            <select id="post-template-select" onchange="applyTemplateSelection('post')">
+                                <option value="">Sem template fixo</option>
+                                @foreach ($postTemplates as $template)
+                                    <option value="{{ $template['id'] }}">{{ $template['name'] }}
+                                        @if (!empty($template['format']))
+                                            · {{ $template['format'] }}
+                                        @endif
+                                    </option>
+                                @endforeach
+                            </select>
+                            <div class="template-select-meta" id="post-template-meta">Escolha um template para reaplicar
+                                canal,
+                                formato editorial e orientação de texto na geração.</div>
+                        </div>
                         <div class="field">
                             <label>Canal</label>
                             <div class="chip-group">
@@ -3474,18 +3457,18 @@
                     </div>
 
                     <div id="tab-interview" style="display:none">
-                        <!--<div class="field">
-                                                                                    <label>Playbook por situação</label>
-                                                                                    <select id="interview-playbook-select" onchange="applyPlaybookSelection('interview')">
-                                                                                        <option value="">Sem playbook fixo</option>
-                                                                                        @foreach ($interviewPlaybooks as $playbook)
-    <option value="{{ $playbook['id'] }}">{{ $playbook['name'] }}</option>
-    @endforeach
-                                                                                    </select>
-                                                                                    <div class="template-select-meta" id="interview-playbook-meta">Use um playbook para puxar a
-                                                                                        linha
-                                                                                        de preparação, mensagens-chave e riscos da entrevista.</div>
-                                                                                </div>-->
+                        <div class="field">
+                            <label>Playbook por situação</label>
+                            <select id="interview-playbook-select" onchange="applyPlaybookSelection('interview')">
+                                <option value="">Sem playbook fixo</option>
+                                @foreach ($interviewPlaybooks as $playbook)
+                                    <option value="{{ $playbook['id'] }}">{{ $playbook['name'] }}</option>
+                                @endforeach
+                            </select>
+                            <div class="template-select-meta" id="interview-playbook-meta">Use um playbook para puxar a
+                                linha
+                                de preparação, mensagens-chave e riscos da entrevista.</div>
+                        </div>
                         <div class="field">
                             <label>Contexto da entrevista</label>
                             <textarea id="interview-context" placeholder="Ex: entrevista ao vivo na rádio local sobre saúde, obras e 100 dias..."
@@ -3570,7 +3553,350 @@
                     </div>
                 </div>
 
+                <!--<aside class="queue-card">
+                                    <div class="queue-card-head">
+                                        <div>
+                                            <h2 class="section-title">Fila Editorial</h2>
+                                            <p class="section-subtitle">Priorize o que revisar, agendar ou publicar agora.</p>
+                                        </div>
+                                    </div>
 
+                                    <div class="queue-list">
+                                        @forelse($queueItems as $entry)
+    <div class="queue-item" onclick="loadContent({{ $entry['id'] }})">
+                                                <div class="queue-item-top">
+                                                    <div class="queue-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
+                                                    <div class="queue-item-badges">
+                                                        <span
+                                                            class="content-card-status status-{{ $entry['status'] }}">{{ $entry['status_label'] }}</span>
+                                                        <span
+                                                            class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
+                                                    </div>
+                                                </div>
+                                                <div class="queue-item-meta">{{ $entry['type_label'] }} ·
+                                                    {{ $entry['channel'] ?: 'interno' }} · {{ $entry['created_at_human'] }}</div>
+                                                <div class="queue-item-foot">
+                                                    @if (!empty($entry['planned_at_human']))
+    Planejado: {{ $entry['planned_at_human'] }}
+@else
+    Sem agendamento definido
+    @endif
+                                                    @if (!empty($entry['origin_module']))
+    · Origem: {{ str_replace('_', ' ', $entry['origin_module']) }}
+    @endif
+                                                </div>
+                                                <div class="queue-item-sla">
+                                                    <span
+                                                        class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['stage_label'] ?? 'Etapa ativa' }}</span>
+                                                    <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
+                                                    <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
+                                                </div>
+                                            </div>
+                        @empty
+                                            <div class="queue-empty">Nenhum conteúdo dentro do recorte atual de filtros.</div>
+    @endforelse
+                                    </div>
+                                </aside>-->
+            </section>
+
+            <!--<section class="templates-shell">
+                                <div class="template-card">
+                                    <div class="queue-card-head">
+                                        <div>
+                                            <h2 class="section-title">Biblioteca de Templates</h2>
+                                            <p class="section-subtitle">Padronize peças recorrentes por canal e formato e reaplique no
+                                                gerador
+                                                sem reescrever a orientação.</p>
+                                        </div>
+                                    </div>
+
+                                    <div class="template-shell-grid">
+                                        <div>
+                                            <div class="template-builder-grid">
+                                                <div class="field">
+                                                    <label>Tipo</label>
+                                                    <select id="template-builder-kind">
+                                                        <option value="post">Comunicação</option>
+                                                        <option value="image">Imagem IA</option>
+                                                    </select>
+                                                </div>
+                                                <div class="field">
+                                                    <label>Nome do template</label>
+                                                    <input type="text" id="template-builder-name"
+                                                        placeholder="Ex: Entrega de obra no Instagram">
+                                                </div>
+                                                <div class="field full">
+                                                    <label>Descrição curta</label>
+                                                    <input type="text" id="template-builder-description"
+                                                        placeholder="Ex: peças de prestação de contas com abertura forte e CTA institucional">
+                                                </div>
+                                                <div class="field full">
+                                                    <label>Instrução editorial fixa</label>
+                                                    <textarea id="template-builder-instruction"
+                                                        placeholder="Ex: abrir com benefício concreto, trazer território e fechar com prestação de contas objetiva."
+                                                        rows="4"></textarea>
+                                                </div>
+                                            </div>
+
+                                            <div class="template-builder-actions">
+                                                <button type="button" class="action-btn primary" onclick="saveCurrentTemplate()">Salvar
+                                                    template
+                                                    atual</button>
+                                                <button type="button" class="action-btn" onclick="prefillTemplateBuilderFromTab()">Usar
+                                                    configuração da aba atual</button>
+                                            </div>
+                                        </div>
+
+                                        <div class="template-library-panel">
+                                            <div class="template-library-list" id="template-library-list">
+                                                <div class="queue-empty">Carregando templates...</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </section>-->
+
+            <section class="results-shell" id="content-review-section">
+                <div class="results-card">
+                    <div class="results-card-head">
+                        <div>
+                            <h2 class="section-title">Editor e Revisão</h2>
+                            <p class="section-subtitle">Abra uma peça da fila ou gere uma nova para editar, aprovar,
+                                agendar e
+                                publicar.</p>
+                        </div>
+                    </div>
+
+                    <div class="results-panel" id="resultsPanel">
+                        <div class="results-empty" id="resultsEmpty">
+                            <div class="results-empty-icon">
+                                <svg viewBox="0 0 24 24" fill="currentColor">
+                                    <path
+                                        d="M21 3H3C2 3 1 4 1 5v14c0 1.1.9 2 2 2h18c1 0 2-1 2-2V5c0-1-1-2-2-2zm0 16H3V5h18v14zm-5-7l-3 3.72L11 13l-4 5h14l-4-5z" />
+                                </svg>
+                            </div>
+                            <h3>Abra uma peça para começar</h3>
+                            <p>Selecione um item da fila editorial ou gere um novo conteúdo. A partir daqui você edita,
+                                agenda,
+                                aprova, publica e arquiva.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="calendar-grid">
+                <div class="calendar-card">
+                    <div class="calendar-card-head">
+                        <div>
+                            <h2 class="section-title">Calendário Editorial da Semana</h2>
+                            <p class="section-subtitle">Visualize o que já está programado, o que está atrasado e onde
+                                ainda
+                                falta preencher a grade.</p>
+                        </div>
+                    </div>
+
+                    <div class="calendar-board">
+                        @foreach ($calendarDays as $day)
+                            <div class="calendar-day">
+                                <div class="calendar-day-head">
+                                    <div class="calendar-day-label">{{ $day['label'] }}</div>
+                                    <div class="calendar-day-date">{{ $day['display'] }}</div>
+                                </div>
+                                @forelse ($day['entries'] as $entry)
+                                    <div class="calendar-entry" onclick="loadContent({{ $entry['id'] }})">
+                                        <div class="calendar-entry-top">
+                                            <div class="calendar-entry-title">
+                                                {{ $entry['title'] ?: 'Conteúdo sem título' }}
+                                            </div>
+                                            <span
+                                                class="content-card-status status-{{ $entry['status'] }}">{{ $entry['planned_time'] ?: '—' }}</span>
+                                        </div>
+                                        <div class="calendar-entry-meta">{{ $entry['status_label'] }} ·
+                                            {{ $entry['channel'] ?: 'interno' }} · ordem
+                                            {{ $entry['editorial_sequence'] ?: '—' }}</div>
+                                        <div class="calendar-entry-actions">
+                                            <button type="button" class="calendar-order-btn"
+                                                onclick="reorderScheduledContent(event, {{ $entry['id'] }}, 'up')">Subir</button>
+                                            <button type="button" class="calendar-order-btn"
+                                                onclick="reorderScheduledContent(event, {{ $entry['id'] }}, 'down')">Descer</button>
+                                        </div>
+                                    </div>
+                                @empty
+                                    <div class="calendar-empty">Sem peça agendada.</div>
+                                @endforelse
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="calendar-month-shell">
+                        <div class="month-header">
+                            <div>
+                                <h2 class="section-title">Visão Mensal</h2>
+                                <p class="section-subtitle">Planejamento do mês com volume agendado e leitura rápida por
+                                    dia.
+                                </p>
+                            </div>
+                            <div class="hero-badge" style="background:#1f2937">
+                                {{ $calendarMonth['month_label'] ?? 'Mês atual' }}
+                            </div>
+                        </div>
+
+                        <div class="month-grid">
+                            @foreach ($calendarMonth['days'] ?? [] as $day)
+                                <div
+                                    class="month-day {{ !($day['is_current_month'] ?? false) ? 'is-outside' : '' }} {{ $day['is_today'] ?? false ? 'is-today' : '' }}">
+                                    <div class="month-day-top">
+                                        <div class="month-day-number">{{ $day['day_number'] }}</div>
+                                        <div class="month-day-badge">{{ $day['scheduled_total'] }} ag.</div>
+                                    </div>
+
+                                    @forelse ($day['entries'] as $entry)
+                                        <div class="month-entry" onclick="loadContent({{ $entry['id'] }})">
+                                            <div class="month-entry-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}
+                                            </div>
+                                            <div class="month-entry-meta">{{ $entry['planned_time'] ?: '—' }} ·
+                                                {{ $entry['status_label'] }}</div>
+                                        </div>
+                                    @empty
+                                        <div class="month-entry-meta">Sem programação.</div>
+                                    @endforelse
+                                </div>
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section class="performance-section">
+                <div class="results-card">
+                    <div class="results-card-head">
+                        <div>
+                            <h2 class="section-title">Inteligência Editorial</h2>
+                            <p class="section-subtitle">Leitura dos últimos 30 dias por origem, tipo e canal, com visão
+                                ampla
+                                do módulo.</p>
+                            <div class="performance-legend">
+                                <span class="performance-legend-item"><span
+                                        class="performance-legend-dot good"></span>Forte:
+                                    taxa de publicação acima de 60%</span>
+                                <span class="performance-legend-item"><span
+                                        class="performance-legend-dot medium"></span>Moderado:
+                                    taxa entre 30% e 59,9%</span>
+                                <span class="performance-legend-item"><span
+                                        class="performance-legend-dot low"></span>Baixo:
+                                    taxa abaixo de 30%</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="performance-summary-grid">
+                        <div class="performance-summary-card">
+                            <div class="label">Criados</div>
+                            <div class="value">{{ $performance['totals']['created_total'] ?? 0 }}</div>
+                        </div>
+                        <div class="performance-summary-card">
+                            <div class="label">Agendados</div>
+                            <div class="value">{{ $performance['totals']['scheduled_total'] ?? 0 }}</div>
+                        </div>
+                        <div class="performance-summary-card">
+                            <div class="label">Publicados</div>
+                            <div class="value">{{ $performance['totals']['published_total'] ?? 0 }}</div>
+                        </div>
+                    </div>
+
+                    <div class="performance-grid">
+                        @foreach ($performance['cards'] ?? [] as $card)
+                            @php
+                                $topRate = (float) (collect($card['rows'] ?? [])->max('publish_rate') ?? 0);
+                                $cardStatus = $topRate >= 60 ? 'good' : ($topRate >= 30 ? 'medium' : 'low');
+                                $cardStatusLabel =
+                                    $cardStatus === 'good'
+                                        ? 'Publicação forte'
+                                        : ($cardStatus === 'medium'
+                                            ? 'Publicação moderada'
+                                            : 'Publicação baixa');
+                            @endphp
+                            <div class="performance-card status-{{ $cardStatus }}">
+                                <div class="performance-card-headline">
+                                    <div>
+                                        <h2 class="section-title" style="font-size:.98rem">{{ $card['title'] }}</h2>
+                                        <p class="section-subtitle">{{ $card['subtitle'] }}</p>
+                                    </div>
+                                    <span
+                                        class="performance-status-badge status-{{ $cardStatus }}">{{ $cardStatusLabel }}</span>
+                                </div>
+                                <div class="performance-list">
+                                    @forelse ($card['rows'] as $row)
+                                        @php
+                                            $rowRate = (float) ($row['publish_rate'] ?? 0);
+                                            $rowStatus = $rowRate >= 60 ? 'good' : ($rowRate >= 30 ? 'medium' : 'low');
+                                        @endphp
+                                        <div class="performance-item status-{{ $rowStatus }}">
+                                            <div class="performance-item-head">
+                                                <strong>{{ $row['label'] }}</strong>
+                                                <span
+                                                    class="performance-status-badge status-{{ $rowStatus }}">{{ number_format($rowRate, 1, ',', '.') }}%</span>
+                                            </div>
+                                            <div class="performance-item-meta">
+                                                <span>Publicados: {{ $row['published_total'] }} · Aprovados:
+                                                    {{ $row['approved_total'] }} · Agendados:
+                                                    {{ $row['scheduled_total'] }}</span>
+                                                <span>{{ $row['total'] }} peça(s)</span>
+                                            </div>
+                                            <div class="performance-item-meta">
+                                                <span>Rascunhos: {{ $row['draft_total'] }}</span>
+                                                <span>Share {{ number_format($row['share'] ?? 0, 1, ',', '.') }}%</span>
+                                            </div>
+                                        </div>
+                                    @empty
+                                        <div class="queue-empty">Sem leitura consolidada ainda.</div>
+                                    @endforelse
+                                </div>
+                            </div>
+                        @endforeach
+                    </div>
+
+                    <div class="mix-stack compact" style="margin-top:1rem">
+                        <div class="mix-card">
+                            <div class="mix-card-head">
+                                <div>
+                                    <h2 class="section-title">Mix por Canal</h2>
+                                    <p class="section-subtitle">Veja a distribuição editorial atual.</p>
+                                </div>
+                            </div>
+                            <div class="mix-list">
+                                @forelse ($channelMix as $item)
+                                    <div class="mix-item">
+                                        <strong>{{ $item['label'] }}</strong>
+                                        <span>{{ $item['total'] }}</span>
+                                    </div>
+                                @empty
+                                    <div class="queue-empty">Sem conteúdos ainda.</div>
+                                @endforelse
+                            </div>
+                        </div>
+
+                        <div class="mix-card">
+                            <div class="mix-card-head">
+                                <div>
+                                    <h2 class="section-title">Origem do Conteúdo</h2>
+                                    <p class="section-subtitle">Entenda quanto veio de operação, rotina manual ou outros
+                                        módulos.</p>
+                                </div>
+                            </div>
+                            <div class="mix-list">
+                                @forelse ($originMix as $item)
+                                    <div class="mix-item">
+                                        <strong>{{ $item['label'] }}</strong>
+                                        <span>{{ $item['total'] }}</span>
+                                    </div>
+                                @empty
+                                    <div class="queue-empty">Sem origem consolidada ainda.</div>
+                                @endforelse
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </section>
         @elseif ($activeArea === 'mentions')
             <section class="comm-hero">

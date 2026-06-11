@@ -106,23 +106,11 @@ Route::middleware(['auth', 'role:admin'])
         // Radar de Programas Federais — painel admin + sync
         Route::prefix('federal-programs')->name('federal-programs.')->group(function () {
             Route::get('/',                              [Admin\FederalProgramsController::class, 'index'])->name('index');
-            Route::get('/exports/history.csv',          [Admin\FederalProgramsController::class, 'exportHistoryCsv'])->name('exports.history.csv');
-            Route::get('/exports/history.xlsx',         [Admin\FederalProgramsController::class, 'exportHistoryXlsx'])->name('exports.history.xlsx');
-            Route::get('/exports/summary.csv',          [Admin\FederalProgramsController::class, 'exportSummaryCsv'])->name('exports.summary.csv');
-            Route::get('/exports/summary.xlsx',         [Admin\FederalProgramsController::class, 'exportSummaryXlsx'])->name('exports.summary.xlsx');
-            Route::get('/exports/curation-audit.csv',   [Admin\FederalProgramsController::class, 'exportCurationAuditCsv'])->name('exports.curation-audit.csv');
-            Route::get('/exports/curation-audit.xlsx',  [Admin\FederalProgramsController::class, 'exportCurationAuditXlsx'])->name('exports.curation-audit.xlsx');
-            Route::get('/exports/curation-queue.csv',   [Admin\FederalProgramsController::class, 'exportCurationQueueCsv'])->name('exports.curation-queue.csv');
-            Route::get('/exports/curation-queue.xlsx',  [Admin\FederalProgramsController::class, 'exportCurationQueueXlsx'])->name('exports.curation-queue.xlsx');
             Route::post('/sync-all',                     [Admin\FederalProgramsController::class, 'syncAll'])->name('sync-all');
             Route::post('/backfill-sources',             [Admin\FederalProgramsController::class, 'backfillSources'])->name('backfill-sources');
             Route::post('/sources/{source}/config',      [Admin\FederalProgramsController::class, 'updateSourceConfig'])->name('sources.config');
             Route::post('/curation/{entry}/assign',      [Admin\FederalProgramsController::class, 'assignCurationEntry'])->name('curation.assign');
             Route::post('/curation/{entry}/transition',  [Admin\FederalProgramsController::class, 'transitionCurationEntry'])->name('curation.transition');
-            Route::post('/curation/bulk-update',         [Admin\FederalProgramsController::class, 'bulkUpdateCuration'])->name('curation.bulk-update');
-            Route::post('/curation/suggestions/confirm', [Admin\FederalProgramsController::class, 'confirmSuggestedCurationAssignments'])->name('curation.suggestions.confirm');
-            Route::post('/curation/rebalance',           [Admin\FederalProgramsController::class, 'rebalanceCurationQueue'])->name('curation.rebalance');
-            Route::post('/curation/overflow',            [Admin\FederalProgramsController::class, 'overflowCurationQueue'])->name('curation.overflow');
             Route::post('/executions/reconcile',         [Admin\FederalProgramsController::class, 'reconcileExecutions'])->name('executions.reconcile');
             Route::post('/executions/retry-eligible',    [Admin\FederalProgramsController::class, 'retryEligibleExecutions'])->name('executions.retry-eligible');
             Route::post('/executions/{execution}/retry', [Admin\FederalProgramsController::class, 'retryExecution'])->name('executions.retry');
