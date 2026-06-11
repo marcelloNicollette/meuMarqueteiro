@@ -53,11 +53,8 @@ class MentionsController extends Controller
         $user = request()->user();
         $municipality = $user->municipality;
 
-        $keywords = MentionKeyword::where('municipality_id', $municipality->id)
-            ->where('is_active', true)->count();
-
-        if ($keywords === 0) {
-            return back()->with('error', 'Configure pelo menos uma palavra-chave antes de monitorar.');
+        if (!$this->monitor->hasMonitoringCoverage($municipality)) {
+            return back()->with('error', 'Configure pelo menos um termo ou palavra-chave de monitoramento antes de buscar menções.');
         }
 
         try {

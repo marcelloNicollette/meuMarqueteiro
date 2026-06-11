@@ -816,6 +816,7 @@ class ContentController extends Controller
         return match ($source) {
             'google_news' => 'Google News',
             'nitter' => 'Twitter/X',
+            'portal_rss' => 'Portal local',
             'rss' => 'RSS',
             'manual_whatsapp' => 'WhatsApp manual',
             'manual_news' => 'Portal manual',

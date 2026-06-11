@@ -7,14 +7,16 @@ use App\Models\Municipality;
 use App\Models\SocialMention;
 use App\Models\User;
 use App\Services\WebPushService;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Http;
 use Illuminate\Support\Facades\Log;
 
 /**
  * Monitora menções do município em fontes públicas gratuitas:
- * - Google News (via RSS — sem API key)
- * - Nitter (instância pública do Twitter)
+ * - Google News (via RSS)
+ * - Twitter/X público (via instâncias Nitter)
+ * - Portais locais configurados (via RSS/feeds públicos)
  */
 class SocialMonitorService
 {
@@ -35,11 +37,9 @@ class SocialMonitorService
      */
     public function monitor(Municipality $municipality): array
     {
-        $keywords = MentionKeyword::where('municipality_id', $municipality->id)
-            ->where('is_active', true)
-            ->get();
+        $definitions = $this->monitoringDefinitions($municipality);
 
-        if ($keywords->isEmpty()) {
+        if ($definitions->isEmpty()) {
             return ['found' => 0, 'new' => 0, 'errors' => []];
         }
 
@@ -47,37 +47,57 @@ class SocialMonitorService
         $new    = 0;
         $errors = [];
 
-        foreach ($keywords as $keyword) {
+        foreach ($definitions as $definition) {
+            $term = (string) ($definition['term'] ?? '');
+            if ($term === '') {
+                continue;
+            }
+
             // Google News RSS
             try {
-                $mentions = $this->fetchGoogleNews($keyword->keyword, $municipality);
+                $mentions = $this->fetchGoogleNews($term, $municipality);
                 foreach ($mentions as $mention) {
-                    $mention['keyword'] = $keyword->keyword;
+                    $mention['keyword'] = $term;
                     if ($this->saveMention($mention, $municipality)) {
                         $new++;
                     }
                     $found++;
                 }
             } catch (\Exception $e) {
-                $errors[] = "Google News ({$keyword->keyword}): " . $e->getMessage();
+                $errors[] = "Google News ({$term}): " . $e->getMessage();
                 Log::warning("SocialMonitor Google News erro: " . $e->getMessage());
             }
 
             // Nitter (Twitter público)
-            if ($keyword->type !== 'topic') {
+            if (!empty($definition['allow_social'])) {
                 try {
-                    $mentions = $this->fetchNitter($keyword->keyword, $municipality);
+                    $mentions = $this->fetchNitter($term, $municipality);
                     foreach ($mentions as $mention) {
-                        $mention['keyword'] = $keyword->keyword;
+                        $mention['keyword'] = $term;
                         if ($this->saveMention($mention, $municipality)) {
                             $new++;
                         }
                         $found++;
                     }
                 } catch (\Exception $e) {
-                    // Nitter pode estar fora — não  é crítico
+                    // Nitter pode estar fora — não é crítico
                     Log::debug("SocialMonitor Nitter erro: " . $e->getMessage());
                 }
+            }
+        }
+
+        foreach ($this->configuredPortalUrls($municipality) as $portalUrl) {
+            try {
+                $mentions = $this->fetchPortalMentions($portalUrl, $definitions, $municipality);
+                foreach ($mentions as $mention) {
+                    if ($this->saveMention($mention, $municipality)) {
+                        $new++;
+                    }
+                    $found++;
+                }
+            } catch (\Exception $e) {
+                $errors[] = "Portal configurado ({$portalUrl}): " . $e->getMessage();
+                Log::warning("SocialMonitor portal RSS erro: " . $e->getMessage());
             }
         }
 
@@ -93,10 +113,7 @@ class SocialMonitorService
     {
         $targetsByKeywordId = [];
         $settings = is_array($municipality->settings) ? $municipality->settings : [];
-        $configuredPortals = collect(preg_split('/[\n,;]+/', (string) data_get($settings, 'communication.monitoring.portals', '')))
-            ->map(fn ($value) => trim((string) $value))
-            ->filter()
-            ->values();
+        $configuredPortals = collect($this->configuredPortalUrls($municipality));
         $activeChannels = collect((array) data_get($settings, 'communication.channels', []))
             ->filter(fn ($channel) => !empty($channel['active']))
             ->keys()
@@ -146,6 +163,11 @@ class SocialMonitorService
         }
 
         return $targetsByKeywordId;
+    }
+
+    public function hasMonitoringCoverage(Municipality $municipality): bool
+    {
+        return $this->monitoringDefinitions($municipality)->isNotEmpty();
     }
 
     /**
@@ -253,6 +275,67 @@ class SocialMonitorService
         }
 
         return []; // todas as instâncias falharam
+    }
+
+    private function fetchPortalMentions(string $portalUrl, Collection $definitions, Municipality $municipality): array
+    {
+        $feedUrl = $this->discoverFeedUrl($portalUrl);
+        if ($feedUrl === null) {
+            return [];
+        }
+
+        $response = Http::timeout(12)
+            ->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; MeuMarqueteiro/1.0)'])
+            ->get($feedUrl);
+
+        if (!$response->successful()) {
+            throw new \Exception("HTTP {$response->status()}");
+        }
+
+        $xml = simplexml_load_string($response->body());
+        if (!$xml) {
+            throw new \Exception('Feed XML inválido');
+        }
+
+        $items = $xml->channel->item ?? [];
+        $host = parse_url($portalUrl, PHP_URL_HOST) ?: $portalUrl;
+        $mentions = [];
+        $count = 0;
+
+        foreach ($items as $item) {
+            if ($count++ >= 20) {
+                break;
+            }
+
+            $pubDate = isset($item->pubDate) ? strtotime((string) $item->pubDate) : null;
+            if ($pubDate && (time() - $pubDate) > 86400 * 7) {
+                continue;
+            }
+
+            $title = $this->cleanText((string) ($item->title ?? ''));
+            $description = $this->cleanText((string) ($item->description ?? ''));
+            $matchedTerm = $this->matchMonitoringDefinition(trim($title . ' ' . $description), $definitions);
+
+            if ($matchedTerm === null) {
+                continue;
+            }
+
+            $link = $this->normalizeUrl((string) ($item->link ?? ''));
+
+            $mentions[] = [
+                'source' => 'portal_rss',
+                'platform' => 'news',
+                'keyword' => $matchedTerm,
+                'title' => $title,
+                'content' => $description,
+                'url' => $link,
+                'author' => $this->extractPublisher((string) ($item->source ?? '')) ?: $host,
+                'published_at' => $pubDate ? date('Y-m-d H:i:s', $pubDate) : null,
+                'external_id' => md5($host . '|' . $link . '|' . $municipality->id),
+            ];
+        }
+
+        return $mentions;
     }
 
     /**
@@ -393,10 +476,15 @@ class SocialMonitorService
             return true;
         }
 
-        return MentionKeyword::where('municipality_id', $municipality->id)
+        $keyword = MentionKeyword::where('municipality_id', $municipality->id)
             ->where('keyword', $mention->keyword)
-            ->where('alert_negative', true)
-            ->exists();
+            ->first();
+
+        if (!$keyword instanceof MentionKeyword) {
+            return true;
+        }
+
+        return (bool) $keyword->alert_negative;
     }
 
     /**
@@ -494,6 +582,190 @@ class SocialMonitorService
         $text = html_entity_decode($text, ENT_QUOTES, 'UTF-8');
         $text = preg_replace('/\s+/', ' ', $text);
         return trim($text);
+    }
+
+    private function monitoringDefinitions(Municipality $municipality): Collection
+    {
+        $definitions = [];
+
+        MentionKeyword::query()
+            ->where('municipality_id', $municipality->id)
+            ->where('is_active', true)
+            ->get()
+            ->each(function (MentionKeyword $keyword) use (&$definitions): void {
+                $term = trim((string) $keyword->keyword);
+                if ($term === '') {
+                    return;
+                }
+
+                $definitions[mb_strtolower($term)] = [
+                    'term' => $term,
+                    'allow_social' => $keyword->type !== 'topic',
+                    'origin' => 'keyword',
+                ];
+            });
+
+        foreach ($this->splitList((string) data_get($municipality->settings, 'communication.monitoring.terms_text', '')) as $term) {
+            $key = mb_strtolower($term);
+
+            if (!isset($definitions[$key])) {
+                $definitions[$key] = [
+                    'term' => $term,
+                    'allow_social' => true,
+                    'origin' => 'settings',
+                ];
+                continue;
+            }
+
+            $definitions[$key]['allow_social'] = true;
+        }
+
+        return collect(array_values($definitions));
+    }
+
+    private function configuredPortalUrls(Municipality $municipality): array
+    {
+        return $this->splitList((string) data_get($municipality->settings, 'communication.monitoring.portals', ''));
+    }
+
+    private function splitList(string $value): array
+    {
+        return collect(preg_split('/[\n,;]+/', $value))
+            ->map(fn ($item) => trim((string) $item))
+            ->filter()
+            ->unique(fn ($item) => mb_strtolower($item))
+            ->values()
+            ->all();
+    }
+
+    private function matchMonitoringDefinition(string $text, Collection $definitions): ?string
+    {
+        $haystack = mb_strtolower($text);
+        if ($haystack === '') {
+            return null;
+        }
+
+        foreach ($definitions as $definition) {
+            $term = mb_strtolower((string) ($definition['term'] ?? ''));
+            if ($term !== '' && str_contains($haystack, $term)) {
+                return (string) $definition['term'];
+            }
+        }
+
+        return null;
+    }
+
+    private function discoverFeedUrl(string $portalUrl): ?string
+    {
+        $portalUrl = $this->normalizeUrl($portalUrl);
+        $response = Http::timeout(10)
+            ->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; MeuMarqueteiro/1.0)'])
+            ->get($portalUrl);
+
+        if (!$response->successful()) {
+            throw new \Exception("HTTP {$response->status()}");
+        }
+
+        $contentType = strtolower((string) $response->header('Content-Type'));
+        if (str_contains($contentType, 'xml') || str_contains($contentType, 'rss')) {
+            return $portalUrl;
+        }
+
+        $feedUrl = $this->extractFeedUrlFromHtml($portalUrl, (string) $response->body());
+        if ($feedUrl !== null) {
+            return $feedUrl;
+        }
+
+        foreach (['/feed', '/rss', '/rss.xml', '/feed.xml', '/feeds/posts/default?alt=rss'] as $suffix) {
+            $candidate = rtrim($portalUrl, '/') . $suffix;
+
+            try {
+                $candidateResponse = Http::timeout(8)
+                    ->withHeaders(['User-Agent' => 'Mozilla/5.0 (compatible; MeuMarqueteiro/1.0)'])
+                    ->get($candidate);
+
+                if (!$candidateResponse->successful()) {
+                    continue;
+                }
+
+                $candidateType = strtolower((string) $candidateResponse->header('Content-Type'));
+                if (str_contains($candidateType, 'xml') || str_contains($candidateType, 'rss')) {
+                    return $candidate;
+                }
+
+                if (simplexml_load_string($candidateResponse->body())) {
+                    return $candidate;
+                }
+            } catch (\Throwable) {
+                continue;
+            }
+        }
+
+        return null;
+    }
+
+    private function extractFeedUrlFromHtml(string $baseUrl, string $html): ?string
+    {
+        if (trim($html) === '') {
+            return null;
+        }
+
+        $previous = libxml_use_internal_errors(true);
+        $dom = new \DOMDocument();
+        $loaded = $dom->loadHTML($html);
+        libxml_clear_errors();
+        libxml_use_internal_errors($previous);
+
+        if (!$loaded) {
+            return null;
+        }
+
+        foreach ($dom->getElementsByTagName('link') as $link) {
+            $type = strtolower(trim((string) $link->getAttribute('type')));
+            $rel = strtolower(trim((string) $link->getAttribute('rel')));
+
+            if ($rel === '' || !str_contains($rel, 'alternate')) {
+                continue;
+            }
+
+            if (!str_contains($type, 'rss') && !str_contains($type, 'xml') && !str_contains($type, 'atom')) {
+                continue;
+            }
+
+            $href = trim((string) $link->getAttribute('href'));
+            if ($href !== '') {
+                return $this->resolveUrl($baseUrl, $href);
+            }
+        }
+
+        return null;
+    }
+
+    private function resolveUrl(string $baseUrl, string $relativeUrl): string
+    {
+        if (str_starts_with($relativeUrl, 'http://') || str_starts_with($relativeUrl, 'https://')) {
+            return $relativeUrl;
+        }
+
+        if (str_starts_with($relativeUrl, '//')) {
+            $scheme = parse_url($baseUrl, PHP_URL_SCHEME) ?: 'https';
+            return $scheme . ':' . $relativeUrl;
+        }
+
+        $scheme = parse_url($baseUrl, PHP_URL_SCHEME) ?: 'https';
+        $host = parse_url($baseUrl, PHP_URL_HOST) ?: '';
+        if ($host === '') {
+            return $this->normalizeUrl($relativeUrl);
+        }
+
+        if (str_starts_with($relativeUrl, '/')) {
+            return $scheme . '://' . $host . $relativeUrl;
+        }
+
+        $path = (string) parse_url($baseUrl, PHP_URL_PATH);
+        $basePath = rtrim(str_replace('\\', '/', dirname($path !== '' ? $path : '/')), '/');
+
+        return rtrim($scheme . '://' . $host . ($basePath !== '' ? $basePath : ''), '/') . '/' . ltrim($relativeUrl, '/');
     }
 
     private function extractPublisher(string $source): ?string
