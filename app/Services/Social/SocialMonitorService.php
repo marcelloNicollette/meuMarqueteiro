@@ -84,6 +84,23 @@ class SocialMonitorService
                     Log::debug("SocialMonitor Nitter erro: " . $e->getMessage());
                 }
             }
+
+            // YouTube Data API v3
+            if (!empty($definition['allow_social']) && $this->youTubeApiKey() !== '') {
+                try {
+                    $mentions = $this->fetchYouTube($term, $municipality);
+                    foreach ($mentions as $mention) {
+                        $mention['keyword'] = $term;
+                        if ($this->saveMention($mention, $municipality)) {
+                            $new++;
+                        }
+                        $found++;
+                    }
+                } catch (\Exception $e) {
+                    $errors[] = "YouTube ({$term}): " . $e->getMessage();
+                    Log::warning("SocialMonitor YouTube erro: " . $e->getMessage());
+                }
+            }
         }
 
         foreach ($this->configuredPortalUrls($municipality) as $portalUrl) {
@@ -137,6 +154,14 @@ class SocialMonitorService
                     $targets[] = [
                         'source' => 'Twitter/X (Nitter RSS)',
                         'url'    => "{$instance}/search/rss?q={$q}&f=tweets",
+                    ];
+                }
+
+                if ($this->youTubeApiKey() !== '') {
+                    $ytQuery    = urlencode('"' . $kw->keyword . '"');
+                    $targets[]  = [
+                        'source' => 'YouTube (Data API v3)',
+                        'url'    => "https://www.googleapis.com/youtube/v3/search?part=snippet&q={$ytQuery}&type=video&regionCode=BR&relevanceLanguage=pt&maxResults=20&key=***",
                     ];
                 }
             }
@@ -780,5 +805,84 @@ class SocialMonitorService
             return '@' . $m[1];
         }
         return null;
+    }
+
+    // ── YouTube ──────────────────────────────────────────────────────
+
+    /**
+     * Buscar vídeos no YouTube via Data API v3.
+     *
+     * Requer YOUTUBE_API_KEY no .env (chave pública, sem OAuth).
+     * Quota: cada chamada consome 100 unidades (limite gratuito: 10.000/dia por projeto).
+     * Documentação: https://developers.google.com/youtube/v3/docs/search/list
+     */
+    private function fetchYouTube(string $keyword, Municipality $municipality): array
+    {
+        $apiKey = $this->youTubeApiKey();
+        if ($apiKey === '') {
+            return [];
+        }
+
+        // publishedAfter: últimas 72h no formato RFC 3339 exigido pela API
+        $publishedAfter = date('Y-m-d\TH:i:s\Z', strtotime('-3 days'));
+
+        $response = Http::timeout(15)
+            ->withHeaders(['Accept' => 'application/json'])
+            ->get('https://www.googleapis.com/youtube/v3/search', [
+                'part'              => 'snippet',
+                'q'                 => '"' . $keyword . '"',
+                'type'              => 'video',
+                'regionCode'        => 'BR',
+                'relevanceLanguage' => 'pt',
+                'publishedAfter'    => $publishedAfter,
+                'maxResults'        => 20,
+                'key'               => $apiKey,
+            ]);
+
+        if ($response->status() === 403) {
+            throw new \Exception('Quota excedida ou chave inválida (HTTP 403)');
+        }
+
+        if (!$response->successful()) {
+            throw new \Exception("HTTP {$response->status()}");
+        }
+
+        $items = $response->json('items', []);
+
+        $mentions = [];
+
+        foreach ($items as $item) {
+            $videoId = data_get($item, 'id.videoId');
+            $snippet = $item['snippet'] ?? [];
+            $title   = $this->cleanText((string) ($snippet['title'] ?? ''));
+            $content = $this->cleanText((string) ($snippet['description'] ?? ''));
+            $channel = $this->cleanText((string) ($snippet['channelTitle'] ?? ''));
+            $pubRaw  = (string) ($snippet['publishedAt'] ?? '');
+            $pubDate = $pubRaw !== '' ? strtotime($pubRaw) : null;
+
+            if (!$videoId || $title === '') {
+                continue;
+            }
+
+            $url = "https://www.youtube.com/watch?v={$videoId}";
+
+            $mentions[] = [
+                'source'       => 'youtube',
+                'platform'     => 'youtube',
+                'title'        => $title,
+                'content'      => $content !== '' ? $content : null,
+                'url'          => $url,
+                'author'       => $channel !== '' ? $channel : null,
+                'published_at' => $pubDate ? date('Y-m-d H:i:s', $pubDate) : null,
+                'external_id'  => md5($videoId . $municipality->id),
+            ];
+        }
+
+        return $mentions;
+    }
+
+    private function youTubeApiKey(): string
+    {
+        return trim((string) env('YOUTUBE_API_KEY', ''));
     }
 }
