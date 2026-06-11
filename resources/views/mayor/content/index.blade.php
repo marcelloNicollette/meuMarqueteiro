@@ -574,8 +574,8 @@
         }
 
         /* ═══════════════════════════════════════
-                                                                                                                                                                                                                                                                                                                                                           IMAGEM IA — estilos específicos
-                                                                                                                                                                                                                                                                                                                                                        ═══════════════════════════════════════ */
+                                                                                                                                                                                                                                                                                                                                                               IMAGEM IA — estilos específicos
+                                                                                                                                                                                                                                                                                                                                                            ═══════════════════════════════════════ */
         .image-info-box {
             background: linear-gradient(135deg, #f5f3ff 0%, #faf5ff 100%);
             border: 1.5px solid #ede9fe;
@@ -2972,255 +2972,255 @@
 
         @if ($activeArea === 'produce')
             <!--<section class="comm-hero">
-                                        <div class="hero-card">
-                                            <div class="hero-top">
-                                                <div class="hero-title">
-                                                    <h1>Central de Comunicação</h1>
-                                                    <p>Crie, revise, agende e publique conteúdos do mandato em um workspace único, com fila
-                                                        editorial e
-                                                        visão semanal de execução.</p>
+                                            <div class="hero-card">
+                                                <div class="hero-top">
+                                                    <div class="hero-title">
+                                                        <h1>Central de Comunicação</h1>
+                                                        <p>Crie, revise, agende e publique conteúdos do mandato em um workspace único, com fila
+                                                            editorial e
+                                                            visão semanal de execução.</p>
+                                                    </div>
+                                                    <div class="hero-badge">Operação editorial ativa</div>
                                                 </div>
-                                                <div class="hero-badge">Operação editorial ativa</div>
+
+                                                <div class="hero-summary-grid">
+                                                    @foreach ([['label' => 'Rascunhos', 'value' => $summary['draft'] ?? 0, 'meta' => 'Peças aguardando revisão ou acabamento final.'], ['label' => 'Aprovados', 'value' => $summary['approved'] ?? 0, 'meta' => 'Conteúdos prontos para virar publicação.'], ['label' => 'Agenda da semana', 'value' => $governance['scheduled_upcoming'] ?? 0, 'meta' => 'Conteúdos planejados para os próximos 7 dias.'], ['label' => 'Prontos para publicar', 'value' => $governance['ready_to_publish'] ?? 0, 'meta' => 'Fila quente para soltar no canal certo.'], ['label' => 'Publicados na semana', 'value' => $governance['published_this_week'] ?? 0, 'meta' => 'Entregas efetivamente publicadas nesta janela.']] as $card)
+    <div class="hero-summary-card">
+                                                            <div class="label">{{ $card['label'] }}</div>
+                                                            <div class="value">{{ $card['value'] }}</div>
+                                                            <div class="meta">{{ $card['meta'] }}</div>
+                                                        </div>
+    @endforeach
+                                                </div>
+                                            </div>
+                                        </section>
+
+                                    <section class="comm-toolbar">
+                                        <div class="toolbar-card">
+                                            <form method="GET" action="{{ route('mayor.content.index') }}" class="toolbar-form">
+                                                <div class="field" style="margin-bottom:0">
+                                                    <label>Status editorial</label>
+                                                    <select name="status">
+                                                        @foreach (['all' => 'Todos', 'draft' => 'Rascunho', 'approved' => 'Aprovado', 'published' => 'Publicado', 'archived' => 'Arquivado'] as $value => $label)
+    <option value="{{ $value }}" @selected(($filters['status'] ?? 'all') === $value)>{{ $label }}
+                                                            </option>
+    @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="field" style="margin-bottom:0">
+                                                    <label>Tipo</label>
+                                                    <select name="type">
+                                                        @foreach (['all' => 'Todos', 'post' => 'Comunicação', 'image' => 'Imagem IA', 'interview' => 'Entrevista', 'crisis' => 'Crise'] as $value => $label)
+    <option value="{{ $value }}" @selected(($filters['type'] ?? 'all') === $value)>{{ $label }}
+                                                            </option>
+    @endforeach
+                                                    </select>
+                                                </div>
+                                                <div class="field" style="margin-bottom:0">
+                                                    <label>Busca</label>
+                                                    <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
+                                                        placeholder="Tema, origem, tag, título ou contexto">
+                                                </div>
+                                                <div class="toolbar-actions">
+                                                    <button class="action-btn primary" type="submit">Filtrar</button>
+                                                    <a class="action-btn" href="{{ route('mayor.content.index') }}">Limpar</a>
+                                                </div>
+                                            </form>
+                                        </div>
+                                    </section>
+
+                                    <section class="sla-section">
+                                        <div class="results-card">
+                                            <div class="results-card-head">
+                                                <div>
+                                                    <h2 class="section-title">SLA Editorial por Etapa</h2>
+                                                    <p class="section-subtitle">Fecha a cadência entre revisão, colaboração, agenda e publicação com
+                                                        leitura de risco em tempo real.</p>
+                                                </div>
+                                                <div class="sla-config-badges">
+                                                    <span class="sla-config-chip">Revisão inicial:
+                                                        {{ $slaConfigData['draft_review_hours'] ?? 24 }}h</span>
+                                                    <span class="sla-config-chip">Aprovado para publicar:
+                                                        {{ $slaConfigData['approved_publish_hours'] ?? 24 }}h</span>
+                                                    <span class="sla-config-chip">Antecedência do agendado:
+                                                        {{ $slaConfigData['scheduled_lead_hours'] ?? 6 }}h</span>
+                                                </div>
                                             </div>
 
-                                            <div class="hero-summary-grid">
-                                                @foreach ([['label' => 'Rascunhos', 'value' => $summary['draft'] ?? 0, 'meta' => 'Peças aguardando revisão ou acabamento final.'], ['label' => 'Aprovados', 'value' => $summary['approved'] ?? 0, 'meta' => 'Conteúdos prontos para virar publicação.'], ['label' => 'Agenda da semana', 'value' => $governance['scheduled_upcoming'] ?? 0, 'meta' => 'Conteúdos planejados para os próximos 7 dias.'], ['label' => 'Prontos para publicar', 'value' => $governance['ready_to_publish'] ?? 0, 'meta' => 'Fila quente para soltar no canal certo.'], ['label' => 'Publicados na semana', 'value' => $governance['published_this_week'] ?? 0, 'meta' => 'Entregas efetivamente publicadas nesta janela.']] as $card)
-    <div class="hero-summary-card">
-                                                        <div class="label">{{ $card['label'] }}</div>
-                                                        <div class="value">{{ $card['value'] }}</div>
-                                                        <div class="meta">{{ $card['meta'] }}</div>
+                                            <div class="sla-summary-grid">
+                                                <div class="sla-summary-card status-overdue">
+                                                    <div class="label">Vencidos agora</div>
+                                                    <div class="value">{{ $slaTotals['overdue_total'] ?? 0 }}</div>
+                                                    <div class="meta">Peças que já estouraram a etapa ativa e pedem ação imediata.</div>
+                                                </div>
+                                                <div class="sla-summary-card status-at_risk">
+                                                    <div class="label">Em risco</div>
+                                                    <div class="value">{{ $slaTotals['at_risk_total'] ?? 0 }}</div>
+                                                    <div class="meta">Peças próximas do vencimento e que precisam entrar na fila quente.</div>
+                                                </div>
+                                                <div class="sla-summary-card status-on_track">
+                                                    <div class="label">Dentro do SLA</div>
+                                                    <div class="value">{{ $slaTotals['on_track_total'] ?? 0 }}</div>
+                                                    <div class="meta">{{ $slaTotals['active_total'] ?? 0 }} peça(s) com SLA ativo no recorte
+                                                        atual.
+                                                    </div>
+                                                </div>
+                                                <div class="sla-summary-card status-complete">
+                                                    <div class="label">Publicação no prazo</div>
+                                                    <div class="value">
+                                                        {{ number_format($slaTotals['published_on_time_rate'] ?? 100, 1, ',', '.') }}%
+                                                    </div>
+                                                    <div class="meta">{{ $slaTotals['published_on_time_total'] ?? 0 }} de
+                                                        {{ $slaTotals['published_recent_total'] ?? 0 }} publicações recentes dentro do prazo.</div>
+                                                </div>
+                                            </div>
+
+                                            <div class="sla-stage-grid">
+                                                @foreach ($slaStages as $stage)
+    <div class="sla-stage-card status-{{ $stage['status_key'] ?? 'on_track' }}">
+                                                        <div class="sla-stage-top">
+                                                            <div>
+                                                                <h2 class="section-title" style="font-size:.98rem">{{ $stage['label'] }}</h2>
+                                                                <p class="section-subtitle">{{ $stage['total'] }} peça(s) nesta etapa</p>
+                                                            </div>
+                                                            <span
+                                                                class="sla-badge sla-status-{{ $stage['status_key'] ?? 'on_track' }}">{{ $stage['overdue_total'] ?? 0 }}
+                                                                vencida(s)</span>
+                                                        </div>
+
+                                                        <div class="sla-stage-metrics">
+                                                            <div class="sla-metric">
+                                                                <div class="metric-label">Dentro</div>
+                                                                <div class="metric-value">
+                                                                    {{ number_format($stage['within_sla_rate'] ?? 100, 1, ',', '.') }}%
+                                                                </div>
+                                                            </div>
+                                                            <div class="sla-metric">
+                                                                <div class="metric-label">Em risco</div>
+                                                                <div class="metric-value">{{ $stage['at_risk_total'] ?? 0 }}</div>
+                                                            </div>
+                                                            <div class="sla-metric">
+                                                                <div class="metric-label">Média</div>
+                                                                <div class="metric-value">
+                                                                    {{ number_format($stage['avg_elapsed_hours'] ?? 0, 1, ',', '.') }}h
+                                                                </div>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="sla-item-list">
+                                                            @forelse ($stage['top_items'] ?? [] as $entry)
+    <div class="sla-item" onclick="loadContent({{ $entry['id'] }})">
+                                                                    <div class="sla-item-head">
+                                                                        <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}
+                                                                        </div>
+                                                                        <span
+                                                                            class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
+                                                                    </div>
+                                                                    <div class="sla-item-meta">
+                                                                        <span>{{ $entry['type_label'] }} ·
+                                                                            {{ $entry['channel'] ?: 'interno' }}</span>
+                                                                        <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
+                                                                    </div>
+                                                                    <div class="sla-item-meta">
+                                                                        <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
+                                                                        <span>{{ $entry['status_label'] }}</span>
+                                                                    </div>
+                                                                </div>
+                                    @empty
+                                                                <div class="queue-empty">Sem peças abertas nesta etapa agora.</div>
+    @endforelse
+                                                        </div>
                                                     </div>
     @endforeach
+                                            </div>
+
+                                            <div class="sla-critical-shell">
+                                                <div class="queue-card-head" style="margin-bottom:.8rem">
+                                                    <div>
+                                                        <h2 class="section-title">Fila Crítica de Vencimento</h2>
+                                                        <p class="section-subtitle">
+                                                            {{ $slaBoard['window_label'] ?? 'Leitura operacional do SLA atual.' }}
+                                                        </p>
+                                                    </div>
+                                                </div>
+
+                                                <div class="sla-critical-grid">
+                                                    @forelse ($slaCriticalItems as $entry)
+    <div class="sla-critical-item {{ ($entry['sla']['status_key'] ?? '') === 'overdue' ? 'is-overdue' : 'is-at-risk' }}"
+                                                            onclick="loadContent({{ $entry['id'] }})">
+                                                            <div class="sla-item-head">
+                                                                <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
+                                                                <span
+                                                                    class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'at_risk' }}">{{ $entry['sla']['status_label'] ?? 'SLA em risco' }}</span>
+                                                            </div>
+                                                            <div class="sla-item-meta">
+                                                                <span>{{ $entry['sla']['stage_label'] ?? 'Etapa atual' }}</span>
+                                                                <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
+                                                            </div>
+                                                            <div class="sla-item-meta">
+                                                                <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
+                                                                <span>{{ $entry['type_label'] }} · {{ $entry['channel'] ?: 'interno' }}</span>
+                                                            </div>
+                                                        </div>
+                            @empty
+                                                        <div class="queue-empty" style="grid-column:1 / -1">Nenhuma peça crítica agora. A operação
+                                                            está
+                                                            respirando dentro do SLA.</div>
+    @endforelse
+                                                </div>
                                             </div>
                                         </div>
                                     </section>
 
-                                <section class="comm-toolbar">
-                                    <div class="toolbar-card">
-                                        <form method="GET" action="{{ route('mayor.content.index') }}" class="toolbar-form">
-                                            <div class="field" style="margin-bottom:0">
-                                                <label>Status editorial</label>
-                                                <select name="status">
-                                                    @foreach (['all' => 'Todos', 'draft' => 'Rascunho', 'approved' => 'Aprovado', 'published' => 'Publicado', 'archived' => 'Arquivado'] as $value => $label)
-    <option value="{{ $value }}" @selected(($filters['status'] ?? 'all') === $value)>{{ $label }}
-                                                        </option>
-    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="field" style="margin-bottom:0">
-                                                <label>Tipo</label>
-                                                <select name="type">
-                                                    @foreach (['all' => 'Todos', 'post' => 'Comunicação', 'image' => 'Imagem IA', 'interview' => 'Entrevista', 'crisis' => 'Crise'] as $value => $label)
-    <option value="{{ $value }}" @selected(($filters['type'] ?? 'all') === $value)>{{ $label }}
-                                                        </option>
-    @endforeach
-                                                </select>
-                                            </div>
-                                            <div class="field" style="margin-bottom:0">
-                                                <label>Busca</label>
-                                                <input type="text" name="search" value="{{ $filters['search'] ?? '' }}"
-                                                    placeholder="Tema, origem, tag, título ou contexto">
-                                            </div>
-                                            <div class="toolbar-actions">
-                                                <button class="action-btn primary" type="submit">Filtrar</button>
-                                                <a class="action-btn" href="{{ route('mayor.content.index') }}">Limpar</a>
-                                            </div>
-                                        </form>
-                                    </div>
-                                </section>
-
-                                <section class="sla-section">
-                                    <div class="results-card">
-                                        <div class="results-card-head">
-                                            <div>
-                                                <h2 class="section-title">SLA Editorial por Etapa</h2>
-                                                <p class="section-subtitle">Fecha a cadência entre revisão, colaboração, agenda e publicação com
-                                                    leitura de risco em tempo real.</p>
-                                            </div>
-                                            <div class="sla-config-badges">
-                                                <span class="sla-config-chip">Revisão inicial:
-                                                    {{ $slaConfigData['draft_review_hours'] ?? 24 }}h</span>
-                                                <span class="sla-config-chip">Aprovado para publicar:
-                                                    {{ $slaConfigData['approved_publish_hours'] ?? 24 }}h</span>
-                                                <span class="sla-config-chip">Antecedência do agendado:
-                                                    {{ $slaConfigData['scheduled_lead_hours'] ?? 6 }}h</span>
-                                            </div>
-                                        </div>
-
-                                        <div class="sla-summary-grid">
-                                            <div class="sla-summary-card status-overdue">
-                                                <div class="label">Vencidos agora</div>
-                                                <div class="value">{{ $slaTotals['overdue_total'] ?? 0 }}</div>
-                                                <div class="meta">Peças que já estouraram a etapa ativa e pedem ação imediata.</div>
-                                            </div>
-                                            <div class="sla-summary-card status-at_risk">
-                                                <div class="label">Em risco</div>
-                                                <div class="value">{{ $slaTotals['at_risk_total'] ?? 0 }}</div>
-                                                <div class="meta">Peças próximas do vencimento e que precisam entrar na fila quente.</div>
-                                            </div>
-                                            <div class="sla-summary-card status-on_track">
-                                                <div class="label">Dentro do SLA</div>
-                                                <div class="value">{{ $slaTotals['on_track_total'] ?? 0 }}</div>
-                                                <div class="meta">{{ $slaTotals['active_total'] ?? 0 }} peça(s) com SLA ativo no recorte
-                                                    atual.
-                                                </div>
-                                            </div>
-                                            <div class="sla-summary-card status-complete">
-                                                <div class="label">Publicação no prazo</div>
-                                                <div class="value">
-                                                    {{ number_format($slaTotals['published_on_time_rate'] ?? 100, 1, ',', '.') }}%
-                                                </div>
-                                                <div class="meta">{{ $slaTotals['published_on_time_total'] ?? 0 }} de
-                                                    {{ $slaTotals['published_recent_total'] ?? 0 }} publicações recentes dentro do prazo.</div>
-                                            </div>
-                                        </div>
-
-                                        <div class="sla-stage-grid">
-                                            @foreach ($slaStages as $stage)
-    <div class="sla-stage-card status-{{ $stage['status_key'] ?? 'on_track' }}">
-                                                    <div class="sla-stage-top">
-                                                        <div>
-                                                            <h2 class="section-title" style="font-size:.98rem">{{ $stage['label'] }}</h2>
-                                                            <p class="section-subtitle">{{ $stage['total'] }} peça(s) nesta etapa</p>
-                                                        </div>
-                                                        <span
-                                                            class="sla-badge sla-status-{{ $stage['status_key'] ?? 'on_track' }}">{{ $stage['overdue_total'] ?? 0 }}
-                                                            vencida(s)</span>
-                                                    </div>
-
-                                                    <div class="sla-stage-metrics">
-                                                        <div class="sla-metric">
-                                                            <div class="metric-label">Dentro</div>
-                                                            <div class="metric-value">
-                                                                {{ number_format($stage['within_sla_rate'] ?? 100, 1, ',', '.') }}%
-                                                            </div>
-                                                        </div>
-                                                        <div class="sla-metric">
-                                                            <div class="metric-label">Em risco</div>
-                                                            <div class="metric-value">{{ $stage['at_risk_total'] ?? 0 }}</div>
-                                                        </div>
-                                                        <div class="sla-metric">
-                                                            <div class="metric-label">Média</div>
-                                                            <div class="metric-value">
-                                                                {{ number_format($stage['avg_elapsed_hours'] ?? 0, 1, ',', '.') }}h
-                                                            </div>
-                                                        </div>
-                                                    </div>
-
-                                                    <div class="sla-item-list">
-                                                        @forelse ($stage['top_items'] ?? [] as $entry)
-    <div class="sla-item" onclick="loadContent({{ $entry['id'] }})">
-                                                                <div class="sla-item-head">
-                                                                    <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}
-                                                                    </div>
-                                                                    <span
-                                                                        class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
-                                                                </div>
-                                                                <div class="sla-item-meta">
-                                                                    <span>{{ $entry['type_label'] }} ·
-                                                                        {{ $entry['channel'] ?: 'interno' }}</span>
-                                                                    <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
-                                                                </div>
-                                                                <div class="sla-item-meta">
-                                                                    <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
-                                                                    <span>{{ $entry['status_label'] }}</span>
-                                                                </div>
-                                                            </div>
-                                    @empty
-                                                            <div class="queue-empty">Sem peças abertas nesta etapa agora.</div>
-    @endforelse
-                                                    </div>
-                                                </div>
-    @endforeach
-                                        </div>
-
-                                        <div class="sla-critical-shell">
-                                            <div class="queue-card-head" style="margin-bottom:.8rem">
+                                    <section class="playbooks-shell">
+                                        <div class="results-card">
+                                            <div class="results-card-head">
                                                 <div>
-                                                    <h2 class="section-title">Fila Crítica de Vencimento</h2>
-                                                    <p class="section-subtitle">
-                                                        {{ $slaBoard['window_label'] ?? 'Leitura operacional do SLA atual.' }}
-                                                    </p>
+                                                    <h2 class="section-title">Playbooks Editoriais por Situação</h2>
+                                                    <p class="section-subtitle">Acione um roteiro pronto por contexto operacional e leve esse guia
+                                                        até
+                                                        a geração, revisão, SLA e publicação.</p>
                                                 </div>
                                             </div>
 
-                                            <div class="sla-critical-grid">
-                                                @forelse ($slaCriticalItems as $entry)
-    <div class="sla-critical-item {{ ($entry['sla']['status_key'] ?? '') === 'overdue' ? 'is-overdue' : 'is-at-risk' }}"
-                                                        onclick="loadContent({{ $entry['id'] }})">
-                                                        <div class="sla-item-head">
-                                                            <div class="sla-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
-                                                            <span
-                                                                class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'at_risk' }}">{{ $entry['sla']['status_label'] ?? 'SLA em risco' }}</span>
-                                                        </div>
-                                                        <div class="sla-item-meta">
-                                                            <span>{{ $entry['sla']['stage_label'] ?? 'Etapa atual' }}</span>
-                                                            <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
-                                                        </div>
-                                                        <div class="sla-item-meta">
-                                                            <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
-                                                            <span>{{ $entry['type_label'] }} · {{ $entry['channel'] ?: 'interno' }}</span>
-                                                        </div>
-                                                    </div>
-                            @empty
-                                                    <div class="queue-empty" style="grid-column:1 / -1">Nenhuma peça crítica agora. A operação
-                                                        está
-                                                        respirando dentro do SLA.</div>
-    @endforelse
-                                            </div>
-                                        </div>
-                                    </div>
-                                </section>
-
-                                <section class="playbooks-shell">
-                                    <div class="results-card">
-                                        <div class="results-card-head">
-                                            <div>
-                                                <h2 class="section-title">Playbooks Editoriais por Situação</h2>
-                                                <p class="section-subtitle">Acione um roteiro pronto por contexto operacional e leve esse guia
-                                                    até
-                                                    a geração, revisão, SLA e publicação.</p>
-                                            </div>
-                                        </div>
-
-                                        <div class="playbook-grid">
-                                            @foreach ($editorialPlaybooks ?? [] as $playbook)
+                                            <div class="playbook-grid">
+                                                @foreach ($editorialPlaybooks ?? [] as $playbook)
     <div class="playbook-card">
-                                                    <div class="playbook-card-top">
-                                                        <div>
-                                                            <div class="playbook-card-title">{{ $playbook['name'] }}</div>
-                                                            <div class="playbook-card-meta">{{ $playbook['situation_label'] }}</div>
+                                                        <div class="playbook-card-top">
+                                                            <div>
+                                                                <div class="playbook-card-title">{{ $playbook['name'] }}</div>
+                                                                <div class="playbook-card-meta">{{ $playbook['situation_label'] }}</div>
+                                                            </div>
+                                                            <span class="playbook-chip">{{ $playbook['target_tab_label'] }}</span>
                                                         </div>
-                                                        <span class="playbook-chip">{{ $playbook['target_tab_label'] }}</span>
-                                                    </div>
 
-                                                    <div class="playbook-card-desc">{{ $playbook['description'] }}</div>
+                                                        <div class="playbook-card-desc">{{ $playbook['description'] }}</div>
 
-                                                    <div class="playbook-chip-row">
-                                                        @if (!empty($playbook['suggested_channel']))
+                                                        <div class="playbook-chip-row">
+                                                            @if (!empty($playbook['suggested_channel']))
     <span class="playbook-chip">Canal: {{ $playbook['suggested_channel'] }}</span>
     @endif
-                                                        @if (!empty($playbook['suggested_format']))
+                                                            @if (!empty($playbook['suggested_format']))
     <span class="playbook-chip">Formato: {{ $playbook['suggested_format'] }}</span>
     @endif
-                                                    </div>
+                                                        </div>
 
-                                                    <div class="playbook-checklist">
-                                                        @foreach (collect($playbook['checklist'] ?? [])->take(3) as $item)
+                                                        <div class="playbook-checklist">
+                                                            @foreach (collect($playbook['checklist'] ?? [])->take(3) as $item)
     <span>{{ $item }}</span>
     @endforeach
-                                                    </div>
+                                                        </div>
 
-                                                    <div class="playbook-actions">
-                                                        <button type="button" class="action-btn"
-                                                            onclick="applyPlaybookFromLibrary('{{ $playbook['id'] }}')">Aplicar
-                                                            playbook</button>
+                                                        <div class="playbook-actions">
+                                                            <button type="button" class="action-btn"
+                                                                onclick="applyPlaybookFromLibrary('{{ $playbook['id'] }}')">Aplicar
+                                                                playbook</button>
+                                                        </div>
                                                     </div>
-                                                </div>
     @endforeach
+                                            </div>
                                         </div>
-                                    </div>
-                                </section>-->
+                                    </section>-->
 
             <section class="workspace-grid">
                 <div class="workspace-card">
@@ -3554,107 +3554,107 @@
                 </div>
 
                 <!--<aside class="queue-card">
-                                    <div class="queue-card-head">
-                                        <div>
-                                            <h2 class="section-title">Fila Editorial</h2>
-                                            <p class="section-subtitle">Priorize o que revisar, agendar ou publicar agora.</p>
+                                        <div class="queue-card-head">
+                                            <div>
+                                                <h2 class="section-title">Fila Editorial</h2>
+                                                <p class="section-subtitle">Priorize o que revisar, agendar ou publicar agora.</p>
+                                            </div>
                                         </div>
-                                    </div>
 
-                                    <div class="queue-list">
-                                        @forelse($queueItems as $entry)
+                                        <div class="queue-list">
+                                            @forelse($queueItems as $entry)
     <div class="queue-item" onclick="loadContent({{ $entry['id'] }})">
-                                                <div class="queue-item-top">
-                                                    <div class="queue-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
-                                                    <div class="queue-item-badges">
-                                                        <span
-                                                            class="content-card-status status-{{ $entry['status'] }}">{{ $entry['status_label'] }}</span>
-                                                        <span
-                                                            class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
+                                                    <div class="queue-item-top">
+                                                        <div class="queue-item-title">{{ $entry['title'] ?: 'Conteúdo sem título' }}</div>
+                                                        <div class="queue-item-badges">
+                                                            <span
+                                                                class="content-card-status status-{{ $entry['status'] }}">{{ $entry['status_label'] }}</span>
+                                                            <span
+                                                                class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['status_label'] ?? 'Dentro do SLA' }}</span>
+                                                        </div>
                                                     </div>
-                                                </div>
-                                                <div class="queue-item-meta">{{ $entry['type_label'] }} ·
-                                                    {{ $entry['channel'] ?: 'interno' }} · {{ $entry['created_at_human'] }}</div>
-                                                <div class="queue-item-foot">
-                                                    @if (!empty($entry['planned_at_human']))
+                                                    <div class="queue-item-meta">{{ $entry['type_label'] }} ·
+                                                        {{ $entry['channel'] ?: 'interno' }} · {{ $entry['created_at_human'] }}</div>
+                                                    <div class="queue-item-foot">
+                                                        @if (!empty($entry['planned_at_human']))
     Planejado: {{ $entry['planned_at_human'] }}
 @else
     Sem agendamento definido
     @endif
-                                                    @if (!empty($entry['origin_module']))
+                                                        @if (!empty($entry['origin_module']))
     · Origem: {{ str_replace('_', ' ', $entry['origin_module']) }}
     @endif
+                                                    </div>
+                                                    <div class="queue-item-sla">
+                                                        <span
+                                                            class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['stage_label'] ?? 'Etapa ativa' }}</span>
+                                                        <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
+                                                        <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
+                                                    </div>
                                                 </div>
-                                                <div class="queue-item-sla">
-                                                    <span
-                                                        class="sla-badge sla-status-{{ $entry['sla']['status_key'] ?? 'on_track' }}">{{ $entry['sla']['stage_label'] ?? 'Etapa ativa' }}</span>
-                                                    <span>{{ $entry['sla']['summary'] ?? 'Sem leitura de SLA' }}</span>
-                                                    <span>Limite: {{ $entry['sla']['due_at_human'] ?? 'Sem prazo' }}</span>
-                                                </div>
-                                            </div>
                         @empty
-                                            <div class="queue-empty">Nenhum conteúdo dentro do recorte atual de filtros.</div>
+                                                <div class="queue-empty">Nenhum conteúdo dentro do recorte atual de filtros.</div>
     @endforelse
-                                    </div>
-                                </aside>-->
+                                        </div>
+                                    </aside>-->
             </section>
 
             <!--<section class="templates-shell">
-                                <div class="template-card">
-                                    <div class="queue-card-head">
-                                        <div>
-                                            <h2 class="section-title">Biblioteca de Templates</h2>
-                                            <p class="section-subtitle">Padronize peças recorrentes por canal e formato e reaplique no
-                                                gerador
-                                                sem reescrever a orientação.</p>
+                                    <div class="template-card">
+                                        <div class="queue-card-head">
+                                            <div>
+                                                <h2 class="section-title">Biblioteca de Templates</h2>
+                                                <p class="section-subtitle">Padronize peças recorrentes por canal e formato e reaplique no
+                                                    gerador
+                                                    sem reescrever a orientação.</p>
+                                            </div>
+                                        </div>
+
+                                        <div class="template-shell-grid">
+                                            <div>
+                                                <div class="template-builder-grid">
+                                                    <div class="field">
+                                                        <label>Tipo</label>
+                                                        <select id="template-builder-kind">
+                                                            <option value="post">Comunicação</option>
+                                                            <option value="image">Imagem IA</option>
+                                                        </select>
+                                                    </div>
+                                                    <div class="field">
+                                                        <label>Nome do template</label>
+                                                        <input type="text" id="template-builder-name"
+                                                            placeholder="Ex: Entrega de obra no Instagram">
+                                                    </div>
+                                                    <div class="field full">
+                                                        <label>Descrição curta</label>
+                                                        <input type="text" id="template-builder-description"
+                                                            placeholder="Ex: peças de prestação de contas com abertura forte e CTA institucional">
+                                                    </div>
+                                                    <div class="field full">
+                                                        <label>Instrução editorial fixa</label>
+                                                        <textarea id="template-builder-instruction"
+                                                            placeholder="Ex: abrir com benefício concreto, trazer território e fechar com prestação de contas objetiva."
+                                                            rows="4"></textarea>
+                                                    </div>
+                                                </div>
+
+                                                <div class="template-builder-actions">
+                                                    <button type="button" class="action-btn primary" onclick="saveCurrentTemplate()">Salvar
+                                                        template
+                                                        atual</button>
+                                                    <button type="button" class="action-btn" onclick="prefillTemplateBuilderFromTab()">Usar
+                                                        configuração da aba atual</button>
+                                                </div>
+                                            </div>
+
+                                            <div class="template-library-panel">
+                                                <div class="template-library-list" id="template-library-list">
+                                                    <div class="queue-empty">Carregando templates...</div>
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
-
-                                    <div class="template-shell-grid">
-                                        <div>
-                                            <div class="template-builder-grid">
-                                                <div class="field">
-                                                    <label>Tipo</label>
-                                                    <select id="template-builder-kind">
-                                                        <option value="post">Comunicação</option>
-                                                        <option value="image">Imagem IA</option>
-                                                    </select>
-                                                </div>
-                                                <div class="field">
-                                                    <label>Nome do template</label>
-                                                    <input type="text" id="template-builder-name"
-                                                        placeholder="Ex: Entrega de obra no Instagram">
-                                                </div>
-                                                <div class="field full">
-                                                    <label>Descrição curta</label>
-                                                    <input type="text" id="template-builder-description"
-                                                        placeholder="Ex: peças de prestação de contas com abertura forte e CTA institucional">
-                                                </div>
-                                                <div class="field full">
-                                                    <label>Instrução editorial fixa</label>
-                                                    <textarea id="template-builder-instruction"
-                                                        placeholder="Ex: abrir com benefício concreto, trazer território e fechar com prestação de contas objetiva."
-                                                        rows="4"></textarea>
-                                                </div>
-                                            </div>
-
-                                            <div class="template-builder-actions">
-                                                <button type="button" class="action-btn primary" onclick="saveCurrentTemplate()">Salvar
-                                                    template
-                                                    atual</button>
-                                                <button type="button" class="action-btn" onclick="prefillTemplateBuilderFromTab()">Usar
-                                                    configuração da aba atual</button>
-                                            </div>
-                                        </div>
-
-                                        <div class="template-library-panel">
-                                            <div class="template-library-list" id="template-library-list">
-                                                <div class="queue-empty">Carregando templates...</div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div>
-                            </section>-->
+                                </section>-->
 
             <section class="results-shell" id="content-review-section">
                 <div class="results-card">
@@ -4053,6 +4053,13 @@
                         <div>
                             <h2 class="section-title">Painel de Menções</h2>
                             <p class="section-subtitle">Abra, marque como lida e puxe para crise sem sair do módulo.</p>
+                        </div>
+                        <div style="display:flex;gap:.6rem;flex-wrap:wrap">
+                            <form method="POST" action="{{ route('mayor.mentions.refresh') }}">
+                                @csrf
+                                <button class="action-btn primary" type="submit">Buscar agora</button>
+                            </form>
+                            <a class="action-btn" href="{{ route('mayor.mentions.config') }}">Fontes e termos</a>
                         </div>
                     </div>
                     <div class="mention-list-embedded">
