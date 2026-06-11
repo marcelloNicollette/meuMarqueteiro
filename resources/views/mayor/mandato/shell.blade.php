@@ -513,6 +513,57 @@
                 @endforeach
             </section>
 
+            <section class="mandate-panel">
+                <div class="mandate-panel-head">
+                    <div>
+                        <div class="mandate-panel-title">Ações recentes do mandato</div>
+                        <div class="mandate-panel-subtitle">Últimas ações registradas, mantendo o painel executivo
+                            conectado
+                            à operação diária.</div>
+                    </div>
+                    <a href="{{ route('mayor.mandato.painel', ['area' => 'actions']) }}" class="mandate-link-btn">Abrir
+                        área de ações</a>
+                </div>
+                <div class="mandate-grid-3">
+                    @forelse ($dashboardRecentActions as $action)
+                        <div class="mandate-action-card">
+                            <div class="mandate-card-top">
+                                <div class="mandate-card-title">{{ $action['title'] }}</div>
+                                <span class="mandate-status-pill"
+                                    style="background:{{ $action['status_color'] ?? '#f8fafc' }}15;color:{{ $action['status_color'] ?? '#475569' }};border-color:{{ $action['status_color'] ?? '#475569' }}33">
+                                    {{ $action['status_label'] ?? 'Em andamento' }}
+                                </span>
+                            </div>
+                            <div class="mandate-card-desc">
+                                {{ \Illuminate\Support\Str::limit($action['description'] ?? 'Sem descrição detalhada.', 150) }}
+                            </div>
+                            <div class="mandate-card-meta">
+                                @if (!empty($action['axis_name']))
+                                    <span
+                                        class="mandate-chip">{{ trim(($action['axis_icon'] ?? '') . ' ' . $action['axis_name']) }}</span>
+                                @endif
+                                <span class="mandate-chip">{{ $action['physical_progress'] ?? 0 }}% físico</span>
+                                @if (($action['milestones_total'] ?? 0) > 0)
+                                    <span class="mandate-chip">
+                                        {{ $action['milestones_completed'] ?? 0 }}/{{ $action['milestones_total'] }}
+                                        marcos
+                                    </span>
+                                @endif
+                                @if (!empty($action['secretaria']))
+                                    <span class="mandate-chip">{{ $action['secretaria'] }}</span>
+                                @endif
+                            </div>
+                            <div class="mandate-card-actions">
+                                <a href="{{ route('mayor.mandato.acao.edit', $action['id']) }}"
+                                    class="mandate-link-btn primary">Abrir ação</a>
+                            </div>
+                        </div>
+                    @empty
+                        <div class="mandate-empty">Nenhuma ação recente cadastrada.</div>
+                    @endforelse
+                </div>
+            </section>
+
             <section class="mandate-grid-2">
                 <div class="mandate-panel">
                     <div class="mandate-panel-head">
@@ -593,7 +644,8 @@
                                     @endif
                                 </div>
                                 <div class="mandate-card-actions">
-                                    <a href="{{ route('mayor.mandato.eixo', $axis['id']) }}" class="mandate-link-btn">Abrir
+                                    <a href="{{ route('mayor.mandato.eixo', $axis['id']) }}"
+                                        class="mandate-link-btn">Abrir
                                         eixo</a>
                                     <a href="{{ route('mayor.mandato.acao.create', ['axis' => $axis['id']]) }}"
                                         class="mandate-link-btn primary">Nova ação no eixo</a>
@@ -694,56 +746,7 @@
                 </div>
             </section>
 
-            <section class="mandate-panel">
-                <div class="mandate-panel-head">
-                    <div>
-                        <div class="mandate-panel-title">Ações recentes do mandato</div>
-                        <div class="mandate-panel-subtitle">Últimas ações registradas, mantendo o painel executivo
-                            conectado
-                            à operação diária.</div>
-                    </div>
-                    <a href="{{ route('mayor.mandato.painel', ['area' => 'actions']) }}" class="mandate-link-btn">Abrir
-                        área de ações</a>
-                </div>
-                <div class="mandate-grid-3">
-                    @forelse ($dashboardRecentActions as $action)
-                        <div class="mandate-action-card">
-                            <div class="mandate-card-top">
-                                <div class="mandate-card-title">{{ $action['title'] }}</div>
-                                <span class="mandate-status-pill"
-                                    style="background:{{ $action['status_color'] ?? '#f8fafc' }}15;color:{{ $action['status_color'] ?? '#475569' }};border-color:{{ $action['status_color'] ?? '#475569' }}33">
-                                    {{ $action['status_label'] ?? 'Em andamento' }}
-                                </span>
-                            </div>
-                            <div class="mandate-card-desc">
-                                {{ \Illuminate\Support\Str::limit($action['description'] ?? 'Sem descrição detalhada.', 150) }}
-                            </div>
-                            <div class="mandate-card-meta">
-                                @if (!empty($action['axis_name']))
-                                    <span
-                                        class="mandate-chip">{{ trim(($action['axis_icon'] ?? '') . ' ' . $action['axis_name']) }}</span>
-                                @endif
-                                <span class="mandate-chip">{{ $action['physical_progress'] ?? 0 }}% físico</span>
-                                @if (($action['milestones_total'] ?? 0) > 0)
-                                    <span class="mandate-chip">
-                                        {{ $action['milestones_completed'] ?? 0 }}/{{ $action['milestones_total'] }}
-                                        marcos
-                                    </span>
-                                @endif
-                                @if (!empty($action['secretaria']))
-                                    <span class="mandate-chip">{{ $action['secretaria'] }}</span>
-                                @endif
-                            </div>
-                            <div class="mandate-card-actions">
-                                <a href="{{ route('mayor.mandato.acao.edit', $action['id']) }}"
-                                    class="mandate-link-btn primary">Abrir ação</a>
-                            </div>
-                        </div>
-                    @empty
-                        <div class="mandate-empty">Nenhuma ação recente cadastrada.</div>
-                    @endforelse
-                </div>
-            </section>
+
         @endif
 
         @if ($activeArea === 'commitments')
