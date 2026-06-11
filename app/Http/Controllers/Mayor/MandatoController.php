@@ -400,10 +400,11 @@ class MandatoController extends Controller
             'milestones.*.due_date' => 'nullable|date',
             'milestones.*.completed' => 'nullable',
         ]);
+        $selectedPromises = $this->selectedPromisesFromPayload($data['promises'] ?? []);
 
         $actor = $this->currentMayor();
 
-        DB::transaction(function () use ($actor, $data, $municipality, $request) {
+        DB::transaction(function () use ($actor, $data, $municipality, $request, $selectedPromises) {
             $action = MandateAction::create(array_merge(
                 $data,
                 [
@@ -414,8 +415,8 @@ class MandatoController extends Controller
             ));
 
             // Vincular promessas com nível de atendimento
-            if (!empty($data['promises'])) {
-                foreach ($data['promises'] as $p) {
+            if (!empty($selectedPromises)) {
+                foreach ($selectedPromises as $p) {
                     $action->promises()->attach($p['id'], [
                         'fulfillment_level'         => $p['level'] ?? 0,
                         'fulfillment_justification' => $p['justification'] ?? null,
@@ -515,10 +516,11 @@ class MandatoController extends Controller
             'milestones.*.due_date' => 'nullable|date',
             'milestones.*.completed' => 'nullable',
         ]);
+        $selectedPromises = $this->selectedPromisesFromPayload($data['promises'] ?? []);
 
         $actor = $this->currentMayor();
 
-        DB::transaction(function () use ($action, $actor, $data, $request) {
+        DB::transaction(function () use ($action, $actor, $data, $request, $selectedPromises) {
             $beforeProgress = (int) ($action->physical_progress ?? 0);
             $beforeStatus = (string) $action->status;
 
@@ -534,8 +536,8 @@ class MandatoController extends Controller
             $action->promises()->detach();
             $newPromiseIds = [];
 
-            if (!empty($data['promises'])) {
-                foreach ($data['promises'] as $p) {
+            if (!empty($selectedPromises)) {
+                foreach ($selectedPromises as $p) {
                     $action->promises()->attach($p['id'], [
                         'fulfillment_level'         => $p['level'] ?? 0,
                         'fulfillment_justification' => $p['justification'] ?? null,
@@ -719,6 +721,19 @@ class MandatoController extends Controller
             'success' => true,
             'suggestions' => $suggestions,
         ]);
+    }
+
+    private function selectedPromisesFromPayload(array $promises): array
+    {
+        return collect($promises)
+            ->filter(fn ($promise) => is_array($promise) && !empty($promise['id']))
+            ->map(fn (array $promise) => [
+                'id' => (int) $promise['id'],
+                'level' => isset($promise['level']) ? (int) $promise['level'] : 0,
+                'justification' => $promise['justification'] ?? null,
+            ])
+            ->values()
+            ->all();
     }
 
     private function serializePromise(MandatePromise $promise): array
