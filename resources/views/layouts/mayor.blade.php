@@ -292,6 +292,7 @@
             font-size: .82rem;
             font-weight: 600;
             text-decoration: none;
+            color: #000;
         }
 
         /* ── Page ─────────────────────────────────────────────── */
