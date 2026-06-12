@@ -580,6 +580,9 @@
         <div class="topbar">
             <div class="topbar-title">@yield('topbar-title', 'Meu Assistente')</div>
             <div class="topbar-date">{{ now()->locale('pt_BR')->isoFormat('ddd, D MMM') }}</div>
+
+            <a href="/ajuda.html" target="_blank" class="mandate-shell-btn">Ajuda</a>
+
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
                 <button type="submit" class="topbar-logout">
@@ -592,7 +595,7 @@
                 </button>
             </form>
 
-            <a href="{{ $praHojeRoute }}" class="topbar-briefing">
+            <!--<a href="{{ $praHojeRoute }}" class="topbar-briefing">
                 <svg viewBox="0 0 26 26" aria-hidden="true">
                     <rect x="4" y="5" width="18" height="17" rx="3" />
                     <path d="M4 10h18" />
@@ -602,7 +605,7 @@
                     <path d="M16 16.5l1 1 2-2" />
                 </svg>
                 Pra hoje!
-            </a>
+            </a>-->
         </div>
 
         <div class="page-body">

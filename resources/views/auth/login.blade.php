@@ -469,6 +469,7 @@
                         <div class="brand-stat-label">Alinhado à marca</div>
                     </div>
                 </div>-->
+                <img width="50%" src="/images/logo-FIA-white.png" alt="">
             </div>
         </div>
 

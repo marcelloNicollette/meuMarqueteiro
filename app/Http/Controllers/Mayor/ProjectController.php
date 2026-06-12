@@ -24,6 +24,8 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 use Illuminate\View\View;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -289,6 +291,7 @@ class ProjectController extends Controller
             && !$currentDraftRevision;
         $canManageCollaborators = $this->canManageCollaborators($project, $currentUser);
         $canManageRevisions = $this->canManageRevisions($project, $currentUser);
+        $canDeleteProject = $this->canDeleteProject($project, $currentUser);
         $currentUserRole = $this->projectAccessRole($project, $currentUser);
         $canEditCoreMetadata = $this->canEditCoreMetadata($project, $currentUser);
         $projectEditNotice = $canEditProject ? null : $this->projectEditBlockMessage($project, $currentUser);
@@ -322,6 +325,7 @@ class ProjectController extends Controller
             'canEditCoreMetadata' => $canEditCoreMetadata,
             'canManageCollaborators' => $canManageCollaborators,
             'canManageRevisions' => $canManageRevisions,
+            'canDeleteProject' => $canDeleteProject,
             'currentUserProjectRole' => $currentUserRole,
             'projectEditNotice' => $projectEditNotice,
             'projectMetadata' => $projectMetadata,
@@ -465,6 +469,70 @@ class ProjectController extends Controller
                 ? 'Colaborador removido do projeto.'
                 : 'Convite pendente cancelado com sucesso.'
         );
+    }
+
+    public function destroy(Request $request, Project $project): RedirectResponse
+    {
+        $this->authorizeProjectAccess($project);
+
+        $user = Auth::user();
+        if (!$this->canDeleteProject($project, $user)) {
+            $this->logPermissionBlocked($project, $user, 'delete_project', 'owner');
+            abort(403, 'Somente o proprietario do projeto ou um administrador pode excluir este registro.');
+        }
+
+        $password = trim((string) $request->input('delete_password', ''));
+        if ($password === '') {
+            return $this->redirectToProjectShow($project)
+                ->withErrors(['delete_password' => 'Informe sua senha para confirmar a exclusao do projeto.']);
+        }
+
+        if (!Hash::check($password, (string) $user->password)) {
+            return $this->redirectToProjectShow($project)
+                ->withErrors(['delete_password' => 'Senha invalida. A exclusao do projeto foi cancelada.']);
+        }
+
+        $project->loadMissing([
+            'owner:id,name,email',
+            'collaborators.user:id,name,email',
+            'sections:id,project_id,section_key,title',
+        ]);
+
+        $deletionSnapshot = [
+            'title' => $project->title,
+            'status' => $project->status,
+            'project_type' => $project->project_type,
+            'current_phase' => $project->current_phase,
+            'owner_user_id' => $project->owner_user_id,
+            'owner_name' => $project->owner?->name,
+            'sections_count' => $project->sections->count(),
+            'collaborators_count' => $project->collaborators->count(),
+            'deleted_by_user_id' => $user->id,
+            'deleted_by_name' => $user->name,
+        ];
+
+        DB::transaction(function () use ($project, $user, $deletionSnapshot) {
+            $this->logProjectHistory($project, [
+                'user_id' => $user->id,
+                'action' => 'project_deleted',
+                'field_name' => 'project',
+                'previous_content' => $project->title,
+                'metadata' => $deletionSnapshot,
+            ]);
+
+            Log::warning('projects.deleted', [
+                'project_id' => $project->id,
+                'municipality_id' => $project->municipality_id,
+                'deleted_at' => now()->toIso8601String(),
+                'snapshot' => $deletionSnapshot,
+            ]);
+
+            $project->delete();
+        });
+
+        return redirect()
+            ->route('mayor.projects.index')
+            ->with('success', 'Projeto excluido com sucesso.');
     }
 
     public function analyzeOverlap(Project $project): RedirectResponse
@@ -1331,6 +1399,11 @@ class ProjectController extends Controller
     }
 
     private function canManageRevisions(Project $project, User $user): bool
+    {
+        return $user->isAdmin() || $project->owner_user_id === $user->id;
+    }
+
+    private function canDeleteProject(Project $project, User $user): bool
     {
         return $user->isAdmin() || $project->owner_user_id === $user->id;
     }

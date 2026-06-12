@@ -23,6 +23,14 @@
             align-items: flex-start;
         }
 
+        .project-show-header-actions {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: .75rem;
+            flex-shrink: 0;
+        }
+
         .project-show-header h1 {
             font-family: "Outfit", sans-serif;
             font-size: 1.45rem;
@@ -35,6 +43,26 @@
             color: var(--ink-soft);
             line-height: 1.65;
             max-width: 820px;
+        }
+
+        .project-delete-hint {
+            max-width: 240px;
+            font-size: .74rem;
+            color: var(--ink-muted);
+            line-height: 1.45;
+            text-align: right;
+        }
+
+        .btn-danger-soft {
+            background: rgba(183, 28, 28, .08);
+            border: 1px solid rgba(183, 28, 28, .14);
+            color: #b71c1c;
+        }
+
+        .btn-danger-soft:hover {
+            background: rgba(183, 28, 28, .12);
+            border-color: rgba(183, 28, 28, .22);
+            color: #8f1414;
         }
 
         .project-show-chip-row {
@@ -1522,7 +1550,25 @@
                 <p>{{ $project->initial_idea }}</p>
             </div>
 
-            <a href="{{ route('mayor.projects.index') }}" class="btn btn-dark">Voltar ao painel</a>
+            <div class="project-show-header-actions">
+                <a href="{{ route('mayor.projects.index') }}" class="btn btn-dark">Voltar ao painel</a>
+
+                @if ($canDeleteProject)
+                    <button type="button" class="btn btn-danger-soft" data-project-delete-trigger="true"
+                        data-project-title="{{ $project->title }}">
+                        Excluir projeto
+                    </button>
+                    <span class="project-delete-hint">
+                        A exclusão e permanente e exige a confirmação com sua senha atual.
+                    </span>
+                    <form method="POST" action="{{ route('mayor.projects.destroy', $project) }}"
+                        data-project-delete-form="true" style="display: none;">
+                        @csrf
+                        @method('DELETE')
+                        <input type="hidden" name="delete_password" value="">
+                    </form>
+                @endif
+            </div>
         </section>
 
         <div class="project-layout">
@@ -1688,7 +1734,8 @@
 
                                 <div class="project-metadata-field">
                                     <label for="metadata-priority">Prioridade</label>
-                                    <select id="metadata-priority" name="metadata[priority]" @disabled(!$canEditProject)>
+                                    <select id="metadata-priority" name="metadata[priority]"
+                                        @disabled(!$canEditProject)>
                                         <option value="">A definir</option>
                                         @foreach ($projectPriorityOptions as $value => $label)
                                             <option value="{{ $value }}" @selected(old('metadata.priority', $projectMetadata['priority']) === $value)>
@@ -3156,10 +3203,13 @@
 @endsection
 
 @push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script>
         document.addEventListener('DOMContentLoaded', () => {
             const projectForms = Array.from(document.querySelectorAll('.project-show-page form'));
             const selects = Array.from(document.querySelectorAll('[data-approval-step-select="true"]'));
+            const deleteTrigger = document.querySelector('[data-project-delete-trigger="true"]');
+            const deleteForm = document.querySelector('[data-project-delete-form="true"]');
 
             const ensureHiddenInput = (form, name) => {
                 let input = form.querySelector(`input[name="${name}"]`);
@@ -3250,6 +3300,67 @@
                     select.focus();
                 });
             });
+
+            if (deleteTrigger && deleteForm) {
+                deleteTrigger.addEventListener('click', async () => {
+                    const projectTitle = deleteTrigger.dataset.projectTitle || 'este projeto';
+                    const passwordInput = deleteForm.querySelector('input[name="delete_password"]');
+
+                    if (window.Swal && typeof window.Swal.fire === 'function') {
+                        const result = await window.Swal.fire({
+                            title: 'Excluir projeto?',
+                            text: `Essa ação removerá permanentemente "${projectTitle}".`,
+                            icon: 'warning',
+                            input: 'password',
+                            inputLabel: 'Digite sua senha para confirmar',
+                            inputPlaceholder: 'Sua senha atual',
+                            inputAttributes: {
+                                autocapitalize: 'off',
+                                autocorrect: 'off',
+                            },
+                            showCancelButton: true,
+                            confirmButtonText: 'Excluir projeto',
+                            cancelButtonText: 'Cancelar',
+                            confirmButtonColor: '#b71c1c',
+                            reverseButtons: true,
+                            focusCancel: true,
+                            preConfirm: (value) => {
+                                if (!value) {
+                                    window.Swal.showValidationMessage(
+                                        'Informe sua senha para confirmar a exclusão.');
+                                }
+
+                                return value;
+                            },
+                        });
+
+                        if (!result.isConfirmed) {
+                            return;
+                        }
+
+                        passwordInput.value = result.value || '';
+                        deleteForm.submit();
+                        return;
+                    }
+
+                    const confirmed = window.confirm(
+                        `Tem certeza que deseja excluir permanentemente "${projectTitle}"?`
+                    );
+
+                    if (!confirmed) {
+                        return;
+                    }
+
+                    const password = window.prompt(
+                        'Digite sua senha para confirmar a exclusão deste projeto:');
+                    if (!password) {
+                        return;
+                    }
+
+                    passwordInput.value = password;
+                    deleteForm.submit();
+                });
+            }
         });
     </script>
 @endpush

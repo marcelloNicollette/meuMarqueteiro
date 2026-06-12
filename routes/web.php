@@ -285,6 +285,7 @@ Route::middleware(['auth', 'role:mayor', 'municipality.onboarded'])
             Route::get('/create', [Mayor\ProjectController::class, 'create'])->name('create');
             Route::post('/', [Mayor\ProjectController::class, 'store'])->name('store');
             Route::get('/{project}', [Mayor\ProjectController::class, 'show'])->name('show');
+            Route::delete('/{project}', [Mayor\ProjectController::class, 'destroy'])->name('destroy');
             Route::post('/{project}/collaborators', [Mayor\ProjectController::class, 'inviteCollaborator'])->name('collaborators.invite');
             Route::post('/{project}/collaborators/accept', [Mayor\ProjectController::class, 'acceptCollaboratorInvite'])->name('collaborators.accept');
             Route::delete('/{project}/collaborators/{collaborator}', [Mayor\ProjectController::class, 'removeCollaborator'])->name('collaborators.remove');

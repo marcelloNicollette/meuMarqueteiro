@@ -349,7 +349,7 @@
         .chat-context-bar {
             background: var(--white);
             border-bottom: 1px solid var(--border);
-            padding: .95rem 1.25rem;
+            padding: .5rem 1rem;
             display: flex;
             align-items: center;
             justify-content: space-between;
@@ -383,7 +383,7 @@
         }
 
         .chat-context-badges {
-            display: flex;
+            display: none;
             flex-wrap: wrap;
             justify-content: flex-end;
             gap: .4rem;
@@ -1689,13 +1689,13 @@
         }
 
         .audio-status {
-            display: block;
+            display: none;
             margin-top: .28rem;
             color: var(--ink-muted);
         }
 
         .audio-preferences {
-            display: flex;
+            display: none;
             justify-content: center;
             gap: .45rem;
             flex-wrap: wrap;
@@ -1734,7 +1734,7 @@
         }
 
         .chat-audio-bar {
-            display: flex;
+            display: none;
             align-items: center;
             justify-content: space-between;
             gap: .85rem;
@@ -3715,10 +3715,10 @@
             const sourcesHtml = (sources && sources.length > 0) ?
                 `<div class="rag-sources">
                  ${sources.slice(0,4).map(s => `
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               <span class="rag-source-tag">
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                 ${s.source || 'Fonte'}
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                               </span>`).join('')}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       <span class="rag-source-tag">
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         <svg viewBox="0 0 24 24" fill="currentColor" width="10" height="10"><path d="M14 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6zm2 16H8v-2h8v2zm0-4H8v-2h8v2zm-3-5V3.5L18.5 9H13z"/></svg>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                         ${s.source || 'Fonte'}
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       </span>`).join('')}
                </div>` :
                 '';
 
@@ -4090,17 +4090,17 @@
                     ${escapeHtml(share.excerpt || share.message_preview || 'Trecho compartilhado')}
                 </div>
                 ${share.note ? `
-                                                                                                                                                                                                                                                                        <div class="share-feed-note">
-                                                                                                                                                                                                                                                                            <span class="share-feed-label">Observacao</span>
-                                                                                                                                                                                                                                                                            ${escapeHtml(share.note)}
-                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                    ` : ''}
+                                                                                                                                                                                                                                                                                                <div class="share-feed-note">
+                                                                                                                                                                                                                                                                                                    <span class="share-feed-label">Observacao</span>
+                                                                                                                                                                                                                                                                                                    ${escapeHtml(share.note)}
+                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                            ` : ''}
                 ${share.context_excerpt ? `
-                                                                                                                                                                                                                                                                        <div class="share-feed-context">
-                                                                                                                                                                                                                                                                            <span class="share-feed-label">Contexto da conversa</span>
-                                                                                                                                                                                                                                                                            ${escapeHtml(share.context_excerpt)}
-                                                                                                                                                                                                                                                                        </div>
-                                                                                                                                                                                                                                                                    ` : ''}
+                                                                                                                                                                                                                                                                                                <div class="share-feed-context">
+                                                                                                                                                                                                                                                                                                    <span class="share-feed-label">Contexto da conversa</span>
+                                                                                                                                                                                                                                                                                                    ${escapeHtml(share.context_excerpt)}
+                                                                                                                                                                                                                                                                                                </div>
+                                                                                                                                                                                                                                                                                            ` : ''}
                 <div class="share-feed-meta" style="margin-top:.65rem">
                     ${share.is_revoked ? revokedLabel : viewedLabel}
                 </div>
@@ -4124,10 +4124,10 @@
                     </div>
                     ${renderShareCardContent(share)}
                     ${conversationUrl ? `
-                                                                                                                                                                                                                                                                                <div class="share-feed-actions" style="margin-top:.45rem">
-                                                                                                                                                                                                                                                                                    <a class="share-feed-link" href="${escapeHtml(conversationUrl)}">Abrir conversa</a>
-                                                                                                                                                                                                                                                                                </div>
-                                                                                                                                                                                                                                                                            ` : ''}
+                                                                                                                                                                                                                                                                                                        <div class="share-feed-actions" style="margin-top:.45rem">
+                                                                                                                                                                                                                                                                                                            <a class="share-feed-link" href="${escapeHtml(conversationUrl)}">Abrir conversa</a>
+                                                                                                                                                                                                                                                                                                        </div>
+                                                                                                                                                                                                                                                                                                    ` : ''}
                 </div>
             `;
         }
@@ -4896,10 +4896,10 @@
                     Todas
                 </button>
                 ${uniqueTags.map(tag => `
-                                                                                                                                                                                                                                                                                                                                                                                                            <button type="button" class="conv-filter-chip ${activeTagFilter === tag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">
-                                                                                                                                                                                                                                                                                                                                                                                                                ${escapeHtml(formatTagLabel(tag))}
-                                                                                                                                                                                                                                                                                                                                                                                                            </button>
-                                                                                                                                                                                                                                                                                                                                                                                                        `).join('')}
+                                                                                                                                                                                                                                                                                                                                                                                                                                    <button type="button" class="conv-filter-chip ${activeTagFilter === tag ? 'active' : ''}" data-tag="${escapeHtml(tag)}">
+                                                                                                                                                                                                                                                                                                                                                                                                                                        ${escapeHtml(formatTagLabel(tag))}
+                                                                                                                                                                                                                                                                                                                                                                                                                                    </button>
+                                                                                                                                                                                                                                                                                                                                                                                                                                `).join('')}
             `;
         }
 
