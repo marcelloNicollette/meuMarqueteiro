@@ -288,6 +288,12 @@
             stroke-linejoin: round;
         }
 
+        .cta_help {
+            font-size: .82rem;
+            font-weight: 600;
+            text-decoration: none;
+        }
+
         /* ── Page ─────────────────────────────────────────────── */
         .page-body {
             flex: 1;
@@ -581,7 +587,7 @@
             <div class="topbar-title">@yield('topbar-title', 'Meu Assistente')</div>
             <div class="topbar-date">{{ now()->locale('pt_BR')->isoFormat('ddd, D MMM') }}</div>
 
-            <a href="/ajuda.html" target="_blank" class="mandate-shell-btn">Ajuda</a>
+            <a href="/ajuda.html" target="_blank" class="cta_help">Ajuda</a>
 
             <form method="POST" action="{{ route('logout') }}" style="margin:0">
                 @csrf
