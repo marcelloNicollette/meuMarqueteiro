@@ -515,7 +515,7 @@
             <div class="sidebar-logo-icon">
                 <img width="100%" src="/images/icon.svg" alt="">
             </div>
-            <span class="sidebar-logo-text">Qu4tro.ai</span>
+            <span class="sidebar-logo-text">Qu4tro.cc</span>
             <span class="sidebar-badge">Admin</span>
         </div>
 

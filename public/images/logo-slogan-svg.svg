@@ -1,0 +1,205 @@
+
+<svg xmlns="http://www.w3.org/2000/svg" version="1.1" xmlns:xlink="http://www.w3.org/1999/xlink" preserveAspectRatio="none" x="0px" y="0px" width="750px" height="250px" viewBox="0 0 750 250">
+<defs>
+<g id="Layer0_0_FILL">
+<path fill="#1C243A" stroke="none" d="
+M 174.55 87.5
+Q 174.55 70.6 168.4 55.4 161.35 39.65 150.8 30.1 140.85 19.9 124.85 12.75 110.3 6.9 92.4 6.9 74.4 6.9 59.95 12.75 44.45 19.6 34 30.1 23.45 39.65 16.35 55.4 12.6 65.95 11.4 73.65
+L 10.2 87.25
+Q 10.2 104.3 16.65 119.05 22.8 133.65 34 144.75 45.35 156.15 60.2 162.05 75.3 168.25 92.65 168.25
+L 97.3 168.25 113.95 165.75
+Q 119.85 164.2 124.85 162.05 132.2 158.95 139 154.65
+L 162.5 178.1 202.75 178.1 159.45 134.9 159.75 134.55
+Q 164.4 128.35 168.4 119.05 174.55 104.3 174.55 87.5
+M 124.85 52.95
+Q 138.7 67.8 138.7 88.2 138.7 99.3 134.4 109.5
+L 110 85.1 89.55 105.2 115.55 131.15
+Q 105 137.65 91.75 137.65 72.25 137.65 58.7 123.1 45.1 109.2 45.1 88.2 45.1 67.45 58.7 52.95 72.9 38.4 91.75 38.4 111.2 38.4 124.85 52.95
+M 295.75 67.55
+L 261.75 67.55 261.75 129.25
+Q 261.75 137.95 257.4 142.3 253.35 147.2 245.3 147.2 239.75 147.2 236.35 145.05 232.65 142.9 230.8 138.9 228.95 134.9 228.95 129.25
+L 228.95 67.55 194.95 67.55 194.95 129.6
+Q 194.95 143.55 201.5 154.65 207.95 165.45 219.1 171 230.2 177.2 245.3 177.2 261.15 177.2 271.6 171 282.75 165.45 289.2 154.65 295.75 143.55 295.75 129.6
+L 295.75 67.55
+M 524.95 70.3
+L 500.55 70.3 500.55 22.05 466.9 22.05 466.9 70.3 442.5 70.3 442.5 99 466.9 99 466.9 177.8 500.55 177.8 500.55 99 524.95 99 524.95 70.3
+M 573.5 78.3
+L 573.5 69.95 539.8 69.95 539.8 177.45 573.5 177.45 573.5 117.25
+Q 574.15 107.6 578.5 102.7 583.45 97.75 592.05 97.75 596.75 97.75 599.55 99 602.95 100.55 605.1 102.7
+L 625.1 77.4
+Q 620.8 72.75 614.95 70.3 609.65 67.8 601.35 67.8 583.7 67.8 573.5 78.3
+M 681.1 65.05
+Q 664.45 65.05 650.85 72.45 637.25 80.15 630.1 92.5 622.4 104.85 622.4 120.95 622.4 137.05 630.1 149.7 637.6 162.35 651.15 169.75 664.8 177.2 681.1 177.2 697.8 177.2 711.15 169.75 724.1 162.7 732.15 149.7 739.85 137.05 739.85 120.95 739.85 104.85 732.15 92.2 723.75 79 711.15 72.45 697.8 65.05 681.1 65.05
+M 705.5 120.95
+Q 705.5 127.45 702.45 134.25 699.95 139.8 694.15 143.2 688.25 146.6 681.1 146.6 674.35 146.6 668.45 143.2 662.9 139.8 659.8 134.25 657.05 128.35 657.05 120.95 657.05 113.85 659.8 107.6 662.9 102.05 668.45 99 674.35 95.6 681.1 95.6 687.95 95.6 693.8 99 699.35 102.4 702.1 107.6 705.5 113.5 705.5 120.95 Z"/>
+
+<path fill="#B8902A" stroke="none" d="
+M 398.65 21.5
+L 360.95 21.5 309.6 123.45 309.6 142.6 383.2 142.6 383.2 177.45 417.2 177.45 417.2 142.6 434.8 142.6 434.8 113.25 417.2 113.25 417.2 70.3 383.2 70.3 383.2 113.25 351.3 113.25 398.65 21.5 Z"/>
+</g>
+</defs>
+
+<g transform="matrix( 1, 0, 0, 1, 0,0) ">
+<use xlink:href="#Layer0_0_FILL"/>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 114.9,200.9) ">
+<clipPath id="Mask_Mask_1">
+<rect x="-2" y="-2" width="37.4" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_1)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">M</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 148.1,200.9) ">
+<clipPath id="Mask_Mask_2">
+<rect x="-2" y="-2" width="32.25" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_2)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">A</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 176.15,200.9) ">
+<clipPath id="Mask_Mask_3">
+<rect x="-2" y="-2" width="32.75" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_3)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">N</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 204.7,200.9) ">
+<clipPath id="Mask_Mask_4">
+<rect x="-2" y="-2" width="33.85" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_4)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">D</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 234.35,200.9) ">
+<clipPath id="Mask_Mask_5">
+<rect x="-2" y="-2" width="32.25" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_5)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">A</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 262.4,200.9) ">
+<clipPath id="Mask_Mask_6">
+<rect x="-2" y="-2" width="29.7" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_6)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">T</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 287.9,200.9) ">
+<clipPath id="Mask_Mask_7">
+<rect x="-2" y="-2" width="35.8" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_7)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">O</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 319.5,200.9) ">
+<clipPath id="Mask_Mask_8">
+<rect x="-2" y="-2" width="27.2" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_8)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">S</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 353,200.9) ">
+<clipPath id="Mask_Mask_9">
+<rect x="-2" y="-2" width="16.5" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_9)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">I</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 365.3,200.9) ">
+<clipPath id="Mask_Mask_10">
+<rect x="-2" y="-2" width="32.75" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_10)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">N</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 393.85,200.9) ">
+<clipPath id="Mask_Mask_11">
+<rect x="-2" y="-2" width="29.7" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_11)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">T</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 419.35,200.9) ">
+<clipPath id="Mask_Mask_12">
+<rect x="-2" y="-2" width="28.45" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_12)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">E</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 443.6,200.9) ">
+<clipPath id="Mask_Mask_13">
+<rect x="-2" y="-2" width="27" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_13)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">L</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 466.4,200.9) ">
+<clipPath id="Mask_Mask_14">
+<rect x="-2" y="-2" width="16.5" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_14)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">I</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 478.7,200.9) ">
+<clipPath id="Mask_Mask_15">
+<rect x="-2" y="-2" width="35.05" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_15)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">G</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 509.55,200.9) ">
+<clipPath id="Mask_Mask_16">
+<rect x="-2" y="-2" width="28.45" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_16)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">E</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 533.8,200.9) ">
+<clipPath id="Mask_Mask_17">
+<rect x="-2" y="-2" width="32.75" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_17)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">N</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 562.35,200.9) ">
+<clipPath id="Mask_Mask_18">
+<rect x="-2" y="-2" width="29.7" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_18)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">T</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 587.85,200.9) ">
+<clipPath id="Mask_Mask_19">
+<rect x="-2" y="-2" width="28.45" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_19)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">E</tspan></text>
+</g>
+
+<g transform="matrix( 1, 0, 0, 1, 612.1,200.9) ">
+<clipPath id="Mask_Mask_20">
+<rect x="-2" y="-2" width="27.2" height="49.35" fill="#FFFFFF" stroke="none"/>
+</clipPath>
+
+<text clip-path="url(#Mask_Mask_20)" writing-mode="lr"><tspan x="0" y="36" baseline-shift="0%" font-family="Outfit" font-size="36" fill="#80869A" xml:space="preserve">S</tspan></text>
+</g>
+</svg>

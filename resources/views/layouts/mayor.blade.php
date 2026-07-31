@@ -464,7 +464,7 @@
     {{-- ── Sidenav ──────────────────────────────────────────────── --}}
     <nav class="sidenav">
         <div class="sidenav-logo">
-            <img src="/images/icon.svg" width="100%" alt="Qu4tro.ai">
+            <img src="/images/icon.svg" width="100%" alt="Qu4tro.cc">
         </div>
 
         <div class="sidenav-nav">

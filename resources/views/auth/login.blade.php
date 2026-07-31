@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Qu4tro.ai</title>
+    <title>Qu4tro.cc</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="icon" type="image/x-icon" href="/images/icon.svg">
@@ -445,7 +445,7 @@
 
             <div class="brand-hero">
                 <div class="brand-logo-icon">
-                    <img width="100%" src="/images/logo-qu4tro.ai-white.svg" alt="">
+                    <img width="100%" src="/images/logo-white.svg" alt="">
                 </div>
                 <h2 class="brand-hero-title">Mandatos Inteligentes.</h2>
                 <p class="brand-hero-body">
@@ -477,11 +477,11 @@
         <div class="form-panel">
             <div class="form-box">
                 <div class="logo">
-                    <img src="/images/logo-qu4tro.ai.svg" width="100%" alt="">
+                    <img src="/images/logo-svg.svg" width="100%" alt="">
                 </div>
                 <div class="form-heading">
                     <h1>Entrar na plataforma</h1>
-                    <p>Acesse com seu e-mail e senha cadastrados para continuar no ambiente da Qu4tro.ai.</p>
+                    <p>Acesse com seu e-mail e senha cadastrados para continuar no ambiente da Qu4tro.cc.</p>
                 </div>
 
                 {{-- Erros globais --}}
